@@ -21,11 +21,11 @@
     \foreach \pos [count=\name] in {0,...,7,9} {
         \ifnum \pos=9  %create the x_T input.
           \node[BLSTM rcNeuron, pin=left:
-            \rotatebox{-90}{\parbox[t][][r]{8mm}{\centering $x_{T}$}}]
+            \rotatebox{-90}{\parbox[t][][r]{8mm}{\centering $\mathbf{x}_{T}$}}]
             (I-\name) at (0,-\pos) {};
         \else
           \node[BLSTM rcNeuron, pin=left:
-            \rotatebox{-90}{\parbox[t][][r]{8mm}{\centering $x_{\name}$}}]
+            \rotatebox{-90}{\parbox[t][][r]{8mm}{\centering $\mathbf{x}_{\name}$}}]
             (I-\name) at (0,-\pos) {};
         \fi
       }
@@ -88,19 +88,19 @@
     % Annotate the layers
     \node[annot,above of=H-1, node distance=1cm,hoz] (hl) {}; %Hidden layer
     %\node[annot,left of=hl,hoz] {Input layer};
-    \node[annot,right of=hl,hoz] {Listener: \\ pyramidal BLSTM};
+    \node[annot,right of=hl,hoz] {Listener:};
 
     % draw the listener output nodes
-    \node[right of=O-1, node distance=1.0cm, rotate=-90] (h1) {$h_1$};
+    \node[right of=O-1, node distance=1.0cm, rotate=-90] (h1) {$\mathbf{h}_1$};
     \draw[->] (O-1) -- (h1);
-    \node[right of=O-2, node distance=1.0cm, rotate=-90] (h2) {$h_2$};
+    \node[right of=O-2, node distance=1.0cm, rotate=-90] (h2) {$\mathbf{h}_2$};
     \draw[->] (O-2) -- (h2);
-    \node[right of=O-3, node distance=1.0cm, rotate=-90] (h3) {$h_u$};
+    \node[right of=O-3, node distance=1.0cm, rotate=-90] (h3) {$\mathbf{h}_u$};
     \draw[->] (O-3) -- (h3);
 
     % draw the node for the h vector.
     \node[below right of=h1, rotate=-90, node distance=1.5cm] (h)
-        {$h = (h_1, h_2, \dots ,h_u)$};
+        {$\mathbf{H} = (\mathbf{h}_1, \mathbf{h}_2, \dots ,\mathbf{h}_u)$};
     \draw[-] (h1) -- (h);
     \draw[-] (h2) -- (h);
     \draw[-] (h3) -- (h);
@@ -109,7 +109,7 @@
     \foreach \pos [count=\name] in {0,...,2,4} {
         \ifnum \pos=4.5  %create the x_T input.
           \node[LSTM rcNeuron, pin=left:
-            \rotatebox{-90}{\parbox[t][][r]{8mm}{\centering $y_{s-1}$}}]
+            \rotatebox{-90}{\parbox[t][][r]{8mm}{\centering $\mathbf{y}_{s-1}$}}]
             (SI-\name) at (\layersep*4,-\pos*2-0.5) {};
         \else
           \ifnum \pos=0
@@ -119,14 +119,14 @@
 
           \else
             \node[LSTM rcNeuron, pin=left:
-              \rotatebox{-90}{\parbox[t][][r]{8mm}{\centering $y_{\name}$}}]
+              \rotatebox{-90}{\parbox[t][][r]{8mm}{\centering $\mathbf{y}_{\name}$}}]
               (SI-\name) at (\layersep*4,-\pos*2-0.5) {};
           \fi
         \fi
       }
 
       %draw the attent layer.
-      \foreach \pos [count=\name] in {0,1,4} {
+      \foreach \pos [count=\name] in {0,1,2,4} {
         \node[attent neuron]
           (A-\name) at (\layersep*5,-\pos*2-0.5) {};
       }
@@ -144,11 +144,11 @@
       }
 
       %draw the output distributions.
-      \node[right of=SO-1, node distance=1.0cm, rotate=-90] (y2) {$y_2$};
+      \node[right of=SO-1, node distance=1.0cm, rotate=-90] (y2) {$\mathbf{y}_2$};
       \draw[->] (SO-1) -- (y2);
-      \node[right of=SO-2, node distance=1.0cm, rotate=-90] (y3) {$y_3$};
+      \node[right of=SO-2, node distance=1.0cm, rotate=-90] (y3) {$\mathbf{y}_3$};
       \draw[->] (SO-2) -- (y3);
-      \node[right of=SO-3, node distance=1.0cm, rotate=-90] (y4) {$y_4$};
+      \node[right of=SO-3, node distance=1.0cm, rotate=-90] (y4) {$\mathbf{y}_4$};
       \draw[->] (SO-3) -- (y4);
       \node[right of=SO-4, node distance=1.0cm, rotate=-90] (eos) {$<$eos$>$};
       \draw[->] (SO-4) -- (eos);
@@ -169,29 +169,32 @@
       %attend forward
       \draw[->] (SI-1) -- (A-1);
       \draw[->] (SI-2) -- (A-2);
-      \draw[->,dashed] (SI-3) -- (SH-3); %why this arrow??
-      \draw[->] (SI-4) -- (A-3);
+      \draw[->] (SI-3) -- (A-3);
+      \draw[->] (SI-4) -- (A-4);
       \draw[->] (A-1) -- (SH-1);
       \draw[->] (A-2) -- (SH-2);
-      \draw[->] (A-3) -- (SH-4);
+      \draw[->] (A-3) -- (SH-3);
+      \draw[->] (A-4) -- (SH-4);
 
       %attend connections.
-      \draw[->, bend angle=10, bend left] (h) to (A-1) node[below right, rotate=-90] {$h$};
-      \draw[->, bend angle=20, bend right] (h) to (A-2) node[below right, rotate=-90] {$h$};
-      \draw[->, bend angle=25, bend right] (h) to (A-3) node[below left, rotate=-90] {$h$};
+      \draw[->, bend angle=10, bend left] (h) to (A-1) node[below right, rotate=-90] {$\mathbf{H}$};
+      \draw[->, bend angle=20, bend right] (h) to (A-2) node[below right, rotate=-90] {$\mathbf{H}$};
+      \draw[->, bend angle=25, bend right] (h) to (A-4) node[below left, rotate=-90] {$\mathbf{H}$};
+      \draw[->, bend angle=55, bend right] (h) to (A-3) node[below right, 	
+      rotate=-90] {$\mathbf{H}$};
 
       %draw the c vector connections.
-      \draw[->, bend angle=45, bend left] (A-1) to ($(SI-2) + (0.3,0.25)$) node[above left, rotate=-90] {$c_1$};
-      \draw[->, bend angle=45, bend left] (A-2) to ($(SI-3) + (0.3,0.25)$) node[above left, rotate=-90] {$c_2$};
+      \draw[->, bend angle=45, bend left] (A-1) to ($(SI-2) + (0.3,0.25)$) node[above left, rotate=-90] {$\mathbf{c}_1$};
+      \draw[->, bend angle=45, bend left] (A-2) to ($(SI-3) + (0.3,0.25)$) node[above left, rotate=-90] {$\mathbf{c}_2$};
+      \draw[dashed, ->, bend angle=45, bend left] (A-3) to ($(SI-4) + (0.3,0.25)$) node[above left, rotate=-90] {};
 
       \node[above right of=y2, node distance=1 cm, rotate=-90] {Speller:};
-      \node[annot, below of=A-3, node distance=1.4 cm, hoz] {Attention-Context creates \\
-                                                              context vector $c_i$ from $h$ \\
-                                                              and $s_i$};
-
-      \node[annot, below of=SO-4, node distance=1.4 cm, hoz] {Grapheme characters $y_i$ \\
-                                                             are modelled by the
-                                                             CharacterDistribution};
+      %\node[annot, below of=A-3, node distance=1.4 cm, hoz] {Attention-Context creates \\
+      %                                                        context vector $c_i$ from $h$ \\
+      %                                                        and $s_i$};
+      %\node[annot, below of=SO-4, node distance=1.4 cm, hoz] {Grapheme characters $y_i$ \\
+      %                                                       are modelled by the
+      %                                                       CharacterDistribution};
 ;
 
 \end{tikzpicture}
