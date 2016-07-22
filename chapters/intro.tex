@@ -1,0 +1,74 @@
+\chapter{Literature Study}
+\label{cha:intro}
+The first contains a general introduction to the work. The goals are
+defined and the modus operandi is explained.
+TODO: describe the problem.
+
+
+\section{The classical approach to speech recognition}
+\subsection{Hidden Markov Models}
+
+\subsection{Gaussian mixture models}
+
+\subsection{DNN}
+
+
+\section{Methods for Deep-Network based speech recognition}
+
+\subsection{Preprocessing}
+
+\subsubsection{f-bank features}
+f-bank (filter banks) features are one option or raw data.
+time domian or frequency domain?
+
+\subsection{Stochastic gradient descent}
+When training networks on very large training sets, working with the full data set to compute the current gradient becomes very inefficient. As a remedy its is good practice in machine learning to work with so called mini-batches. A mini-batch includes a random subset of the training data set. This procedure is known as randomized gradient descent. With an added momentum term it can be formalized as \cite[page 4]{Hinton2012}:
+\begin{align}
+\triangle w_{ij}(t) = \alpha \triangle w_{ij}(t-1) - \epsilon \frac{\partial C}{\partial w_{ij}(t)}
+\end{align}
+$C$ is the cost, which is computed by comparing the current network output to the desired output. $\alpha \in (0,1)$ is a momentum coefficient. The weight of a connection from unit $i$ in the layer under consideration to unit $j$ in the layer below is given by the expression $w_{ij}$.
+
+
+
+
+\subsection{Dropout}
+
+\subsection{Classical layer architecture}
+
+
+\subsection{Convnets}
+When looking for a signal in different parts of a recoding it is not always advisable to relearn recognition
+of the signal in different locations. With a conventional fully connected structure every sample on the time axis gets its own input weight. For shifted version of this signal the network will not be able to reuse weights it used
+to recognize the same signal at another time point in the recording.
+Convolutional neural nets aim to solve this problem \cite[page 6]{Dumoulin2016}, while preserving essential ordering information.
+
+\subsection{RNNs}
+
+
+\subsection{Tensor-flow}
+
+
+\section{Listen, Attend and Spell}
+The Listen Attend and Spell architecture (LAS) is the main Idea around which this thesis revolves. This section is based on \cite{Chan2015}. The las-network consists of two mayor parts, the listener and the speller. The listener is a pyramidal recurrent neural net. It accepts filter bank spectra $\mathbf{x}_n$ as inputs and produces high level output features $\mathbf{h}_m$. The speller in turn accepts the features as input and outputs distributions over Latin character sequences $\mathbf{y}_p$. An overview of the las-achrcitecture is given in figure~\ref*{fig:las}.
+
+\subsection{The listener}
+The listener shown in figure~\ref*{fig:las} on the bottom, consists of Bidirectional Long Short Term Memory RNN (BLSTM) blocks. These blocks are arranged in a pyramidal structure, such that the time resolution is cut in half in every layer. This operation reduces the length $U$ of the high level features $\mathbf{h}$. Without this compression the following attend and spell operation has a hard time extracting the relevant information. Additionally the compression reduces the problem complexity, which speeds up the training process significantly \cite[page 4]{Chan2015}.    
+
+\subsection{Attend and spell}
+The speller takes the features and produces a distribution over Latin character sequences as output. The computation of this output involves the context vector $\mathbf{c}_i$, the decoder state $s_i$, the features $\mathbf{h}$ and the previous output $y_i$. The index $i$ denotes time, $i-1$ is used to refer to results from the last time step. \\
+These values are computed using \cite[page 4]{Chan2015}:
+\begin{align}
+ s_i &= \text{RNN}(s_{i-1}, y_{i-1}, c_{i-1}) \\
+ \mathbf{c}_i &= \text{AttentionContext}(s_i,\mathbf{h}) \\
+  P(y_i|\mathbf{x}, y_{<i}) &= \text{CharacterDistribution}(s_i,c_i)  
+\end{align}
+The state follows from a recurrent neural net (RNN) made of a two layer LSTM. 
+The attention mechanism, called AttentionContext above, computes a new context vector once every time step. 
+This computation starts with the determination of the scalar energy $\mathbf{e_i}$, which is later transformed into  
+
+
+\begin{figure}
+\includestandalone[width=\textwidth]{../tikz/lasArcBottomUp}
+\caption{The LAS architecture \cite[page 3]{Chan2015}. BLSTM blocks are shown in red. LSTM blocks in blue and attention nets in green.}
+\label{fig:las}
+\end{figure}
