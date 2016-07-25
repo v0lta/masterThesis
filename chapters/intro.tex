@@ -6,35 +6,27 @@ TODO: describe the problem.
 
 
 \section{The classical approach to speech recognition}
-\subsection{Hidden Markov Models}
 
-\subsection{Gaussian mixture models}
-
-\subsection{DNN}
-
-
-\section{Methods for Deep-Network based speech recognition}
-
-\subsection{Preprocessing}
+\subsection{Preprocessing and feature extraction}
 
 \subsubsection{f-bank features}
 f-bank (filter banks) features are one option or raw data.
 time domian or frequency domain?
 
-\subsection{Stochastic gradient descent}
+\subsection{Gaussian mixture models}
+
+\subsection{Hidden Markov Models}
+
+\subsection{DNN}
+
+\subsubsection{Stochastic gradient descent}
 When training networks on very large training sets, working with the full data set to compute the current gradient becomes very inefficient. As a remedy its is good practice in machine learning to work with so called mini-batches. A mini-batch includes a random subset of the training data set. This procedure is known as randomized gradient descent. With an added momentum term it can be formalized as \cite[page 4]{Hinton2012}:
 \begin{align}
 \triangle w_{ij}(t) = \alpha \triangle w_{ij}(t-1) - \epsilon \frac{\partial C}{\partial w_{ij}(t)}
 \end{align}
 $C$ is the cost, which is computed by comparing the current network output to the desired output. $\alpha \in (0,1)$ is a momentum coefficient. The weight of a connection from unit $i$ in the layer under consideration to unit $j$ in the layer below is given by the expression $w_{ij}$.
 
-
-
-
-\subsection{Dropout}
-
 \subsection{Classical layer architecture}
-
 
 \subsection{Convnets}
 When looking for a signal in different parts of a recoding it is not always advisable to relearn recognition
@@ -42,17 +34,55 @@ of the signal in different locations. With a conventional fully connected struct
 to recognize the same signal at another time point in the recording.
 Convolutional neural nets aim to solve this problem \cite[page 6]{Dumoulin2016}, while preserving essential ordering information.
 
-\subsection{RNNs}
+\subsection{Recurrent neural Networks}
+Feedforward neural nets do not possess memory. These networks make decisions, starting from zero every time. When processing speech its is important however to take context into account. That is why recurrent loops are introduced into the net, which give it access to it's past outputs \cite{Colah2015}.
+\begin{figure}
+\caption{TODO: basic RNN}
+\end{figure}
+Introducing recurrent connections creates the problem of exploding and vanishing gradients. Very large gradients can be treated by clipping, if their norm becomes too large. To tackle the vanishing gradient problem structural changes are required.
 
+\subsubsection{Long short-term memory}
+Long short-term memory (LSTM) cells are one solution to the vanishing gradient problem.
+These cells use the equation system \cite[page 5]{Graves2013}:
+\begin{align}
+\mathbf{i_t} &= \sigma (\mathbf{W}_{ix} \mathbf{x}_t + \mathbf{W}_{ih} \mathbf{h_{t-1}} + \mathbf{W}_{ic} \mathbf{c_{t-1}} +\mathbf{ b}_i) \\
+\mathbf{f_t} &= \sigma (\mathbf{W}_{fx} \mathbf{x}_t + \mathbf{W}_{fh} \mathbf{h_{t-1}} + \mathbf{W}_{fc} \mathbf{c_{t-1}} +\mathbf{ b}_f) \\
+\mathbf{c_t} &= \mathbf{f_t} \mathbf{c_{t-1}} + \mathbf{i_t} \tanh( \mathbf{W}_{cx} \mathbf{x}_t + \mathbf{W}_{ch} \mathbf{h_{t-1}} + \mathbf{b}_c ) \\
+\mathbf{o_t} &= \sigma (\mathbf{W}_{ox} \mathbf{x}_t + \mathbf{W}_{oh} \mathbf{h_{t-1}} + \mathbf{W}_{oc} \mathbf{c_t} + \mathbf{b}_o ) \\
+\mathbf{h_t} &= \mathbf{o}_t \tanh(\mathbf{c}_t) \\
+\end{align}
+From the definition of the matrix product follows that
+\begin{equation}
+\mathbf{A}\mathbf{x}_1 + \mathbf{B}\mathbf{x}_2
+=
+\begin{bmatrix} \mathbf{A} & \mathbf{B} \end{bmatrix} \cdot
+\begin{bmatrix} \mathbf{x}_1 \\ \mathbf{x}_2 \end{bmatrix}.
+\end{equation}
+Which this relation in mind the equations above can be rewritten, by creating column wise concatenated weight matrices for every neuron gate $W_i$, $W_f$, $W_o$, as well as for the state $W_c$. These matrices can then be multiplied by a row wise concatenated vector $[\mathbf{x}_t \; \mathbf{h_{t-1}} \; \mathbf{c_{t-1}}]^T$, which leads to the slightly simplified system of equations below:
+\begin{align}
+\mathbf{i_t} &= \sigma (\mathbf{W}_i [\mathbf{x}_t \; \mathbf{h_{t-1}} \; \mathbf{c_{t-1}}]^T + \mathbf{b}_i) \\
+\mathbf{f_t} &= \sigma (\mathbf{W}_f [\mathbf{x}_t \; \mathbf{h_{t-1}} \; \mathbf{c_{t-1}}]^T + \mathbf{b}_f) \\
+\mathbf{c_t} &= \mathbf{f}_t \mathbf{c_{t-1}} + \mathbf{i}_t \tanh( \mathbf{W}_c [\mathbf{x}_t \; \mathbf{h_{t-1}}]^T + \mathbf{b}_c ) \\
+\mathbf{o_t} &= \sigma (\mathbf{W}_o [\mathbf{x}_t \; \mathbf{h_{t-1}} \; \mathbf{c_t}]^T + \mathbf{b}_o ) \\
+\mathbf{h_t} &= \mathbf{o_t} \tanh(\mathbf{c_t})
+\end{align}
+\begin{figure}
+\includestandalone[width=\textwidth]{../tikz/lstm}
+\caption{Visualization of the LSTM architecture following.}
+\label{fig:lstm}
+\end{figure}
+This system of equation is visualized in figure~\ref{fig:lstm}. 
 
-\subsection{Tensor-flow}
+\section{Tensor-flow}
 
 
 \section{Listen, Attend and Spell}
 The Listen Attend and Spell architecture (LAS) is the main Idea around which this thesis revolves. This section is based on \cite{Chan2015}. The las-network consists of two mayor parts, the listener and the speller. The listener is a pyramidal recurrent neural net. It accepts filter bank spectra $\mathbf{x}_n$ as inputs and produces high level output features $\mathbf{h}_m$. The speller in turn accepts the features as input and outputs distributions over Latin character sequences $\mathbf{y}_p$. An overview of the las-achrcitecture is given in figure~\ref*{fig:las}.
+%If maps the input sequence to a set of vectors of fixed length. The speller then takes these
+%vectors and produces an output sequence \cite{Sutskever2014}.
 
 \subsection{The listener}
-The listener shown in figure~\ref*{fig:las} on the bottom, consists of Bidirectional Long Short Term Memory RNN (BLSTM) blocks. These blocks are arranged in a pyramidal structure, such that the time resolution is cut in half in every layer. This operation reduces the length $U$ of the high level features $\mathbf{H}$. Without this compression the following attend and spell operation has a hard time extracting the relevant information. Additionally the compression reduces the problem complexity, which speeds up the training process significantly \cite[page 4]{Chan2015}.    
+The listener shown in figure~\ref*{fig:las} on the bottom, consists of Bidirectional Long Short Term Memory RNN (BLSTM) blocks. These blocks are arranged in a pyramidal structure, such that the time resolution is cut in half in every layer. This operation reduces the length $U$ of the high level features $\mathbf{H}$. Without this compression the following attend and spell operation has a hard time extracting the relevant information. Additionally the compression reduces the problem complexity, which speeds up the training process significantly \cite[page 4]{Chan2015}.
 
 \subsection{Attend and spell}
 The speller takes the features and produces a distribution over Latin character sequences as output. The computation of this output involves the context vector $\mathbf{c}_i$, the decoder state $\mathbf{s}_i$, the features $\mathbf{H}$ and the previous output $\mathbf{y}_i$. The index $i$ denotes time, $i-1$ is used to refer to results from the last time step. \\
@@ -60,10 +90,10 @@ These values are computed using \cite[page 4]{Chan2015}:
 \begin{align}
  s_i &= \text{RNN}(\mathbf{s}_{i-1}, \mathbf{y}_{i-1}, \mathbf{c}_{i-1}) \\
  \mathbf{c}_i &= \text{AttentionContext}(\mathbf{s}_i,\mathbf{H}) \\
-  P(\mathbf{y}_i|\mathbf{x}, \mathbf{y}_{<i}) &= \text{CharacterDistribution}(s_i,\textbf{c}_i)  
+  P(\mathbf{y}_i|\mathbf{x}, \mathbf{y}_{<i}) &= \text{CharacterDistribution}(s_i,\textbf{c}_i)
 \end{align}
-The state follows from a recurrent neural net (RNN) made of a two layer LSTM. 
-The attention mechanism, called AttentionContext above, computes a new context vector once every time step. 
+The state follows from a recurrent neural net (RNN) made of a two layer LSTM.
+The attention mechanism, called AttentionContext above, computes a new context vector once every time step.
 This computation starts with the determination of the scalar energy $e_{i,u}$, which will be used as weight for its corresponding feature vector  $h_u$. The computation starts with two feedforward neural networks or multilayer perceptrons (MLP), $\phi$ and $\psi$ \cite[page 5]{Chan2015}:
 \begin{align}
 e_{i,u} = \phi(\mathbf{s}_i)^T \psi(\mathbf{h_u}) \\
@@ -79,7 +109,15 @@ $\alpha$ is produced by running $\mathbf{e}$ trough a softmax function, which sc
 \end{figure}
 
 \subsection{Training}
-For end-to-end speech recognition the all networks must be trained jointly. \dots
-
-
-
+For end-to-end speech recognition the all networks must be trained jointly. The objective is to maximize the logarithmic probability:
+\begin{equation}
+\max\limits_\theta \sum\limits_{i} \log P(y_i | \mathbf{x}, y_{<i};\theta).
+\end{equation}
+Here $y_i$ denotes the current output distribution, $x$ the input, $\theta$ the various network parameters and finally $y_{<i}$ the ground truth, which is the known true desired output.
+Using the known output during training creates a situation, where the past outputs are always right. In practice however the situation will be different, as the network is going to make mistakes. As it is desired to create a robust model it is necessary to sometimes include the character distribution generated by the networks being trained.
+Which leads to the objective \cite[page 5]{Chan2015}:
+\begin{align}
+\hat{y}_{i} = \text{CharacterDistribution}(s_i,\textbf{c}_i) \\
+\max_{\theta} \sum\limits_{i} \log R(y_i|\mathbf{x},\hat{y}_{<i};\theta)
+\end{align}
+The novelty in comparison to the previous expression is that $\hat{y}_{<i}$ is sometimes taken from the past network outputs instead of the ground truth. An idea which Chan et al. found in \cite{Bengio2015}.
