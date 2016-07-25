@@ -78,6 +78,7 @@ Last but not least the new output value has to be computed, which will be a filt
 \section{Tensor-flow}
 
 
+
 \section{Listen, Attend and Spell}
 The Listen Attend and Spell architecture (LAS) is the main Idea around which this thesis revolves. This section is based on \cite{Chan2015}. The las-network consists of two mayor parts, the listener and the speller. The listener is a pyramidal recurrent neural net. It accepts filter bank spectra $\mathbf{x}_n$ as inputs and produces high level output features $\mathbf{h}_m$. The speller in turn accepts the features as input and outputs distributions over Latin character sequences $\mathbf{y}_p$. An overview of the las-achrcitecture is given in figure~\ref*{fig:las}.
 %If maps the input sequence to a set of vectors of fixed length. The speller then takes these
