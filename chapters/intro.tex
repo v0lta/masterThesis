@@ -35,7 +35,7 @@ to recognize the same signal at another time point in the recording.
 Convolutional neural nets aim to solve this problem \cite[page 6]{Dumoulin2016}, while preserving essential ordering information.
 
 \subsection{Recurrent neural Networks}
-Feedforward neural nets do not possess memory. These networks make decisions, starting from zero every time. When processing speech its is important however to take context into account. That is why recurrent loops are introduced into the net, which give it access to it's past outputs \cite{Colah2015}.
+Feedforward neural nets do not possess memory. These networks make decisions, starting from zero every time. When processing speech its is important however to take context into account. That is why recurrent loops are introduced into the net, which give it access to it's past outputs.
 \begin{figure}
 \caption{TODO: basic RNN}
 \end{figure}
@@ -58,7 +58,7 @@ From the definition of the matrix product follows that
 \begin{bmatrix} \mathbf{A} & \mathbf{B} \end{bmatrix} \cdot
 \begin{bmatrix} \mathbf{x}_1 \\ \mathbf{x}_2 \end{bmatrix}.
 \end{equation}
-Which this relation in mind the equations above can be rewritten, by creating column wise concatenated weight matrices for every neuron gate $W_i$, $W_f$, $W_o$, as well as for the state $W_c$. These matrices can then be multiplied by a row wise concatenated vector $[\mathbf{x}_t \; \mathbf{h_{t-1}} \; \mathbf{c_{t-1}}]^T$, which leads to the slightly simplified system of equations below:
+Which this relation in mind the equations above can be rewritten, by creating column wise concatenated weight matrices for every neuron gate $W_i$, $W_f$, $W_o$, as well as for the state $W_c$. These matrices can then be multiplied by a row wise concatenated vector $[\mathbf{x}_t \; \mathbf{h_{t-1}} \; \mathbf{c}]^T$, which leads to the slightly simplified system of equations below:
 \begin{align}
 \mathbf{i_t} &= \sigma (\mathbf{W}_i [\mathbf{x}_t \; \mathbf{h_{t-1}} \; \mathbf{c_{t-1}}]^T + \mathbf{b}_i) \\
 \mathbf{f_t} &= \sigma (\mathbf{W}_f [\mathbf{x}_t \; \mathbf{h_{t-1}} \; \mathbf{c_{t-1}}]^T + \mathbf{b}_f) \\
@@ -71,7 +71,9 @@ Which this relation in mind the equations above can be rewritten, by creating co
 \caption{Visualization of the LSTM architecture following.}
 \label{fig:lstm}
 \end{figure}
-This system of equation is visualized in figure~\ref{fig:lstm}. 
+This system of equations is visualized in figure~\ref{fig:lstm}. The diagram is read from bottom to top. The most important part is the line from $\mathbf{c}_{t-1}$ to $\mathbf{c}_{t}$ \cite{Colah2015}. It records operations on the cell state $\mathbf{c_t}$. The cell state contains information from the past which helps the block make decisions regarding the current output $\mathbf{h}_t$. The sigmoid functions $\sigma()$ are applied element wise on the input vectors and produce outputs between zero and one. In the case of the forget gate output $\mathbf{f}_t$ these values $\in (0,1)$ well serve as a measure of how much of the past state the cell would like to remember. One means keep this variable and zero throw it away \cite{Colah2015}. 
+The following task is to determine what should be added to the memory. This information can be found in the input gate result $\mathbf{i}_t$. $\mathbf{i}_t$ is multiplied element wise with the candidate values $\mathbf{\bar{c}}_t$. These are computed by a hyperbolic tangent neuron.  The $\tanh()$ function makes sure all vector elements are between $-1$ and $1$. The neuron looks at input data and the past outputs. Both are labeled $\mathbf{w}$ in figure~\ref{fig:lstm}, $\mathbf{w}$ contains all information that could possibly be included in the new state. Finally the weighted candidate values are added to what was previously stored. This operation leads to the updated memory state $\mathbf{c}_t$. 
+Last but not least the new output value has to be computed, which will be a filtered version of the cell state. The decision of which and how much of each state variable will be send outside is made by output gate. It's output $\mathbf{o}_t$ is multiplied with a rescaled version of the cell state. The rescaling is done using another hyperbolic tangent, which again sets all values between minus one and one. The product of this rescaled state and the weights found in $\mathbf{o}_t$ then yields the new output $\mathbf{h}_t$. 
 
 \section{Tensor-flow}
 
