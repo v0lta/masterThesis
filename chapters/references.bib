@@ -108,6 +108,23 @@ title = {{Framewise phoneme classification with bidirectional LSTM networks}},
 volume = {4},
 year = {2005}
 }
+@article{Greff2015,
+abstract = {Several variants of the Long Short-Term Memory (LSTM) architecture for recurrent neural networks have been proposed since its inception in 1995. In recent years, these networks have become the state-of-the-art models for a variety of machine learning problems. This has led to a renewed interest in understanding the role and utility of various computational components of typical LSTM variants. In this paper, we present the first large-scale analysis of eight LSTM variants on three representative tasks: speech recognition, handwriting recognition, and polyphonic music modeling. The hyperparameters of all LSTM variants for each task were optimized separately using random search and their importance was assessed using the powerful fANOVA framework. In total, we summarize the results of 5400 experimental runs (about 15 years of CPU time), which makes our study the largest of its kind on LSTM networks. Our results show that none of the variants can improve upon the standard LSTM architecture significantly, and demonstrate the forget gate and the output activation function to be its most critical components. We further observe that the studied hyperparameters are virtually independent and derive guidelines for their efficient adjustment.},
+archivePrefix = {arXiv},
+arxivId = {1503.04069},
+author = {Greff, Klaus and Srivastava, Rupesh Kumar and Koutn{\'{i}}k, Jan and Steunebrink, Bas R and Schmidhuber, J{\"{u}}rgen},
+doi = {10.1017/CBO9781107415324.004},
+eprint = {1503.04069},
+file = {:home/moritz/Documents/Mendeley/Greff et al/arXiv/Greff et al. - 2015 - LSTM A Search Space Odyssey.pdf:pdf},
+isbn = {9788578110796},
+issn = {19454589},
+journal = {arXiv},
+pages = {10},
+pmid = {25246403},
+title = {{LSTM: A Search Space Odyssey}},
+url = {http://arxiv.org/abs/1503.04069},
+year = {2015}
+}
 @article{Hannun2014,
 abstract = {We present a state-of-the-art speech recognition system developed using end-toend deep learning. Our architecture is significantly simpler than traditional speech systems, which rely on laboriously engineered processing pipelines; these traditional systems also tend to perform poorly when used in noisy environments. In contrast, our system does not need hand-designed components to model background noise, reverberation, or speaker variation, but instead directly learns a function that is robust to such effects. We do not need a phoneme dictionary, nor even the concept of a “phoneme.” Key to our approach is a well-optimized RNN training system that uses multiple GPUs, as well as a set of novel data synthesis techniques that allow us to efficiently obtain a large amount of varied data for training. Our system, called Deep Speech, outperforms previously published results on the widely studied Switchboard Hub5'00, achieving 16.0{\%} error on the full test set. Deep Speech also handles challenging noisy environments better than widely used, state-of-the-art commercial speech systems.},
 archivePrefix = {arXiv},
@@ -120,6 +137,21 @@ journal = {Arxiv},
 pages = {1--12},
 title = {{Deep Speech: Scaling up end-to-end speech recognition}},
 year = {2014}
+}
+@article{Hinton2012,
+abstract = {Most current speech recognition systems use hidden Markov models (HMMs) to deal with the temporal variability of speech and Gaussian mixture models to determine how well each state of each HMMfits a frame or a short window of frames of coefficients that represents the acoustic input. An alternative way to evaluate the fit is to use a feed- forward neural network that takes several frames of coefficients as input and produces posterior probabilities over HMM states as output. Deep neural networks with many hidden layers, that are trained using new methods have been shown to outperform Gaussian mixture models on a variety of speech recognition benchmarks, sometimes by a large margin. This paper provides an overview of this progress and represents the shared views of four research groups who have had recent successes in using deep neural networks for acoustic modeling in speech recognition.},
+author = {Hinton, Geoffrey and Deng, Li and Yu, Dong and Dahl, George and Mohamed, Abdel-rahman and Jaitly, Navdeep and Vanhoucke, Vincent and Nguyen, Patrick and Sainath, Tara and Kingsbury, Brian},
+doi = {10.1109/MSP.2012.2205597},
+file = {:home/moritz/Documents/Mendeley/Hinton et al/IEEE Signal Processing Magazine/Hinton et al. - 2012 - Deep Neural Networks for Acoustic Modeling in Speech Recognition.pdf:pdf},
+isbn = {1053-5888},
+issn = {1053-5888},
+journal = {IEEE Signal Processing Magazine},
+number = {6},
+pages = {82--97},
+pmid = {13057166},
+title = {{Deep Neural Networks for Acoustic Modeling in Speech Recognition}},
+volume = {29},
+year = {2012}
 }
 @article{LeCun1998,
 abstract = {A long and detailed paper on convolutional nets, graph transformer$\backslash$nnetworks, and discriminative training methods for sequence labeling.$\backslash$nWe show how to build systems that integrate segmentation, feature$\backslash$nextraction, classification, contextual post-processing, and language$\backslash$nmodeling into one single learning machine trained end-to-end. Applications$\backslash$nto handwriting recognition and face detection are described.},
@@ -197,6 +229,7 @@ year = {2013}
 }
 @article{Zaremba2014,
 abstract = {We present a simple regularization technique for Recurrent Neural Networks (RNNs) with Long Short-Term Memory (LSTM) units. Dropout, the most successful technique for regularizing neural networks, does not work well with RNNs and LSTMs. In this paper, we show how to correctly apply dropout to LSTMs, and show that it substantially reduces overfitting on a variety of tasks. These tasks include language modeling, speech recognition, image caption generation, and machine translation.},
+annote = {class BasicLSTMCell(RNNCell), is based on this paper.},
 archivePrefix = {arXiv},
 arxivId = {arXiv:1409.2329v3},
 author = {Zaremba, Wojciech and Sutskever, Ilya and Vinyals, Oriol},
@@ -209,19 +242,4 @@ pages = {1--8},
 title = {{Recurrent Neural Network Regularization}},
 url = {http://arxiv.org/abs/1409.2329$\backslash$nhttp://www.arxiv.org/pdf/1409.2329.pdf},
 year = {2014}
-}
-@article{Hinton2012,
-abstract = {Most current speech recognition systems use hidden Markov models (HMMs) to deal with the temporal variability of speech and Gaussian mixture models to determine how well each state of each HMMfits a frame or a short window of frames of coefficients that represents the acoustic input. An alternative way to evaluate the fit is to use a feed- forward neural network that takes several frames of coefficients as input and produces posterior probabilities over HMM states as output. Deep neural networks with many hidden layers, that are trained using new methods have been shown to outperform Gaussian mixture models on a variety of speech recognition benchmarks, sometimes by a large margin. This paper provides an overview of this progress and represents the shared views of four research groups who have had recent successes in using deep neural networks for acoustic modeling in speech recognition.},
-author = {Hinton, Geoffrey and Deng, Li and Yu, Dong and Dahl, George and Mohamed, Abdel-rahman and Jaitly, Navdeep and Vanhoucke, Vincent and Nguyen, Patrick and Sainath, Tara and Kingsbury, Brian},
-doi = {10.1109/MSP.2012.2205597},
-file = {:home/moritz/Documents/Mendeley/Hinton et al/Unknown/Hinton et al. - Unknown - Deep Neural Networks for Acoustic Modeling in Speech Recognition.pdf:pdf},
-isbn = {1053-5888},
-issn = {1053-5888},
-journal = {IEEE Signal Processing Magazine},
-number = {6},
-pages = {82--97},
-pmid = {13057166},
-title = {{Deep Neural Networks for Acoustic Modeling in Speech Recognition}},
-volume = {29},
-year = {2012}
 }

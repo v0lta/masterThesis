@@ -76,6 +76,8 @@ The following task is to determine what should be added to the memory. This info
 Last but not least the new output value has to be computed, which will be a filtered version of the cell state. The decision of which and how much of each state variable will be send outside is made by output gate. It's output $\mathbf{o}_t$ is multiplied with a rescaled version of the cell state. The rescaling is done using another hyperbolic tangent, which again sets all values between minus one and one. The product of this rescaled state and the weights found in $\mathbf{o}_t$ then yields the new output $\mathbf{h}_t$. 
 
 \section{Tensor-flow}
+In this section is devoted to the toolbox, which will be used to implement the Listen Attend and spell, architecture. According to the authors \cite{Agarwal2015}: 
+\textquotedblleft TensorFlow is an interface for expressing machine learning algorithms, and an implementation for executing such algorithms\textquotedblright . It was released by Google in 2015 and after installation can be used from within Python or C++. 
 
 
 
