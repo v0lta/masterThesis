@@ -1,0 +1,76 @@
+\documentclass{beamer}
+%
+% Choose how your presentation looks.
+%
+% For more themes, color themes and font themes, see:
+% http://deic.uab.es/~iblanes/beamer_gallery/index_by_theme.html
+%
+\mode<presentation>
+{
+  \usetheme{Darmstadt}      % or try Darmstadt, Madrid, Warsaw, ...
+  \usecolortheme{crane} % or try albatross, beaver, crane, ...
+  \usefonttheme{default}  % or try serif, structurebold, ...
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{caption}[numbered]
+  \usepackage{tikz}
+  \usepackage{pgfplots}
+  \usepackage{pgf}
+  \usepackage{units}
+  \usepackage{metalogo}
+  \usepackage{graphicx}
+  \usepackage{caption}
+  \usepackage{subcaption}
+  \usepackage[mode=buildnew]{standalone}% requires -shell-escape
+  \usepgfplotslibrary{groupplots}
+
+} 
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\setbeamertemplate{footline}[frame number]
+
+\title{Thesis intermediate Presentation}
+\author{Moritz Wolter}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+
+% Uncomment these lines for an automatically generated outline.
+%\begin{frame}{Outline}
+%  \tableofcontents
+%\end{frame}
+
+
+\section{Deep Learning}
+\begin{frame}{Long Short Term Memory (LSTM)}
+\begin{figure}
+\includestandalone[height=6.5 cm]{../tikz/lstm}
+\caption{Visualization of the LSTM architecture}
+\label{fig:lstm}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Bidirectional BLSTM}
+
+
+
+
+\end{frame}
+
+
+\section{Listen Attend and Spell}
+\begin{frame}{The LAS-Architecture}
+\begin{figure}
+\includestandalone[height=6.5 cm]{../tikz/lasArcBottomUp}
+\caption{The LAS architecture}
+\label{fig:las}
+\end{figure}
+\end{frame}
+
+
+\end{document}

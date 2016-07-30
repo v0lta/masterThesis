@@ -5,19 +5,23 @@ defined and the modus operandi is explained.
 TODO: describe the problem.
 
 
-\section{The classical approach to speech recognition}
+\section{Preprocessing and feature extraction}
 
-\subsection{Preprocessing and feature extraction}
+\subsubsection{Filter-Bank features}
+\begin{figure}
+\centering
+\includegraphics[width=1.0\linewidth]{../png/timitInput}
+\caption{Frequency Bank input computed from a sentence contained in the \textit{TIMIT} dataset. Time is shown on x and Frequency on the y-Axis.}
+\label{fig:timitInput}
+\end{figure}
+Filter-banks are collections of filters. These filters are spread out over the whole frequency band \cite{Huang2001}. Filter-bank output is commonly used as input for speech analysis \cite{Huang2001}\cite{Chan2015}. The number of filter-banks depends on the required resolution, 32 is a common choice \cite{Juang1987}. The energy within the part of the signal spectrum described by all individual filters is measured. Figure~\ref{fig:timitInput} shows the resulting energy measurements using 23 filters, for a sentence recording contained in the \textit{TIMIT} data set. 
+ 
 
-\subsubsection{f-bank features}
-f-bank (filter banks) features are one option or raw data.
-time domian or frequency domain?
 
-\subsection{Gaussian mixture models}
 
-\subsection{Hidden Markov Models}
+\section{Deep Neural Networks}
 
-\subsection{DNN}
+\subsection{Gradient descent}
 
 \subsubsection{Stochastic gradient descent}
 When training networks on very large training sets, working with the full data set to compute the current gradient becomes very inefficient. As a remedy its is good practice in machine learning to work with so called mini-batches. A mini-batch includes a random subset of the training data set. This procedure is known as randomized gradient descent. With an added momentum term it can be formalized as \cite[page 4]{Hinton2012}:
@@ -26,23 +30,31 @@ When training networks on very large training sets, working with the full data s
 \end{align}
 $C$ is the cost, which is computed by comparing the current network output to the desired output. $\alpha \in (0,1)$ is a momentum coefficient. The weight of a connection from unit $i$ in the layer under consideration to unit $j$ in the layer below is given by the expression $w_{ij}$.
 
-\subsection{Classical layer architecture}
-
 \subsection{Convnets}
 When looking for a signal in different parts of a recoding it is not always advisable to relearn recognition
 of the signal in different locations. With a conventional fully connected structure every sample on the time axis gets its own input weight. For shifted version of this signal the network will not be able to reuse weights it used
 to recognize the same signal at another time point in the recording.
 Convolutional neural nets aim to solve this problem \cite[page 6]{Dumoulin2016}, while preserving essential ordering information.
 
-\subsection{Recurrent neural Networks}
-Feedforward neural nets do not possess memory. These networks make decisions, starting from zero every time. When processing speech its is important however to take context into account. That is why recurrent loops are introduced into the net, which give it access to it's past outputs.
+\section{Recurrent Neural Networks}
 \begin{figure}
-\caption{TODO: basic RNN}
+\centering
+\includestandalone[width=9cm]{../tikz/recNet}
+\caption{Rolled (left) and unrolled (right) recurrent neural net with two units.}
+\label{fig:unrolledNet}
 \end{figure}
-Introducing recurrent connections creates the problem of exploding and vanishing gradients. Very large gradients can be treated by clipping, if their norm becomes too large. To tackle the vanishing gradient problem structural changes are required.
+When processing speech its is important to take context into account. When spelling the letters, which make up a word, it is important to know what the previous letter was, in order to make the right decision. 
+Feed-forward neural nets do not possess memory. These networks make decisions, starting from zero every time. In oder to fix this a cell state variable can be introduced. This state is fed back into the cell together with new inputs every time step. Such a layout is shown in figure~\ref{fig:unrolledNet} on the left. 
+Another way to depict the same network is to not only consider the spacial dimension, but add the time axis as well. Figures, which show the spacial and time dimension are called unrolled network diagrams, shown in figure~\ref{fig:unrolledNet} on the right. When looking at the 
 
-\subsubsection{Long short-term memory}
-Long short-term memory (LSTM) cells are one solution to the vanishing gradient problem.
+
+
+\subsection{The exploding and vanishing gradient problem}
+Even tough past information is available in theory, learning long time dependencies is problematic with classical neural nets. The back-propagated derivative can sometimes become waker and weaker until it ultimately vanishes \cite{Hochreiter1998}. Another problem is that sometimes classical recurrent neural nets produce a gradient that blows up \cite{Pascanu2012}. The exploding gradients can be fixed by clipping, but vanishing gradients require more sophisticated treatment \cite{Bengio1993}.     
+
+\subsection{Long short-term memory}
+Research seemed to be focused on solving the problem by making changes to the back-propagation algorithm. However a good solution to the problem turned out to
+be changing the network instead. Long short-term memory (LSTM) cells as proposed in \cite{Hochreiter1995} are more complex network units.
 These cells use the equation system \cite[page 5]{Graves2013}:
 \begin{align}
 \mathbf{i_t} &= \sigma (\mathbf{W}_{ix} \mathbf{x}_t + \mathbf{W}_{ih} \mathbf{h_{t-1}} + \mathbf{W}_{ic} \mathbf{c_{t-1}} +\mathbf{ b}_i) \\
@@ -75,19 +87,44 @@ This system of equations is visualized in figure~\ref{fig:lstm}. The diagram is 
 The following task is to determine what should be added to the memory. This information can be found in the input gate result $\mathbf{i}_t$. $\mathbf{i}_t$ is multiplied element wise with the candidate values $\mathbf{\bar{c}}_t$. These are computed by a hyperbolic tangent neuron.  The $\tanh()$ function makes sure all vector elements are between $-1$ and $1$. The neuron looks at input data and the past outputs. Both are labeled $\mathbf{w}$ in figure~\ref{fig:lstm}, $\mathbf{w}$ contains all information that could possibly be included in the new state. Finally the weighted candidate values are added to what was previously stored. This operation leads to the updated memory state $\mathbf{c}_t$. 
 Last but not least the new output value has to be computed, which will be a filtered version of the cell state. The decision of which and how much of each state variable will be send outside is made by output gate. It's output $\mathbf{o}_t$ is multiplied with a rescaled version of the cell state. The rescaling is done using another hyperbolic tangent, which again sets all values between minus one and one. The product of this rescaled state and the weights found in $\mathbf{o}_t$ then yields the new output $\mathbf{h}_t$. 
 
+\subsection{Bidirectional Long Short Term Memory}
+With the advent of LSTMs deep recurrent networks became feasible in speech recognition \cite{Graves2013b}. RNNs are always deep in time, because their hidden state depends on past inputs. To enable abstraction their structure must also be deep in space. A bidirectional LSTM layer is shown in figure~\ref{fig:blstm}. It is important to note, that linear neurons are used to compute the LSTM input as well as the outputs according to the equations \cite{Graves2013b}:
+\begin{align}
+\overrightarrow{\mathbf{h}}_t &= \text{LSTM}(\mathbf{W}_{\overrightarrow{\mathbf{h}}_t} [\mathbf{x}_t \; \mathbf{h}_{t-1}]^T + \mathbf{b}_{\overrightarrow{\mathbf{h}}_t}) 
+\\
+\overleftarrow{\mathbf{h}}_t &= \text{LSTM}(\mathbf{W}_{\overleftarrow{\mathbf{h}}_t} [\mathbf{x}_t \; \mathbf{h}_{t+1}]^T + \mathbf{b}_{\overleftarrow{\mathbf{h}}_t})
+\\
+\mathbf{y}_t &= \mathbf{W}_{y} [\overrightarrow{\mathbf{h}}_t \; \overleftarrow{\mathbf{h}}_t]^T + \mathbf{b}_y  
+\end{align}
+\begin{figure}
+\centering
+\includestandalone[height=7 cm]{../tikz/blstm2}
+\caption{A bidirectional Long short term memory layer, according to \cite{Graves2013b} }
+\label{fig:blstm}
+\end{figure}
+If stacked on top of each other, these bidirectional LSTM layers form a deep recurrent network. Defining $\mathbf{h}^0 = \mathbf{x}$, $\mathbf{h}^N = \mathbf{y}$ looking at time from $t = 1$ to $T$ and taking $N$ layers leads to:
+\begin{align}
+\overrightarrow{\mathbf{h}}_t^n &= \text{LSTM}(\mathbf{W}_{\overrightarrow{\mathbf{h}}_t}^n [\mathbf{h}_t^{n-1} \; \mathbf{h}_{t-1}^n]^T + \mathbf{b}_{\overrightarrow{\mathbf{h}}_t}^n) 
+\\
+\overleftarrow{\mathbf{h}}_t^n &= \text{LSTM}(\mathbf{W}_{\overleftarrow{\mathbf{h}}_t}^n [\mathbf{h}_t^{n-1} \; \mathbf{h}_{t+1}^n]^T + \mathbf{b}_{\overleftarrow{\mathbf{h}}_t}^n)
+\\
+\mathbf{h}_t^n &= \mathbf{W}_{y}^n [\overrightarrow{\mathbf{h}}_t \; \overleftarrow{\mathbf{h}}_t]^T + \mathbf{b}_y^n
+\end{align}
+In this setting each LSTM cell has access to information from before and after it. For this to work the speech sequence, which is analyzed has to be recoded completely. In this case future information is available and should be used for recognition purposes.
+
 \section{Tensor-flow}
-In this section is devoted to the toolbox, which will be used to implement the Listen Attend and spell, architecture. According to the authors \cite{Agarwal2015}: 
+In this section is devoted to the toolbox, which will be used to implement the Listen Attend and spell, architecture. According to the Tensor-flow authors \cite{Agarwal2015}: 
 \textquotedblleft TensorFlow is an interface for expressing machine learning algorithms, and an implementation for executing such algorithms\textquotedblright . It was released by Google in 2015 and after installation can be used from within Python or C++. 
 
 
 
 \section{Listen, Attend and Spell}
-The Listen Attend and Spell architecture (LAS) is the main Idea around which this thesis revolves. This section is based on \cite{Chan2015}. The las-network consists of two mayor parts, the listener and the speller. The listener is a pyramidal recurrent neural net. It accepts filter bank spectra $\mathbf{x}_n$ as inputs and produces high level output features $\mathbf{h}_m$. The speller in turn accepts the features as input and outputs distributions over Latin character sequences $\mathbf{y}_p$. An overview of the las-achrcitecture is given in figure~\ref*{fig:las}.
+The Listen Attend and Spell architecture (LAS) is the main Idea around which this thesis revolves. This entire section is based on \cite{Chan2015}. The las-network consists of two mayor parts, the listener and the speller. The listener is a pyramidal recurrent neural net. It accepts filter bank spectra $\mathbf{x}_n$ as inputs and produces high level output features $\mathbf{h}_m$. The speller in turn accepts the features as input and outputs distributions over Latin character sequences $\mathbf{y}_p$. An overview of the las-achrcitecture is given in figure~\ref*{fig:las}.
 %If maps the input sequence to a set of vectors of fixed length. The speller then takes these
 %vectors and produces an output sequence \cite{Sutskever2014}.
 
 \subsection{The listener}
-The listener shown in figure~\ref*{fig:las} on the bottom, consists of Bidirectional Long Short Term Memory RNN (BLSTM) blocks. These blocks are arranged in a pyramidal structure, such that the time resolution is cut in half in every layer. This operation reduces the length $U$ of the high level features $\mathbf{H}$. Without this compression the following attend and spell operation has a hard time extracting the relevant information. Additionally the compression reduces the problem complexity, which speeds up the training process significantly \cite[page 4]{Chan2015}.
+The listener shown in figure~\ref*{fig:las} on the bottom, consists of Bidirectional Long Short Term Memory RNN (BLSTM) blocks. This choice implies that only fully recorded data can be analyzed.  These blocks are arranged in a pyramidal structure, such that the time resolution is cut in half in every layer. This operation reduces the length $U$ of the high level features $\mathbf{H}$. Without this compression the following attend and spell operation has a hard time extracting the relevant information. Additionally the compression reduces the problem complexity, which speeds up the training process significantly \cite[page 4]{Chan2015}.
 
 \subsection{Attend and spell}
 The speller takes the features and produces a distribution over Latin character sequences as output. The computation of this output involves the context vector $\mathbf{c}_i$, the decoder state $\mathbf{s}_i$, the features $\mathbf{H}$ and the previous output $\mathbf{y}_i$. The index $i$ denotes time, $i-1$ is used to refer to results from the last time step. \\
