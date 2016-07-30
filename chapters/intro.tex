@@ -14,7 +14,13 @@ TODO: describe the problem.
 \caption{Frequency Bank input computed from a sentence contained in the \textit{TIMIT} dataset. Time is shown on x and Frequency on the y-Axis.}
 \label{fig:timitInput}
 \end{figure}
-Filter-banks are collections of filters. These filters are spread out over the whole frequency band \cite{Huang2001}. Filter-bank output is commonly used as input for speech analysis \cite{Huang2001}\cite{Chan2015}. The number of filter-banks depends on the required resolution, 32 is a common choice \cite{Juang1987}. The energy within the part of the signal spectrum described by all individual filters is measured. Figure~\ref{fig:timitInput} shows the resulting energy measurements using 23 filters, for a sentence recording contained in the \textit{TIMIT} data set. 
+Filter-banks are collections of filters. These filters are spread out over the whole frequency band \cite[page 251]{Huang2001}. Filter-bank output is commonly used as input for speech analysis \cite{Huang2001}\cite{Chan2015}. The number of filter-banks depends on the required resolution, 32 is a common choice \cite{Juang1987}. The energy within the part of the signal spectrum described by all individual filters is measured. Figure~\ref{fig:timitInput} shows the resulting energy measurements using 23 filters, for a sentence recording contained in the \textit{TIMIT} data set. 
+The general argument for filter banks is speech recognitions is that the cochlea, in the human ear, resembles a filter bank\cite[page 30]{Huang2001}.
+
+TODO:Melody (Mel)-scale.
+\begin{equation}
+B(f) = 1125 ln(1 + f / 700)
+\end{equation}
  
 
 
