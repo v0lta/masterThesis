@@ -6,7 +6,6 @@ TODO: describe the problem.
 
 
 \section{Preprocessing and feature extraction}
-
 \subsubsection{Filter-Bank features}
 \begin{figure}
 \centering
@@ -31,18 +30,29 @@ Mel-scaling suggests, that human are able to distinguish more lower frequencies 
 Mel spaced filter-banks are an attempt to include the human perception in speech recognition. The filter functions are defined by \cite[page 317]{Huang2001}:
 \begin{align}
 H_m &= 0 									   &\text{if}\;\; & k < f[m-1] \\
-H_m &= \frac{k      - f[m-1] }{f[m] - f[m-1]}  &\text{if}\;\; & f[m-1] \leq k \geq f[m] \\
-H_m &= \frac{f[m+1] - k      }{f[m + 1] - f[m]}&\text{if}\;\; & f[m] \leq k \geq f[m+1] \\
+H_m &= \frac{k      - f[m-1] }{f[m] - f[m-1]}  &\text{if}\;\; & f[m-1] \leq k \leq f[m] \\
+H_m &= \frac{f[m+1] - k      }{f[m + 1] - f[m]}&\text{if}\;\; & f[m] \leq k \leq f[m+1] \\
 H_m &= 0									   &\text{if}\;\; & k > f[m+1] 
 \end{align} 
 In the equations above $H_m$ denotes the magnitude of filter $m$ with a total of $M$ filters. The frequency is denoted by $k$, the vector $f$ contains $M+2$ linearly spaced filter border values. These are the red stars on the right of  figure~\ref{fig:mel}. The left plot shows the triangular filter bank using, where the spacing is done according to the same values. Roughly speaking using mel-filter banks means using a high filter resolution where human hearing is good and a low resolution where it is bad. \\
+Mel-Frequency banks are considered high level feature inputs. When the recognition system is found to work with these, features on a lower level or even raw data could be used as input. The idea behind doing fewer preprocessing, is that the network might be able to come up with something better.
 
-
+\subsection{Text and Phoneme output}
 
 
 \section{Deep Neural Networks}
-
 \subsection{Gradient descent}
+\begin{figure}
+\centering
+\includestandalone[width=12cm]{../tikz/gd_exampleNet}
+\caption{Example funciton network with partial derivatives.}
+\includestandalone[width=12cm]{../tikz/gd_reverseSweep}
+\caption{Reverse sweep.}
+\label{fig:gdExamples}
+\end{figure}
+
+
+
 
 \subsubsection{Stochastic gradient descent}
 When training networks on very large training sets, working with the full data set to compute the current gradient becomes very inefficient. As a remedy its is good practice in machine learning to work with so called mini-batches. A mini-batch includes a random subset of the training data set. This procedure is known as randomized gradient descent. With an added momentum term it can be formalized as \cite[page 4]{Hinton2012}:

@@ -1,0 +1,32 @@
+\documentclass[crop,tikz]{standalone}% 'crop' is the default for v1.0, before it was 'preview'
+%\usetikzlibrary{...}% tikz package already loaded by 'tikz' option
+
+\begin{document}
+\usetikzlibrary{shapes,snakes}
+\def\layersep{2.0cm}
+\begin{tikzpicture}
+\tikzstyle{node}=[ellipse,fill=black!10,minimum size=17pt,inner sep=0pt]
+
+\node[node] (x1) at (0,0) {$x_1$};
+\node[node] (x2)    at (5,0) {$x_2$};
+\node[node] (x3) at (10,0) {$x_3$};
+
+\node[node] (x4) at (2.5,\layersep) {$x_4 = x_1 x_2$};
+\node[node] (x6) at (10,2*\layersep) {$x_6 = x_4 x_3$};
+
+\node[node] (x5) at (2.5,3*\layersep){$x_5 = sin(x_4)$};
+\node[node] (x7) at (10,3*\layersep){$x_7 = exp(x_6)$};
+
+\node[node] (x8) at (5,4*\layersep){$x_8 = x_5 + x_7$};
+
+\draw[->] (x1) |- (x4)  node[near end, above] {$\frac{\partial x_4}{\partial x_1} = x_2$};
+\draw[->] (x2) |- (x4)  node[near end, above] {$\frac{\partial x_4}{\partial x_2} = x_1$};
+\draw[->] (x3) -- (x6)  node[near end, left] {$\frac{\partial x_6}{\partial x_3} = x_4$};
+\draw[->] (x4) -- (x5)  node[near end, left] {$\frac{\partial x_5}{\partial x_4} = cos(x_4)$};
+\draw[->] (x4) |- (x6)  node[near end, above] {$\frac{\partial x_6}{\partial x_4} = x_3$};
+\draw[->] (x6) -- (x7)  node[near end, left] {$\frac{\partial x_7}{\partial x_6} = exp(x_6)$};
+\draw[->] (x5) |- (x8)  node[near end, above] {$\frac{\partial x_8}{\partial x_5} = 1$};
+\draw[->] (x7) |- (x8)  node[near end, above] {$\frac{\partial x_8}{\partial x_7} = 1$};
+
+\end{tikzpicture}
+\end{document}
