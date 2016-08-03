@@ -42,16 +42,45 @@ Mel-Frequency banks are considered high level feature inputs. When the recogniti
 
 \section{Deep Neural Networks}
 \subsection{Gradient descent}
+The optimization process of neural networks is done based on a training data set $\{\{\mathbf{x}_1,\mathbf{t}_1\}, \dots , \{\mathbf{x}_p,\mathbf{t}_p\} \}$ \cite[page 156]{Rojas1996}. The elements of this set are the input- and output-patters $\mathbf{x}$ and $\mathbf{t}$ respectively. Ideally the network output should be the same as the desired one for all data pairs. The difference between target and current performance is measured by the cost function\cite[page 156]{Rojas1996}:
+\begin{align}
+E = \frac{1}{2}\sum\limits_{i=1}^{p} \| \mathbf{o}_i - \mathbf{t}_i \|^2.
+\end{align}
+During the training process a local minimum of the error function $E$ is sought. At this minimum the difference between the network output $\mathbf{o}$ and the target values $\mathbf{t}$ is as small as possible. After the training process is done the network is expected to identify similarities to data seen during the training process and produce a similar output. 
+In order to reach a local minimum, the gradient of the error function is needed. The key idea of gradient descent is to follow the negative gradient until a local minimum is reached. 
+Neural networks can be considered as large composite functions, which are made up of elementary operations. The evaluation of the network can be written as a graph. Computations are done at each node and information travels trough the network along directed edges from node to node. In order to create a computational graph for the training process each of the output units of the network under consideration are connected to a new node which computes $\frac{1}{2}(o_{ij} - t_{ij})^2$\cite[page 157]{Rojas1996}. These new nodes in turn are connected to one more node, which sums up all error values and produces $E_i$. The process described above must be repeated for all training data pairs. One final node is added, which sums up all values $E_i$. Its output gives the value for the error function $E$ which is now in the form of a large graph.\\
+Reverse mode algorithmic differentiation or back-propagation is an algorithm to compute the gradient of a graph consisting of basic elementary operations. Its operation is now illustrated using the function \cite[page 69]{Diehl2013}:
+\begin{align}
+f(x_1,x_2,x_3) = \sin(x_1 x_2) + \exp(x_1 x_2 x_3)
+\label{eq:backFun}
+\end{align}
+This function written in terms of five elementary operations as \cite[page 70]{Diehl2013}:
+\begin{align}
+x_4 = x_1 x_2 \\
+x_5 = sin(x_4)\\
+x_6 = x_4 x_3 \\
+x_7 = exp(x_6) \\
+x_8 = x_5 + x_7 \\
+y = x_8
+\end{align}
+Computing the gradient means computing the partial derivatives of $f$ with respect to all inputs. In this case this means finding:
+\begin{align}
+\frac{\partial f(x_1,x_2,x_3)}{\partial x_1} = x_2 (\cos(x_1 x_2) + x_3 \exp(x_1 x_2 x_3)) \\
+\frac{\partial f(x_1,x_2,x_3)}{\partial x_2} = x_1 (\cos(x_1 x_2) + x_3 \exp(x_1 x_2 x_3)) \\
+\frac{\partial f(x_1,x_2,x_3)}{\partial x_3} = x_1  x_2 \exp(x_1 x_2 x_3)
+\end{align} 
+Above the derivatives have been found by hand using the chain rule. Now these will be computed using back-propagation. Figure~\ref{fig:networkGraph} shows a graphical representation of equation~\ref{eq:backFun}. The partial derivatives needed for the backwards sweep can be found on the edges. \\
 \begin{figure}
 \centering
 \includestandalone[width=12cm]{../tikz/gd_exampleNet}
 \caption{Example funciton network with partial derivatives.}
+\label{fig:networkGraph}
 \includestandalone[width=12cm]{../tikz/gd_reverseSweep}
 \caption{Reverse sweep.}
-\label{fig:gdExamples}
+\label{fig:reverseSweep}
 \end{figure}
-
-
+The gradient is computed using a forward and backward sweep. During the forward sweep the inputs are fed into the network and the functions at each node are evaluated layer by layer, until the output at the last node is known. In figure~\ref{fig:networkGraph} this means computing $x_4$ to $x_8$. \\
+After the forward sweep the gradient is found by going back trough the network from the output to each input node. Using a seed value of $1$ at the output node the lower unit values are computed by multiplying the associated partial derivative found on each edge. If a node has more then one incoming value, their sum is computed. The process is illustrated in figure~\ref{fig:reverseSweep}. At the roots of the tree the partial derivatives of the output with respect to each input can be found. Together these root values make up the gradient. 
 
 
 \subsubsection{Stochastic gradient descent}
@@ -111,7 +140,7 @@ Which this relation in mind the equations above can be rewritten, by creating co
 \end{align}
 \begin{figure}
 \includestandalone[width=\textwidth]{../tikz/lstm}
-\caption{Visualization of the LSTM architecture following.}
+\caption{Visualization of the LSTM architecture.}
 \label{fig:lstm}
 \end{figure}
 This system of equations is visualized in figure~\ref{fig:lstm}. The diagram is read from bottom to top. The most important part is the line from $\mathbf{c}_{t-1}$ to $\mathbf{c}_{t}$ \cite{Colah2015}. It records operations on the cell state $\mathbf{c_t}$. The cell state contains information from the past which helps the block make decisions regarding the current output $\mathbf{h}_t$. The sigmoid functions $\sigma()$ are applied element wise on the input vectors and produce outputs between zero and one. In the case of the forget gate output $\mathbf{f}_t$ these values $\in (0,1)$ well serve as a measure of how much of the past state the cell would like to remember. One means keep this variable and zero throw it away \cite{Colah2015}. 
