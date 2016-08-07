@@ -153,7 +153,15 @@
 
 \begin{frame}{Decoding and Rescoring}
 \begin{itemize}
-	\item Left to right beam search.
+	\item Humans do not read character distributions.
+	\item Left to right beam search turns distributions into text.
+	\item Generate a tree using the $n$ most likely characters.
+	\item Select from the tree according to:
+		\begin{align}
+		s(\mathbf{y}|\mathbf{x}) = \frac{\log P(\mathbf{y}|\mathbf{x})}{ |\mathbf{y}|_c} + \lambda \log P_{LM}(\mathbf{y})
+		\end{align}
+	\item The first summand is the total probability found from the tree. 
+	\item The second summand is a weighted language model contribution.
 \end{itemize}
 \end{frame}
 
