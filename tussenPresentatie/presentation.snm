@@ -1,2 +1,5 @@
-\beamer@slide {fig:lstm}{2}
-\beamer@slide {fig:las}{3}
+\beamer@slide {fig:melBank}{3}
+\beamer@slide {fig:lstm}{5}
+\beamer@slide {fig:blstm}{6}
+\beamer@slide {fig:las}{10}
+\beamer@slide {fig:net1}{12}

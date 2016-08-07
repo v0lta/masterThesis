@@ -81,7 +81,7 @@ Above the derivatives have been found by hand using the chain rule. Now these wi
 \end{figure}
 The gradient is computed using a forward and backward sweep. During the forward sweep the inputs are fed into the network and the functions at each node are evaluated layer by layer, until the output at the last node is known. In figure~\ref{fig:networkGraph} this means computing $x_4$ to $x_8$. \\
 After the forward sweep the gradient is found by going back trough the network from the output to each input node. Using a seed value of $1$ at the output node the lower unit values are computed by multiplying the associated partial derivative found on each edge. If a node has more then one incoming value, their sum is computed. The process is illustrated in figure~\ref{fig:reverseSweep}. At the roots of the tree the partial derivatives of the output with respect to each input can be found. Together these root values make up the gradient. 
-
+To be able to perform the first forward sweep the network weights are initialized at random. The training data pairs are known and can be added as constants to the graph. 
 
 \subsubsection{Stochastic gradient descent}
 When training networks on very large training sets, working with the full data set to compute the current gradient becomes very inefficient. As a remedy its is good practice in machine learning to work with so called mini-batches. A mini-batch includes a random subset of the training data set. This procedure is known as randomized gradient descent. With an added momentum term it can be formalized as \cite[page 4]{Hinton2012}:
@@ -223,3 +223,15 @@ Which leads to the objective \cite[page 5]{Chan2015}:
 \max_{\theta} \sum\limits_{i} \log R(y_i|\mathbf{x},\hat{y}_{<i};\theta)
 \end{align}
 The novelty in comparison to the previous expression is that $\hat{y}_{<i}$ is sometimes taken from the past network outputs instead of the ground truth. An idea which Chan et al. found in \cite{Bengio2015}.
+
+\subsection{Beam search}
+In order to generate a readable text, it is necessary to choose characters from the generated character distributions. One way to do this to simply pick the most likely letter from each distribution. This method ignores the possibility of generating better results by also considering less likely options. Unfortunately memory limitations make it impossible to search trough all possible combinations. Therefore only the $n$ most likely options are explored and the rest is disregarded. Beam search generates a set of possible speech transcriptions. A language model trained on text data only is the used to select on of the beams according to \cite[page 6]{Chan2015}:
+\begin{align}
+s(\mathbf{y}|\mathbf{x}) = \frac{\log P(\mathbf{y}|\mathbf{x})}{ |\mathbf{y}|_c} + \lambda \log P_{LM}(\mathbf{y})
+\end{align}
+Here $P_{LM}$ denotes the weight the language model assigns to each beam. And $\lambda$ is a weight factor, which determines the language model importance. 
+
+
+
+
+

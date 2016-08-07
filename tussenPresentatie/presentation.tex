@@ -22,7 +22,7 @@
   \usepackage{subcaption}
   \usepackage[mode=buildnew]{standalone}% requires -shell-escape
   \usepgfplotslibrary{groupplots}
-
+  \usepackage{amsmath}
 } 
 
 \usepackage[english]{babel}
@@ -34,7 +34,6 @@
 \date{\today}
 
 \begin{document}
-
 \begin{frame}
   \titlepage
 \end{frame}
@@ -45,8 +44,45 @@
 %  \tableofcontents
 %\end{frame}
 
+\section{Preprocessing}
+\begin{frame}
+\begin{align}
+	B(f) = 1125 ln(1 + f / 700)
+\end{align}
+\begin{align}
+	H_m &= 0 				   &\text{if}\;\; & k < f[m-1] \\
+	H_m &= \frac{k      - f[m-1] }{f[m] - f[m-1]}  &\text{if}\;\; & f[m-1] \leq k \leq f[m] \\
+	H_m &= \frac{f[m+1] - k      }{f[m + 1] - f[m]}&\text{if}\;\; & f[m] \leq k \leq f[m+1] \\
+	H_m &= 0									   &\text{if}\;\; & k > f[m+1] 
+\end{align}
+\end{frame}
+
+
+
+\begin{frame}
+\begin{figure}
+	\includestandalone[height=4 cm]{../tikz/melScale}
+	\includestandalone[height=4 cm]{../tikz/melBank}
+	\caption{The Mel scale and mel banks.}
+	\label{fig:melBank}
+\end{figure}
+\end{frame}
+
 
 \section{Deep Learning}
+
+\begin{frame}{Long Short Term Memory (LSTM)}
+
+\begin{align}
+\mathbf{i_t} &= \sigma (\mathbf{W}_i [\mathbf{x}_t \; \mathbf{h_{t-1}} \; \mathbf{c_{t-1}}]^T + \mathbf{b}_i) \\
+\mathbf{f_t} &= \sigma (\mathbf{W}_f [\mathbf{x}_t \; \mathbf{h_{t-1}} \; \mathbf{c_{t-1}}]^T + \mathbf{b}_f) \\
+\mathbf{c_t} &= \mathbf{f}_t \mathbf{c_{t-1}} + \mathbf{i}_t \tanh( \mathbf{W}_c [\mathbf{x}_t \; \mathbf{h_{t-1}}]^T + \mathbf{b}_c ) \\
+\mathbf{o_t} &= \sigma (\mathbf{W}_o [\mathbf{x}_t \; \mathbf{h_{t-1}} \; \mathbf{c_t}]^T + \mathbf{b}_o ) \\
+\mathbf{h_t} &= \mathbf{o_t} \tanh(\mathbf{c_t})
+\end{align}
+
+\end{frame}
+
 \begin{frame}{Long Short Term Memory (LSTM)}
 \begin{figure}
 \includestandalone[height=6.5 cm]{../tikz/lstm}
@@ -56,14 +92,57 @@
 \end{frame}
 
 \begin{frame}{Bidirectional BLSTM}
-
-
-
-
+\begin{figure}
+\includestandalone[height=6.5 cm]{../tikz/blstm2}
+\caption{Bidirectional LSTM architecture}
+\label{fig:blstm}
+\end{figure}
 \end{frame}
 
 
 \section{Listen Attend and Spell}
+
+
+\begin{frame}{Listener}
+\begin{itemize}
+	\item Pyramidal Bidirectional long short term memory (\textit{pBLSTM}).
+	\item Pyramid structure compresses the features. 
+	\item Three \textit{pBLSTM}s on top of a \textit{BLSTM} layer $\Rightarrow$ compression factor $2^3 = 8 $.
+	\item Pyramidal inputs concatenate the out put from previous layers:
+		  \begin{align}
+		  	\mathbf{h}_i^j = \text{pBLSTM}(\mathbf{h}_{i-1}^j, [\mathbf{h}_{2i}^{j-1}, \mathbf{h}_{2i+1}^{j-1}])
+		  \end{align}
+	\item $i$ denotes the time step (from $0$) and $j$ the layer.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Attend and Spell}
+\begin{itemize}
+	\item attention based \textit{LSTM} transducer.
+	\item Find the most likely character given the features and previously found letters.
+		  \begin{align}
+			\mathbf{c}_i &= \text{AttentionContext}(\mathbf{s}_i,\mathbf{H}) \\
+			\mathbf{s}_i &= \text{RNN}(\mathbf{s}_i,\mathbf{H}) \\
+			P(\mathbf{y}_i|\mathbf{x},y_{<i}) &= \text{CharacterDistribution}(\mathbf{s}_i,\mathbf{c}_{i})
+		  \end{align}
+
+\end{itemize}
+\end{frame}
+\begin{frame}{Attention Context}
+	\begin{itemize}
+		\item Produce a context vector $\mathbf{c}_i$, with alignment information.
+			  \begin{align}
+			  	e_{i,u} &= \phi(\mathbf{s}_i)^T \psi(\mathbf{h}_u) \\
+			  	\alpha_{i,u} &= \frac{\exp(e_{i,u})}{\sum_u exp(e_{i,u})} \\
+			  	\mathbf{c}_i &= \sum\limits_{u} \alpha_{i,u}\mathbf{h}_u 
+			  \end{align}
+		\item $\phi$ and $\psi$ are feed-forward MLP networks.
+		\item $\mathbf{s}_i$ is the decoder state.
+		\item The $\alpha$s work like a sliding window.
+		\item $U$ denotes the total number of feature vectors.
+	\end{itemize}
+\end{frame}
+
 \begin{frame}{The LAS-Architecture}
 \begin{figure}
 \includestandalone[height=6.5 cm]{../tikz/lasArcBottomUp}
@@ -72,5 +151,19 @@
 \end{figure}
 \end{frame}
 
+\begin{frame}{Decoding and Rescoring}
+\begin{itemize}
+	\item Left to right beam search.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Tensorflow}
+\begin{figure}
+\centering
+\includegraphics[width=0.7\linewidth]{../png/net1}
+\caption{A simple linear node in tensorboard}
+\label{fig:net1}
+\end{figure}
+\end{frame}
 
 \end{document}
