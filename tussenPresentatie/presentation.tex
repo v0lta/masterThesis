@@ -40,9 +40,16 @@
 
 
 % Uncomment these lines for an automatically generated outline.
-%\begin{frame}{Outline}
-%  \tableofcontents
-%\end{frame}
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+\section{The Goal}
+\begin{frame}
+Speech in text out.
+\end{frame}
+
+
 
 \section{Preprocessing}
 \begin{frame}
@@ -50,14 +57,12 @@
 	B(f) = 1125 ln(1 + f / 700)
 \end{align}
 \begin{align}
-	H_m &= 0 				   &\text{if}\;\; & k < f[m-1] \\
+	H_m &= 0 				                       & \text{if}\;\; & k < f[m-1] \\
 	H_m &= \frac{k      - f[m-1] }{f[m] - f[m-1]}  &\text{if}\;\; & f[m-1] \leq k \leq f[m] \\
 	H_m &= \frac{f[m+1] - k      }{f[m + 1] - f[m]}&\text{if}\;\; & f[m] \leq k \leq f[m+1] \\
 	H_m &= 0									   &\text{if}\;\; & k > f[m+1] 
 \end{align}
 \end{frame}
-
-
 
 \begin{frame}
 \begin{figure}
@@ -70,6 +75,24 @@
 
 
 \section{Deep Learning}
+
+\begin{frame}{Recurrent neural nets}
+\begin{figure}
+	\includestandalone[height=4 cm]{../tikz/recNet}
+	\caption{Unrolling a recurrent neural net.}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Gradient updates on correlated data}
+\begin{figure}
+	\includestandalone[height=4 cm]{../tikz/uncorr}
+	\includestandalone[height=4 cm]{../tikz/corr}
+	\caption{Normally distributed random variables with $
+	\Sigma_1 = \mathbf{I}$ and $\Sigma_2 = (0.25 \; 0.3; \; 0.3 \; 1)$. }
+\end{figure}
+\end{frame}
+
+
 
 \begin{frame}{Long Short Term Memory (LSTM)}
 
@@ -165,6 +188,13 @@
 \end{itemize}
 \end{frame}
 
+
+
+\begin{frame}{What is tensorflow}
+A machine learning toolbox.
+\end{frame}
+
+
 \begin{frame}{Tensorflow}
 \begin{figure}
 \centering
@@ -173,5 +203,10 @@
 \label{fig:net1}
 \end{figure}
 \end{frame}
+
+\begin{frame}{Summary and questions}
+
+\end{frame}
+
 
 \end{document}
