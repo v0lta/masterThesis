@@ -3,7 +3,7 @@
 \headcommand {\beamer@framepages {1}{1}}
 \headcommand {\slideentry {0}{0}{2}{2/2}{}{0}}
 \headcommand {\beamer@framepages {2}{2}}
-\headcommand {\sectionentry {1}{The Goal}{3}{The Goal}{0}}
+\headcommand {\sectionentry {1}{Overview}{3}{Overview}{0}}
 \headcommand {\beamer@sectionpages {1}{2}}
 \headcommand {\beamer@subsectionpages {1}{2}}
 \headcommand {\slideentry {1}{0}{3}{3/3}{}{0}}
@@ -15,7 +15,7 @@
 \headcommand {\beamer@framepages {4}{4}}
 \headcommand {\slideentry {2}{0}{5}{5/5}{}{0}}
 \headcommand {\beamer@framepages {5}{5}}
-\headcommand {\sectionentry {3}{Deep Learning}{6}{Deep Learning}{0}}
+\headcommand {\sectionentry {3}{Tools from Deep Learning}{6}{Tools from Deep Learning}{0}}
 \headcommand {\beamer@sectionpages {4}{5}}
 \headcommand {\beamer@subsectionpages {4}{5}}
 \headcommand {\slideentry {3}{0}{6}{6/6}{}{0}}
@@ -28,11 +28,11 @@
 \headcommand {\beamer@framepages {9}{9}}
 \headcommand {\slideentry {3}{0}{10}{10/10}{}{0}}
 \headcommand {\beamer@framepages {10}{10}}
-\headcommand {\sectionentry {4}{Listen Attend and Spell}{11}{Listen Attend and Spell}{0}}
-\headcommand {\beamer@sectionpages {6}{10}}
-\headcommand {\beamer@subsectionpages {6}{10}}
-\headcommand {\slideentry {4}{0}{11}{11/11}{}{0}}
+\headcommand {\slideentry {3}{0}{11}{11/11}{}{0}}
 \headcommand {\beamer@framepages {11}{11}}
+\headcommand {\sectionentry {4}{Listen Attend and Spell}{12}{Listen Attend and Spell}{0}}
+\headcommand {\beamer@sectionpages {6}{11}}
+\headcommand {\beamer@subsectionpages {6}{11}}
 \headcommand {\slideentry {4}{0}{12}{12/12}{}{0}}
 \headcommand {\beamer@framepages {12}{12}}
 \headcommand {\slideentry {4}{0}{13}{13/13}{}{0}}
@@ -47,8 +47,10 @@
 \headcommand {\beamer@framepages {17}{17}}
 \headcommand {\slideentry {4}{0}{18}{18/18}{}{0}}
 \headcommand {\beamer@framepages {18}{18}}
-\headcommand {\beamer@partpages {1}{18}}
-\headcommand {\beamer@subsectionpages {11}{18}}
-\headcommand {\beamer@sectionpages {11}{18}}
-\headcommand {\beamer@documentpages {18}}
-\headcommand {\def \inserttotalframenumber {18}}
+\headcommand {\slideentry {4}{0}{19}{19/19}{}{0}}
+\headcommand {\beamer@framepages {19}{19}}
+\headcommand {\beamer@partpages {1}{19}}
+\headcommand {\beamer@subsectionpages {12}{19}}
+\headcommand {\beamer@sectionpages {12}{19}}
+\headcommand {\beamer@documentpages {19}}
+\headcommand {\def \inserttotalframenumber {19}}

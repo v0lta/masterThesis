@@ -44,15 +44,19 @@
   \tableofcontents
 \end{frame}
 
-\section{The Goal}
-\begin{frame}
-Speech in text out.
+\section{Overview}
+\begin{frame}{Project Overview}
+	\begin{itemize}
+		\item Transcribe speech utterances to characters. 
+		\item Use a listen attend and spell (LAS) model to do this.
+		\item Train model components jointly.
+	\end{itemize}
 \end{frame}
 
 
 
 \section{Preprocessing}
-\begin{frame}
+\begin{frame}{Mel-Scale and Mel-Filter-Banks}
 \begin{align}
 	B(f) = 1125 ln(1 + f / 700)
 \end{align}
@@ -64,7 +68,7 @@ Speech in text out.
 \end{align}
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Mel-Scale and Mel-Filter-Banks}
 \begin{figure}
 	\includestandalone[height=4 cm]{../tikz/melScale}
 	\includestandalone[height=4 cm]{../tikz/melBank}
@@ -74,52 +78,57 @@ Speech in text out.
 \end{frame}
 
 
-\section{Deep Learning}
+\section{Tools from Deep Learning}
 
-\begin{frame}{Recurrent neural nets}
+\begin{frame}{Recurrent Neural Nets}
 \begin{figure}
 	\includestandalone[height=4 cm]{../tikz/recNet}
 	\caption{Unrolling a recurrent neural net.}
 \end{figure}
 \end{frame}
 
-\begin{frame}{Gradient updates on correlated data}
-\begin{figure}
-	\includestandalone[height=4 cm]{../tikz/uncorr}
-	\includestandalone[height=4 cm]{../tikz/corr}
-	\caption{Normally distributed random variables with $
-	\Sigma_1 = \mathbf{I}$ and $\Sigma_2 = (0.25 \; 0.3; \; 0.3 \; 1)$. }
-\end{figure}
+\begin{frame}{Simple Cell}
+	\begin{figure}
+		\includestandalone[height=4 cm]{../tikz/recurrentCell}
+		\caption{Simple recurrent cell.}
+	\end{figure}
 \end{frame}
 
 
+\begin{frame}{Gradient Updates on Correlated Data}
+	\begin{figure}
+		\includestandalone[height=4 cm]{../tikz/uncorr}
+		\includestandalone[height=4 cm]{../tikz/corr}
+		\caption{Normally distributed random variables with $
+		\Sigma_1 = \mathbf{I}$ and $\Sigma_2 = (0.25 \; 0.3; \; 0.3 \; 1)$. }
+	\end{figure}
+\end{frame}
+
 
 \begin{frame}{Long Short Term Memory (LSTM)}
-
-\begin{align}
-\mathbf{i_t} &= \sigma (\mathbf{W}_i [\mathbf{x}_t \; \mathbf{h_{t-1}} \; \mathbf{c_{t-1}}]^T + \mathbf{b}_i) \\
-\mathbf{f_t} &= \sigma (\mathbf{W}_f [\mathbf{x}_t \; \mathbf{h_{t-1}} \; \mathbf{c_{t-1}}]^T + \mathbf{b}_f) \\
-\mathbf{c_t} &= \mathbf{f}_t \mathbf{c_{t-1}} + \mathbf{i}_t \tanh( \mathbf{W}_c [\mathbf{x}_t \; \mathbf{h_{t-1}}]^T + \mathbf{b}_c ) \\
-\mathbf{o_t} &= \sigma (\mathbf{W}_o [\mathbf{x}_t \; \mathbf{h_{t-1}} \; \mathbf{c_t}]^T + \mathbf{b}_o ) \\
-\mathbf{h_t} &= \mathbf{o_t} \tanh(\mathbf{c_t})
-\end{align}
-
+	\begin{figure}
+		\includestandalone[height=6.5 cm]{../tikz/lstm}
+		\caption{Visualization of the LSTM architecture}
+		\label{fig:lstm}
+	\end{figure}
 \end{frame}
 
 \begin{frame}{Long Short Term Memory (LSTM)}
-\begin{figure}
-\includestandalone[height=6.5 cm]{../tikz/lstm}
-\caption{Visualization of the LSTM architecture}
-\label{fig:lstm}
-\end{figure}
+	\begin{align}
+	\mathbf{i_t} &= \sigma (\mathbf{W}_i [\mathbf{x}_t \; \mathbf{h_{t-1}} \; \mathbf{c_{t-1}}]^T + \mathbf{b}_i) \\
+	\mathbf{f_t} &= \sigma (\mathbf{W}_f [\mathbf{x}_t \; \mathbf{h_{t-1}} \; \mathbf{c_{t-1}}]^T + \mathbf{b}_f) \\
+	\mathbf{c_t} &= \mathbf{f}_t \mathbf{c_{t-1}} + \mathbf{i}_t \tanh( \mathbf{W}_c [\mathbf{x}_t \; \mathbf{h_{t-1}}]^T + \mathbf{b}_c ) \\
+	\mathbf{o_t} &= \sigma (\mathbf{W}_o [\mathbf{x}_t \; \mathbf{h_{t-1}} \; \mathbf{c_t}]^T + \mathbf{b}_o ) \\
+	\mathbf{h_t} &= \mathbf{o_t} \tanh(\mathbf{c_t})
+	\end{align}
 \end{frame}
 
 \begin{frame}{Bidirectional BLSTM}
-\begin{figure}
-\includestandalone[height=6.5 cm]{../tikz/blstm2}
-\caption{Bidirectional LSTM architecture}
-\label{fig:blstm}
-\end{figure}
+	\begin{figure}
+		\includestandalone[height=6.5 cm]{../tikz/blstm2}
+		\caption{Bidirectional LSTM architecture}
+		\label{fig:blstm}
+	\end{figure}
 \end{frame}
 
 
@@ -190,8 +199,17 @@ Speech in text out.
 
 
 
-\begin{frame}{What is tensorflow}
-A machine learning toolbox.
+\begin{frame}{What is Tensorflow?}
+	\begin{itemize}
+		\item \textquotedblleft TensorFlow is an interface for expressing machine learning algoritms and an implementation for executing such algorithms. \textquotedblright \footnote{TensorFlow:
+			  Large-Scale Machine Learning on Heterogeneous Distributed Systems, Abadi et al, Google Research.}
+		\item Computations are described by directed graphs. 
+		\item Data-Tensors flow along graph edges.
+		\item Graphs are constructed using user specified elementary
+			  operations.
+		\item Computations are started by requesting certain values, which leads
+			  to (partial) evaluation of the graph.
+	\end{itemize}
 \end{frame}
 
 
@@ -204,8 +222,15 @@ A machine learning toolbox.
 \end{figure}
 \end{frame}
 
-\begin{frame}{Summary and questions}
-
+\begin{frame}{Summary and Questions}
+	The presentation covered:
+	\begin{itemize}
+		\item Input feature generation
+		\item The LSTM building block
+		\item A LAS-Architecture overview
+		\item The tensorflow toolbox
+	\end{itemize}
+	Tank you for your attention. Questions?
 \end{frame}
 
 
