@@ -1,9 +1,5 @@
 \chapter{Literature Study}
 \label{cha:intro}
-The first contains a general introduction to the work. The goals are
-defined and the modus operandi is explained.
-TODO: describe the problem.
-
 
 \section{Preprocessing and feature extraction}
 \subsubsection{Filter-Bank features}
@@ -14,12 +10,12 @@ TODO: describe the problem.
 \label{fig:timitInput}
 \end{figure}
 Filter-banks are collections of filters. These filters are spread out over the whole frequency band \cite[page 251]{Huang2001}. Filter-bank output is commonly used as input for speech analysis \cite{Huang2001}\cite{Chan2015}. The number of filter-banks depends on the required resolution, 32 is a common choice \cite{Juang1987}. The energy within the part of the signal spectrum described by all individual filters is measured. Figure~\ref{fig:timitInput} shows the resulting energy measurements using 23 filters, for a sentence recording contained in the \textit{TIMIT} data set. 
-The general argument for filter banks is speech recognitions is that the cochlea, in the human ear, resembles a filter bank \cite[page 30]{Huang2001}. However humans do not perceive frequency linearly. Experimental evidence suggests, that our perceptions is scaled according to \cite[page 34]{Huang2001}:
+The general argument for filter banks in speech recognition is that the cochlea, in the human ear, resembles a filter bank \cite[page 30]{Huang2001}. However humans do not perceive frequency linearly. Experimental evidence suggests, that our perception of is scaled according to the Mel-Scale \cite[page 34]{Huang2001}:
 \begin{equation}
 B(f) = 1125 ln(1 + f / 700)
 \end{equation}
 A normalized plot of this function is shown in figure~\ref{fig:mel} on the left.
-Mel-scaling suggests, that human are able to distinguish more lower frequencies than higher frequencies. In the plot the first four thousand Herz occupy roughly eighty percent of the scale. The band from four thousand to eight thousand Herz is left with only twenty percent of the scale, even tough half of the considered frequencies are in this band. 
+According to the Mel-scale, humans are able to distinguish more lower frequencies than higher frequencies. In the plot the first four thousand Herz occupy roughly eighty percent of the scale. The band from four thousand to eight thousand Herz is left with only about twenty percent of the scale, even tough half of the considered frequencies are in this band. 
 \begin{figure}
 \centering
 \includestandalone[width=6cm]{../tikz/melScale}
@@ -34,11 +30,8 @@ H_m &= \frac{k      - f[m-1] }{f[m] - f[m-1]}  &\text{if}\;\; & f[m-1] \leq k \l
 H_m &= \frac{f[m+1] - k      }{f[m + 1] - f[m]}&\text{if}\;\; & f[m] \leq k \leq f[m+1] \\
 H_m &= 0									   &\text{if}\;\; & k > f[m+1] 
 \end{align} 
-In the equations above $H_m$ denotes the magnitude of filter $m$ with a total of $M$ filters. The frequency is denoted by $k$, the vector $f$ contains $M+2$ linearly spaced filter border values. These are the red stars on the right of  figure~\ref{fig:mel}. The left plot shows the triangular filter bank using, where the spacing is done according to the same values. Roughly speaking using mel-filter banks means using a high filter resolution where human hearing is good and a low resolution where it is bad. \\
-Mel-Frequency banks are considered high level feature inputs. When the recognition system is found to work with these, features on a lower level or even raw data could be used as input. The idea behind doing fewer preprocessing, is that the network might be able to come up with something better.
-
-\subsection{Text and Phoneme output}
-
+In the equations above $H_m$ denotes the magnitude of filter $m$ with a total of $M$ filters. The frequency is denoted by $k$, the vector $f$ contains $M+2$ linearly spaced filter border values. These are the red stars on the left of  figure~\ref{fig:mel}. The right plot shows the triangular filter banks. These banks are spaced according to the same values. Roughly speaking using mel-filter banks means using a high filter resolution where human hearing is good and a low resolution where it is bad. \\
+Mel-Frequency banks are considered high level feature inputs. When the recognition system is found to work with these, features on a lower level or even raw data could be used as input. The idea behind doing fewer preprocessing, is that the network might be able to come up with something better on its own.
 
 \section{Deep Neural Networks}
 \subsection{Gradient descent}
@@ -103,19 +96,18 @@ Convolutional neural nets aim to solve this problem \cite[page 6]{Dumoulin2016},
 \caption{Rolled (left) and unrolled (right) recurrent neural net with two units.}
 \label{fig:unrolledNet}
 \end{figure}
-When processing speech its is important to take context into account. When spelling the letters, which make up a word, it is important to know what the previous letter was, in order to make the right decision. 
+When processing speech its is important to take context into account. When spelling the letters which make up a word, it is important to know what the previous letter was, in order to make the right decision. 
 Feed-forward neural nets do not possess memory. These networks make decisions, starting from zero every time. In oder to fix this a cell state variable can be introduced. This state is fed back into the cell together with new inputs every time step. Such a layout is shown in figure~\ref{fig:unrolledNet} on the left. 
-Another way to depict the same network is to not only consider the spacial dimension, but add the time axis as well. Figures, which show the spacial and time dimension are called unrolled network diagrams, shown in figure~\ref{fig:unrolledNet} on the right. When looking at the 
-
+Another way to depict the same network is to not only consider the spacial dimension, but add the time axis as well. Figures, which show the spacial and time dimension are called unrolled network diagrams, shown in figure~\ref{fig:unrolledNet} on the right. The unrolled form shows a direct dependency of the output at time $t$ on the previous output at $t-1$. This causes $y_t$ and $y_{t-1}$ to change together. Or in other words: The introduction of recurrent connections leads to correlation of the two outputs. 
 
 
 \subsection{The exploding and vanishing gradient problem}
-Even tough past information is available in theory, learning long time dependencies is problematic with classical neural nets. The back-propagated derivative can sometimes become waker and weaker until it ultimately vanishes \cite{Hochreiter1998}. Another problem is that sometimes classical recurrent neural nets produce a gradient that blows up \cite{Pascanu2012}. The exploding gradients can be fixed by clipping, but vanishing gradients require more sophisticated treatment \cite{Bengio1993}.     
+Even tough past information is available in theory, learning long time dependencies is problematic with classical neural nets. Due to problems with gradient descent on correlated data, the back-propagated derivative can sometimes become waker and weaker until it ultimately vanishes \cite{Hochreiter1998}. Another problem is that sometimes classical recurrent neural nets produce a gradient that blows up \cite{Pascanu2012}. The exploding gradients can be fixed by clipping, but vanishing gradients require more sophisticated treatment \cite{Bengio1993}.     
 
 \subsection{Long short-term memory}
 Research seemed to be focused on solving the problem by making changes to the back-propagation algorithm. However a good solution to the problem turned out to
 be changing the network instead. Long short-term memory (LSTM) cells as proposed in \cite{Hochreiter1995} are more complex network units.
-These cells use the equation system \cite[page 5]{Graves2013}:
+These cells use the equation system \cite[page 5]{Graves2013}\footnote{ Various versions of LSTM cells exist. This one is commonly referred to as the \textquotedblleft peephole\textquotedblright $ \: $ variant. }:
 \begin{align}
 \mathbf{i_t} &= \sigma (\mathbf{W}_{ix} \mathbf{x}_t + \mathbf{W}_{ih} \mathbf{h_{t-1}} + \mathbf{W}_{ic} \mathbf{c_{t-1}} +\mathbf{ b}_i) \\
 \mathbf{f_t} &= \sigma (\mathbf{W}_{fx} \mathbf{x}_t + \mathbf{W}_{fh} \mathbf{h_{t-1}} + \mathbf{W}_{fc} \mathbf{c_{t-1}} +\mathbf{ b}_f) \\
@@ -143,8 +135,8 @@ Which this relation in mind the equations above can be rewritten, by creating co
 \caption{Visualization of the LSTM architecture.}
 \label{fig:lstm}
 \end{figure}
-This system of equations is visualized in figure~\ref{fig:lstm}. The diagram is read from bottom to top. The most important part is the line from $\mathbf{c}_{t-1}$ to $\mathbf{c}_{t}$ \cite{Colah2015}. It records operations on the cell state $\mathbf{c_t}$. The cell state contains information from the past which helps the block make decisions regarding the current output $\mathbf{h}_t$. The sigmoid functions $\sigma()$ are applied element wise on the input vectors and produce outputs between zero and one. In the case of the forget gate output $\mathbf{f}_t$ these values $\in (0,1)$ well serve as a measure of how much of the past state the cell would like to remember. One means keep this variable and zero throw it away \cite{Colah2015}. 
-The following task is to determine what should be added to the memory. This information can be found in the input gate result $\mathbf{i}_t$. $\mathbf{i}_t$ is multiplied element wise with the candidate values $\mathbf{\bar{c}}_t$. These are computed by a hyperbolic tangent neuron.  The $\tanh()$ function makes sure all vector elements are between $-1$ and $1$. The neuron looks at input data and the past outputs. Both are labeled $\mathbf{w}$ in figure~\ref{fig:lstm}, $\mathbf{w}$ contains all information that could possibly be included in the new state. Finally the weighted candidate values are added to what was previously stored. This operation leads to the updated memory state $\mathbf{c}_t$. 
+This system of equations is visualized in figure~\ref{fig:lstm}. The diagram is read from bottom to top. The most important part is the line from $\mathbf{c}_{t-1}$ to $\mathbf{c}_{t}$ \cite{Colah2015}. It records operations on the cell state $\mathbf{c_t}$. The cell state contains information from the past which helps the block make decisions regarding the current output $\mathbf{h}_t$. The sigmoid functions $\sigma(\cdot)$ are applied element wise on the input vectors and produce outputs between zero and one. In the case of the forget gate output $\mathbf{f}_t$ these values $\in (0,1)$ well serve as a measure of how much of the past state the cell would like to remember. One means keep this variable and zero throw it away \cite{Colah2015}. 
+The following task is to determine what should be added to the memory. This information can be found in the input gate result $\mathbf{i}_t$. $\mathbf{i}_t$ is multiplied element wise with the candidate values $\mathbf{\bar{c}}_t$. These are computed by a hyperbolic tangent neuron.  The $\tanh(\cdot)$ function makes sure all vector elements are between $-1$ and $1$. The neuron computing the candidate state values $\mathbf{\bar{c}}_t$ looks at input data and the past outputs. Both are labeled $\mathbf{w}$ in figure~\ref{fig:lstm}, $\mathbf{w}$ contains all information that could possibly be included in the new state. Finally the weighted candidate values are added to what was previously stored. This operation leads to the updated memory state $\mathbf{c}_t$. 
 Last but not least the new output value has to be computed, which will be a filtered version of the cell state. The decision of which and how much of each state variable will be send outside is made by output gate. It's output $\mathbf{o}_t$ is multiplied with a rescaled version of the cell state. The rescaling is done using another hyperbolic tangent, which again sets all values between minus one and one. The product of this rescaled state and the weights found in $\mathbf{o}_t$ then yields the new output $\mathbf{h}_t$. 
 
 \subsection{Bidirectional Long Short Term Memory}
@@ -170,7 +162,7 @@ If stacked on top of each other, these bidirectional LSTM layers form a deep rec
 \\
 \mathbf{h}_t^n &= \mathbf{W}_{y}^n [\overrightarrow{\mathbf{h}}_t \; \overleftarrow{\mathbf{h}}_t]^T + \mathbf{b}_y^n
 \end{align}
-In this setting each LSTM cell has access to information from before and after it. For this to work the speech sequence, which is analyzed has to be recoded completely. In this case future information is available and should be used for recognition purposes.
+In this setting each LSTM cell has access to information from before or after it. For this to work the speech sequence, which is analyzed has to be recorded completely. In this case future information is available and should be used for recognition purposes.
 
 \section{Tensor-flow}
 In this section is devoted to the toolbox, which will be used to implement the Listen Attend and spell, architecture. According to the Tensor-flow authors \cite{Agarwal2015}: 
@@ -202,7 +194,7 @@ e_{i,u} = \phi(\mathbf{s}_i)^T \psi(\mathbf{h_u}) \\
 \alpha_{i,u} = \frac{ \exp(e_{i,u})}{ \sum\limits_{u} \exp(e_{i,u})} \\
 \mathbf{c}_i = \sum\limits_{u} \alpha_{i,u} \mathbf{h}_u
 \end{align}
-$\alpha$ is produced by running $\mathbf{e}$ trough a softmax function, which scales $\mathbf{e}$ such that all elements are within $(0,1)$ and add up to one. These scaled weights, can then be used to form the context vector $\mathbf{c}_i$. When the training process converges the $\alpha_i$s typically follow a distribution with sharp edges\cite[page 5]{Chan2015}. Thus it is justified to think of the alphas as a sliding window. This window contains only those parts of the condensed input data set, which are currently relevant.
+$\alpha$ is produced by running $\mathbf{e}$ trough a softmax function, which scales $\mathbf{e}$ such that all elements are within $(0,1)$ and add up to one. These scaled weights, can then be used to form the context vector $\mathbf{c}_i$. When the training process converges the $\alpha_i$s typically follow a distribution with sharp edges\cite[page 5]{Chan2015}. Thus it is justified to think of the alphas as a sliding window. This window contains only the currently relevant parts of the condensed input data set.
 
 \begin{figure}
 \includestandalone[width=\textwidth]{../tikz/lasArcBottomUp}
@@ -225,11 +217,11 @@ Which leads to the objective \cite[page 5]{Chan2015}:
 The novelty in comparison to the previous expression is that $\hat{y}_{<i}$ is sometimes taken from the past network outputs instead of the ground truth. An idea which Chan et al. found in \cite{Bengio2015}.
 
 \subsection{Beam search}
-In order to generate a readable text, it is necessary to choose characters from the generated character distributions. One way to do this is to simply pick the most likely letter from each distribution. This method ignores the possibility of generating better results by also considering less likely options. Therefore a broader search trough the most likely options is considered. Unfortunately memory limitations make it impossible to search trough all possible combinations. Therefore only the $n$ most likely options are explored and the rest is disregarded. Adding the most likely options for each letter produces a tree of possible transcriptions. Using the probabilities from the LAS model would be equivalent to picking the most likely letter at every node. Therefore a language model is required to choose a beam. Such models can be trained on text data only. A selection can then be made according to\cite[page 6]{Chan2015}:
+In order to generate a readable text, it is necessary to choose characters from the generated character distributions. One way to do this is to simply pick the most likely letter from each distribution. This method ignores the possibility of generating better results by also considering less likely options. Therefore a broader search trough the most likely options is considered. Unfortunately memory limitations make it impossible to search trough all possible combinations. Therefore only the $n$ most likely options are explored and the rest is disregarded. Adding the most likely options for each letter produces a tree of possible transcriptions. The different routes along this tree are called hypotheses. A score for each hypothesis can be computed, by multiplication of the probability values the las-network assigned to each branch along its path. In beam search only the m most likely hypotheses are kept. Using only las-probabilities would be equivalent to picking the most likely letter at every node. Therefore a language model is required to pick the best hypothesis. Such models can be trained on text data only. A selection can then be made according to\cite[page 6]{Chan2015}:
 \begin{align}
 s(\mathbf{y}|\mathbf{x}) = \frac{\log P(\mathbf{y}|\mathbf{x})}{ |\mathbf{y}|_c} + \lambda \log P_{LM}(\mathbf{y})
 \end{align}
-Here $P_{LM}$ denotes the weight the language model assigns to each beam. And $\lambda$ is a weight factor, which determines the language model importance. 
+Here $P_{LM}$ denotes the weight the language model assigns to each hypothesis. And $\lambda$ is a weight factor, which determines the language model importance. 
 
 
 

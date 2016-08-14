@@ -57,6 +57,15 @@
 
 \section{Preprocessing}
 \begin{frame}{Mel-Scale and Mel-Filter-Banks}
+\begin{figure}
+	\includestandalone[height=4 cm]{../tikz/melScale}
+	\includestandalone[height=4 cm]{../tikz/melBank}
+	\caption{The Mel scale and mel banks.}
+	\label{fig:melBank}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Mel-Scale and Mel-Filter-Banks}
 \begin{align}
 	B(f) = 1125 ln(1 + f / 700)
 \end{align}
@@ -67,16 +76,6 @@
 	H_m &= 0									   &\text{if}\;\; & k > f[m+1] 
 \end{align}
 \end{frame}
-
-\begin{frame}{Mel-Scale and Mel-Filter-Banks}
-\begin{figure}
-	\includestandalone[height=4 cm]{../tikz/melScale}
-	\includestandalone[height=4 cm]{../tikz/melBank}
-	\caption{The Mel scale and mel banks.}
-	\label{fig:melBank}
-\end{figure}
-\end{frame}
-
 
 \section{Tools from Deep Learning}
 
@@ -123,10 +122,10 @@
 	\end{align}
 \end{frame}
 
-\begin{frame}{Bidirectional BLSTM}
+\begin{frame}{Bidirectional LSTM}
 	\begin{figure}
 		\includestandalone[height=6.5 cm]{../tikz/blstm2}
-		\caption{Bidirectional LSTM architecture}
+		\caption{BLSTM architecture}
 		\label{fig:blstm}
 	\end{figure}
 \end{frame}
@@ -151,10 +150,10 @@
 \begin{frame}{Attend and Spell}
 \begin{itemize}
 	\item attention based \textit{LSTM} transducer.
-	\item Find the most likely character given the features and previously found letters.
+	\item Find the most likely character given the features and previously found letter-probabilities.
 		  \begin{align}
 			\mathbf{c}_i &= \text{AttentionContext}(\mathbf{s}_i,\mathbf{H}) \\
-			\mathbf{s}_i &= \text{RNN}(\mathbf{s}_i,\mathbf{H}) \\
+			\mathbf{s}_i &= \text{RNN}(\mathbf{s}_{i-1},\mathbf{y}_{i-1},\mathbf{c}_{i-1}) \\
 			P(\mathbf{y}_i|\mathbf{x},y_{<i}) &= \text{CharacterDistribution}(\mathbf{s}_i,\mathbf{c}_{i})
 		  \end{align}
 
@@ -230,7 +229,7 @@
 		\item A LAS-Architecture overview
 		\item The tensorflow toolbox
 	\end{itemize}
-	Tank you for your attention. Questions?
+	Thank you for your attention. Questions?
 \end{frame}
 
 
