@@ -1,7 +1,7 @@
 \documentclass[master=ewit,english]{kulemt}
 \setup{title={Building a state of the art speech recogniser},
   author={Moritz Wolter},
-  promotor={Prof.\,dr.\,ir.\ Patrick Wambacq },
+  promotor={Prof.\,dr.\,ir.\ Patrick Wambacq \and Prof.\,dr.\,ir.\ Hugo van Hamme},
   assessor={Prof.\,dr.\,ir.\ Johan Suykens},
   assistant={Ir. Vincent Renkens}}
 % The following \setup may be removed entirely if no filing card is wanted
@@ -42,8 +42,23 @@
 \tableofcontents*
 
 \begin{abstract}
-  The \texttt{abstract} environment contains a more extensive overview of
-  the work. But it should be limited to one page.
+  Speech recognition is concerned with transcribing what is said in a
+  recoding of spoken language. In machine learning terms this process is
+  called sequence labeling. A recoding consists of a chain of frames,
+  this chain can be split up into several sequences, these make
+  up words or phonemes, which must be labeled. The sequence of labels forms
+  the transcription. \\
+  The meaning of speech depends on context, therefore a good system needs to
+  take it into account. Classical feed-forward networks fail to do that, which
+  is why this system will mainly consist of recurrently connected Long Short Term
+  Memory (LSTM) blocks. Inspired by the recurrent connects of neurons in the human
+  brain, LSTM-RNNs have the ability to store information over long time periods,
+  an important requirement in take context into account. \\
+  In order to train machine learning systems, speech and transcription text
+  pairs are used. The text contains the exact information of what is said in
+  the recording, but where in the recoding which word or sound is said is unknown.
+  In other words text to speech alignment is missing. Aligning the data will be an
+  important issue in this thesis.    
 
 \end{abstract}
 
@@ -80,8 +95,8 @@
 % Now comes the main text
 \mainmatter
 
-\import{../chapters/}{intro}
-%\import{../chapters/}{chap-1}
+\import{../chapters/}{literature}
+\import{../chapters/}{ctcExperiments}
 %\import{../chapters/}{chap-2}
 % ... and so on until
 %\import{../chapters/}{chap-n}

@@ -9,8 +9,8 @@
 \caption{Frequency Bank input computed from a sentence contained in the \textit{TIMIT} dataset. Time is shown on x and Frequency on the y-Axis.}
 \label{fig:timitInput}
 \end{figure}
-Filter-banks are collections of filters. These filters are spread out over the whole frequency band \cite[page 251]{Huang2001}. Filter-bank output is commonly used as input for speech analysis \cite{Huang2001}\cite{Chan2015}. The number of filter-banks depends on the required resolution, 32 is a common choice \cite{Juang1987}. The energy within the part of the signal spectrum described by all individual filters is measured. Figure~\ref{fig:timitInput} shows the resulting energy measurements using 23 filters, for a sentence recording contained in the \textit{TIMIT} data set. 
-The general argument for filter banks in speech recognition is that the cochlea, in the human ear, resembles a filter bank \cite[page 30]{Huang2001}. However humans do not perceive frequency linearly. Experimental evidence suggests, that our perception of is scaled according to the Mel-Scale \cite[page 34]{Huang2001}:
+Filter-banks are collections of filters. These filters can be spread out over audible frequencies\footnote{Approximately 16 to 16000 Hz.}. Filter-bank output is commonly used as input for speech analysis \cite{Huang2001}\cite{Chan2015}. The number of filter-banks depends on the required resolution, 32 is a common choice \cite{Juang1987}. The energy within the part of the signal spectrum described by all individual filters is measured. Figure~\ref{fig:timitInput} shows the resulting energy measurements using 23 filters, for a sentence recording contained in the \textit{TIMIT} data set. 
+The general argument for filter banks in speech recognition is that the cochlea, in the human ear, resembles a filter bank \cite[page 30]{Huang2001}. Humans do not perceive frequency linearly. Experimental evidence suggests, that our perception of is scaled according to the Mel-Scale \cite[page 34]{Huang2001}:
 \begin{equation}
 B(f) = 1125 ln(1 + f / 700)
 \end{equation}
@@ -33,16 +33,17 @@ H_m &= 0									   &\text{if}\;\; & k > f[m+1]
 In the equations above $H_m$ denotes the magnitude of filter $m$ with a total of $M$ filters. The frequency is denoted by $k$, the vector $f$ contains $M+2$ linearly spaced filter border values. These are the red stars on the left of  figure~\ref{fig:mel}. The right plot shows the triangular filter banks. These banks are spaced according to the same values. Roughly speaking using mel-filter banks means using a high filter resolution where human hearing is good and a low resolution where it is bad. \\
 Mel-Frequency banks are considered high level feature inputs. When the recognition system is found to work with these, features on a lower level or even raw data could be used as input. The idea behind doing fewer preprocessing, is that the network might be able to come up with something better on its own.
 
-\section{Deep Neural Networks}
+\section{Neural Networks}
 \subsection{Gradient descent}
-The optimization process of neural networks is done based on a training data set $\{\{\mathbf{x}_1,\mathbf{t}_1\}, \dots , \{\mathbf{x}_p,\mathbf{t}_p\} \}$ \cite[page 156]{Rojas1996}. The elements of this set are the input- and output-patters $\mathbf{x}$ and $\mathbf{t}$ respectively. Ideally the network output should be the same as the desired one for all data pairs. The difference between target and current performance is measured by the cost function\cite[page 156]{Rojas1996}:
+The optimization process of neural networks is done based on a training data set $\{\{\mathbf{x}_1,\mathbf{t}_1\}, \dots , \{\mathbf{x}_p,\mathbf{t}_p\} \}$ \cite[page 156]{Rojas1996}. The elements of this set are the input- and output-patters $\mathbf{x}$ and $\mathbf{t}$ respectively. Ideally the network output should be the same as the desired one for all data pairs. The difference between target and current outputs is measured by the cost function\cite[page 156]{Rojas1996}:
 \begin{align}
 E = \frac{1}{2}\sum\limits_{i=1}^{p} \| \mathbf{o}_i - \mathbf{t}_i \|^2.
 \end{align}
-During the training process a local minimum of the error function $E$ is sought. At this minimum the difference between the network output $\mathbf{o}$ and the target values $\mathbf{t}$ is as small as possible. After the training process is done the network is expected to identify similarities to data seen during the training process and produce a similar output. 
+During the training process a local minimum of the error function $E$ is sought. At this minimum the difference between the network output $\mathbf{o}$ and the target values $\mathbf{t}$ is as small. This value might not be the smallest possible value, termination can happen at the global or a local minimum. 
+After the training process has completed the network is expected to identify similarities to data seen during the training process and produce a similar output. 
 In order to reach a local minimum, the gradient of the error function is needed. The key idea of gradient descent is to follow the negative gradient until a local minimum is reached. 
 Neural networks can be considered as large composite functions, which are made up of elementary operations. The evaluation of the network can be written as a graph. Computations are done at each node and information travels trough the network along directed edges from node to node. In order to create a computational graph for the training process each of the output units of the network under consideration are connected to a new node which computes $\frac{1}{2}(o_{ij} - t_{ij})^2$\cite[page 157]{Rojas1996}. These new nodes in turn are connected to one more node, which sums up all error values and produces $E_i$. The process described above must be repeated for all training data pairs. One final node is added, which sums up all values $E_i$. Its output gives the value for the error function $E$ which is now in the form of a large graph.\\
-Reverse mode algorithmic differentiation or back-propagation is an algorithm to compute the gradient of a graph consisting of basic elementary operations. Its operation is now illustrated using the function \cite[page 69]{Diehl2013}:
+Reverse mode algorithmic differentiation or back-propagation is an algorithm to compute the gradient of a graph consisting of basic elementary operations. As an example its operation is now illustrated using the function \cite[page 69]{Diehl2013}:
 \begin{align}
 f(x_1,x_2,x_3) = \sin(x_1 x_2) + \exp(x_1 x_2 x_3)
 \label{eq:backFun}
@@ -76,20 +77,11 @@ The gradient is computed using a forward and backward sweep. During the forward 
 After the forward sweep the gradient is found by going back trough the network from the output to each input node. Using a seed value of $1$ at the output node the lower unit values are computed by multiplying the associated partial derivative found on each edge. If a node has more then one incoming value, their sum is computed. The process is illustrated in figure~\ref{fig:reverseSweep}. At the roots of the tree the partial derivatives of the output with respect to each input can be found. Together these root values make up the gradient. 
 To be able to perform the first forward sweep the network weights are initialized at random. The training data pairs are known and can be added as constants to the graph. 
 
+\subsection{Deep Neural Networks}
 \subsubsection{Stochastic gradient descent}
-When training networks on very large training sets, working with the full data set to compute the current gradient becomes very inefficient. As a remedy its is good practice in machine learning to work with so called mini-batches. A mini-batch includes a random subset of the training data set. This procedure is known as randomized gradient descent. With an added momentum term it can be formalized as \cite[page 4]{Hinton2012}:
-\begin{align}
-\triangle w_{ij}(t) = \alpha \triangle w_{ij}(t-1) - \epsilon \frac{\partial C}{\partial w_{ij}(t)}
-\end{align}
-$C$ is the cost, which is computed by comparing the current network output to the desired output. $\alpha \in (0,1)$ is a momentum coefficient. The weight of a connection from unit $i$ in the layer under consideration to unit $j$ in the layer below is given by the expression $w_{ij}$.
+When training networks on very large training sets, working with the full data set to compute the current gradient becomes very inefficient. As a remedy its is good practice in machine learning to work with so called mini-batches. A mini-batch includes a random subset of the training data set. This procedure is known as randomized gradient descent. During training the stochastic process goes trough the data mini-batch by mini-batch. 
 
-\subsection{Convnets}
-When looking for a signal in different parts of a recoding it is not always advisable to relearn recognition
-of the signal in different locations. With a conventional fully connected structure every sample on the time axis gets its own input weight. For shifted version of this signal the network will not be able to reuse weights it used
-to recognize the same signal at another time point in the recording.
-Convolutional neural nets aim to solve this problem \cite[page 6]{Dumoulin2016}, while preserving essential ordering information.
-
-\section{Recurrent Neural Networks}
+\subsection{Recurrent Neural Networks}
 \begin{figure}
 \centering
 \includestandalone[width=9cm]{../tikz/recNet}
@@ -101,10 +93,10 @@ Feed-forward neural nets do not possess memory. These networks make decisions, s
 Another way to depict the same network is to not only consider the spacial dimension, but add the time axis as well. Figures, which show the spacial and time dimension are called unrolled network diagrams, shown in figure~\ref{fig:unrolledNet} on the right. The unrolled form shows a direct dependency of the output at time $t$ on the previous output at $t-1$. This causes $y_t$ and $y_{t-1}$ to change together. Or in other words: The introduction of recurrent connections leads to correlation of the two outputs. 
 
 
-\subsection{The exploding and vanishing gradient problem}
+\subsubsection{The exploding and vanishing gradient problem}
 Even tough past information is available in theory, learning long time dependencies is problematic with classical neural nets. Due to problems with gradient descent on correlated data, the back-propagated derivative can sometimes become waker and weaker until it ultimately vanishes \cite{Hochreiter1998}. Another problem is that sometimes classical recurrent neural nets produce a gradient that blows up \cite{Pascanu2012}. The exploding gradients can be fixed by clipping, but vanishing gradients require more sophisticated treatment \cite{Bengio1993}.     
 
-\subsection{Long short-term memory}
+\subsubsection{Long short-term memory}
 Research seemed to be focused on solving the problem by making changes to the back-propagation algorithm. However a good solution to the problem turned out to
 be changing the network instead. Long short-term memory (LSTM) cells as proposed in \cite{Hochreiter1995} are more complex network units.
 These cells use the equation system \cite[page 5]{Graves2013}\footnote{ Various versions of LSTM cells exist. This one is commonly referred to as the \textquotedblleft peephole\textquotedblright $ \: $ variant. }:
@@ -139,7 +131,7 @@ This system of equations is visualized in figure~\ref{fig:lstm}. The diagram is 
 The following task is to determine what should be added to the memory. This information can be found in the input gate result $\mathbf{i}_t$. $\mathbf{i}_t$ is multiplied element wise with the candidate values $\mathbf{\bar{c}}_t$. These are computed by a hyperbolic tangent neuron.  The $\tanh(\cdot)$ function makes sure all vector elements are between $-1$ and $1$. The neuron computing the candidate state values $\mathbf{\bar{c}}_t$ looks at input data and the past outputs. Both are labeled $\mathbf{w}$ in figure~\ref{fig:lstm}, $\mathbf{w}$ contains all information that could possibly be included in the new state. Finally the weighted candidate values are added to what was previously stored. This operation leads to the updated memory state $\mathbf{c}_t$. 
 Last but not least the new output value has to be computed, which will be a filtered version of the cell state. The decision of which and how much of each state variable will be send outside is made by output gate. It's output $\mathbf{o}_t$ is multiplied with a rescaled version of the cell state. The rescaling is done using another hyperbolic tangent, which again sets all values between minus one and one. The product of this rescaled state and the weights found in $\mathbf{o}_t$ then yields the new output $\mathbf{h}_t$. 
 
-\subsection{Bidirectional Long Short Term Memory}
+\subsubsection{Bidirectional Long Short Term Memory}
 With the advent of LSTMs deep recurrent networks became feasible in speech recognition \cite{Graves2013b}. RNNs are always deep in time, because their hidden state depends on past inputs. To enable abstraction their structure must also be deep in space. A bidirectional LSTM layer is shown in figure~\ref{fig:blstm}. It is important to note, that linear neurons are used to compute the LSTM input as well as the outputs according to the equations \cite{Graves2013b}:
 \begin{align}
 \overrightarrow{\mathbf{h}}_t &= \text{LSTM}(\mathbf{W}_{\overrightarrow{\mathbf{h}}_t} [\mathbf{x}_t \; \mathbf{h}_{t-1}]^T + \mathbf{b}_{\overrightarrow{\mathbf{h}}_t}) 
@@ -203,7 +195,7 @@ $\alpha$ is produced by running $\mathbf{e}$ trough a softmax function, which sc
 \end{figure}
 
 \subsection{Training}
-For end-to-end speech recognition the all networks must be trained jointly. The objective is to maximize the logarithmic probability:
+For end-to-end speech recognition all networks must be trained jointly. The objective is to maximize the logarithmic probability:
 \begin{equation}
 \max\limits_\theta \sum\limits_{i} \log P(y_i | \mathbf{x}, y_{<i};\theta).
 \end{equation}
@@ -216,7 +208,7 @@ Which leads to the objective \cite[page 5]{Chan2015}:
 \end{align}
 The novelty in comparison to the previous expression is that $\hat{y}_{<i}$ is sometimes taken from the past network outputs instead of the ground truth. An idea which Chan et al. found in \cite{Bengio2015}.
 
-\subsection{Beam search}
+\subsection{Decoding with Beam search}
 In order to generate a readable text, it is necessary to choose characters from the generated character distributions. One way to do this is to simply pick the most likely letter from each distribution. This method ignores the possibility of generating better results by also considering less likely options. Therefore a broader search trough the most likely options is considered. Unfortunately memory limitations make it impossible to search trough all possible combinations. Therefore only the $n$ most likely options are explored and the rest is disregarded. Adding the most likely options for each letter produces a tree of possible transcriptions. The different routes along this tree are called hypotheses. A score for each hypothesis can be computed, by multiplication of the probability values the las-network assigned to each branch along its path. In beam search only the m most likely hypotheses are kept. Using only las-probabilities would be equivalent to picking the most likely letter at every node. Therefore a language model is required to pick the best hypothesis. Such models can be trained on text data only. A selection can then be made according to\cite[page 6]{Chan2015}:
 \begin{align}
 s(\mathbf{y}|\mathbf{x}) = \frac{\log P(\mathbf{y}|\mathbf{x})}{ |\mathbf{y}|_c} + \lambda \log P_{LM}(\mathbf{y})

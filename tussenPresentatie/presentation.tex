@@ -29,8 +29,9 @@
 \usepackage[utf8x]{inputenc}
 \setbeamertemplate{footline}[frame number]
 
-\title{Thesis intermediate Presentation}
+\title{Thesis Intermediate Presentation}
 \author{Moritz Wolter}
+
 \date{\today}
 
 \begin{document}
@@ -94,15 +95,6 @@
 \end{frame}
 
 
-\begin{frame}{Gradient Updates on Correlated Data}
-	\begin{figure}
-		\includestandalone[height=4 cm]{../tikz/uncorr}
-		\includestandalone[height=4 cm]{../tikz/corr}
-		\caption{Normally distributed random variables with $
-		\Sigma_1 = \mathbf{I}$ and $\Sigma_2 = (0.25 \; 0.3; \; 0.3 \; 1)$. }
-	\end{figure}
-\end{frame}
-
 
 \begin{frame}{Long Short Term Memory (LSTM)}
 	\begin{figure}
@@ -133,6 +125,13 @@
 
 \section{Listen Attend and Spell}
 
+\begin{frame}{The LAS-Architecture}
+\begin{figure}
+\includestandalone[height=6.5 cm]{../tikz/lasArcBottomUp}
+\caption{The LAS architecture}
+\label{fig:las}
+\end{figure}
+\end{frame}
 
 \begin{frame}{Listener}
 \begin{itemize}
@@ -174,14 +173,6 @@
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{The LAS-Architecture}
-\begin{figure}
-\includestandalone[height=6.5 cm]{../tikz/lasArcBottomUp}
-\caption{The LAS architecture}
-\label{fig:las}
-\end{figure}
-\end{frame}
-
 \begin{frame}{Decoding and Rescoring}
 \begin{itemize}
 	\item Humans do not read character distributions.
@@ -221,15 +212,37 @@
 \end{figure}
 \end{frame}
 
+\section{Planning}
+\begin{frame}{What happend so far? What will happen next?}
+\begin{itemize}
+\item What happend so far?
+	\begin{enumerate}
+		\item Literature overview.
+		\item Learned how to use tensorflow.
+		\item Looked into timit and aurora4.
+	\end{enumerate}
+\item What will happen next?
+		\begin{enumerate}
+			\item Finish implementing a skeleton LAS on Timit. 
+			\item Decoding with beam search.
+			\item Port to aurora4.
+		\end{enumerate}
+\end{itemize}
+\end{frame}
+
+
+\section{Questions}
 \begin{frame}{Summary and Questions}
 	The presentation covered:
 	\begin{itemize}
-		\item Input feature generation
-		\item The LSTM building block
-		\item A LAS-Architecture overview
-		\item The tensorflow toolbox
+		\item Input feature generation.
+		\item The LSTM building block.
+		\item A LAS-Architecture overview.
+		\item The tensorflow toolbox.
+		\item The plan.
 	\end{itemize}
-	Thank you for your attention. Questions?
+	Thank you for your attention. Questions? \\
+	\texttt{moritzalexander.wolter@student.kuleuven.be}
 \end{frame}
 
 

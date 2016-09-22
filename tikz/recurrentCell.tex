@@ -21,8 +21,9 @@
 \draw[->] (mergeW) -- (2,3) -- (4,3) -- (fun);
 
 \node (hNew) at (4,6) {$\mathbf{h}_{t}$};
+\node (yNew) at (0,6) {$\mathbf{y}_{t}$};
 \draw[->] (fun) -- (hNew);
-
+\draw[->] (fun) (4,5)-- (0,5) -- (yNew);
 
 \end{tikzpicture}
 \end{document}
