@@ -57,71 +57,59 @@
 \section{Listen Attend and Spell}
 
 \begin{frame}{The LAS-Architecture}
-\begin{figure}
-\begin{tikzpicture}
-    \node[anchor=south west,inner sep=0] at (0,0) {\includestandalone[height=6.5 cm]{../tikz/lasArcBottomUp}};
-    \draw[red,ultra thick,rounded corners] (0.0,0.0) rectangle (5.0,2.5);
-\end{tikzpicture}
-\caption{The LAS architecture}
-\label{fig:las}
-\end{figure}
+	\begin{figure}
+		\begin{tikzpicture}
+		    \node[anchor=south west,inner sep=0] at (0,0) {\includestandalone[height=6.5 cm]{../tikz/lasArcBottomUp}};
+		    \draw[red,ultra thick,rounded corners] (0.0,0.0) rectangle (5.0,2.5);
+		\end{tikzpicture}
+		\caption{The LAS architecture}
+		\label{fig:las}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Debugging The Listener}
+	\begin{figure}
+		\includestandalone[height=6.5 cm]{../tikz/blstmCTC}
+		\caption{BLSTM CTC schematic}
+	\end{figure}
 \end{frame}
 
 
-\begin{frame}{What is Tensorflow?}
-	\begin{itemize}
-		\item \textquotedblleft TensorFlow is an interface for expressing machine learning algoritms and an implementation for executing such algorithms. \textquotedblright \footnote{TensorFlow:
-			  Large-Scale Machine Learning on Heterogeneous Distributed Systems, Abadi et al, Google Research.}
-		\item Computations are described by directed graphs. 
-		\item Data-Tensors flow along graph edges.
-		\item Graphs are constructed using user specified elementary
-			  operations.
-		\item Computations are started by requesting certain values, which leads
-			  to (partial) evaluation of the graph.
-	\end{itemize}
+\begin{frame}{First Results on Timit}
+	\begin{figure}
+		\includestandalone[height=6.5 cm]{../tikz/ctc2LayerBLSTMclippedGrad}
+		\caption{BLSTM-CTC training and validation error on timit.}
+	\end{figure}
 \end{frame}
 
-
-\begin{frame}{Tensorflow}
-\begin{figure}
-\centering
-\includegraphics[width=0.7\linewidth]{../png/net1}
-\caption{A simple linear node in tensorboard}
-\label{fig:net1}
-\end{figure}
-\end{frame}
 
 \section{Planning}
 \begin{frame}{What happend so far? What will happen next?}
 \begin{itemize}
 \item What happend so far?
 	\begin{enumerate}
-		\item Literature overview.
-		\item Learned how to use tensorflow.
-		\item Looked into timit and aurora4.
+		\item Listener with CTC on Timit .
 	\end{enumerate}
 \item What will happen next?
 		\begin{enumerate}
-			\item Finish implementing a skeleton LAS on Timit. 
+			\item Switch to Aurora4.
+			\item Test the CTC-listener on Aurora4. 
+			\item Add attention based spelling to the listener.
 			\item Decoding with beam search.
-			\item Port to aurora4.
 		\end{enumerate}
+\item After that you take over!		
+	 \begin{enumerate}
+	 	\item Test the las skeleton on LibriSpeech.
+	 \end{enumerate}
 \end{itemize}
 \end{frame}
 
 
 \section{Questions}
-\begin{frame}{Summary and Questions}
-	The presentation covered:
-	\begin{itemize}
-		\item Input feature generation.
-		\item The LSTM building block.
-		\item A LAS-Architecture overview.
-		\item The tensorflow toolbox.
-		\item The plan.
-	\end{itemize}
+\begin{frame}{Questions}
 	Thank you for your attention. Questions? \\
-	\texttt{moritzalexander.wolter@student.kuleuven.be}
+	\texttt{moritzalexander.wolter@student.kuleuven.be} \\
+	or come and meet me in our LAS-room (02.88).
 \end{frame}
 
 
