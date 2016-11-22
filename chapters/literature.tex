@@ -35,14 +35,26 @@ Mel-Frequency banks are considered high level feature inputs. When the recogniti
 
 \section{Neural Networks}
 \subsection{Gradient descent}
-The optimization process of neural networks is done based on a training data set $\{\{\mathbf{x}_1,\mathbf{t}_1\}, \dots , \{\mathbf{x}_p,\mathbf{t}_p\} \}$ \cite[page 156]{Rojas1996}. The elements of this set are the input- and output-patters $\mathbf{x}$ and $\mathbf{t}$ respectively. Ideally the network output should be the same as the desired one for all data pairs. The difference between target and current outputs is measured by the cost function\cite[page 156]{Rojas1996}:
+The optimization process of neural networks is done based on a training data set $\{\{\mathbf{x}_1,\mathbf{t}_1\}, \dots , \{\mathbf{x}_p,\mathbf{t}_p\} \}$ \cite[page 156]{Rojas1996}. The elements of this set are the input- and output-patters $\mathbf{x}$ and $\mathbf{t}$ respectively. Ideally the network output should be the same as the desired one for all data pairs. The difference between target and current outputs could be measured by the cost function \cite[page 156]{Rojas1996}:
 \begin{align}
 E = \frac{1}{2}\sum\limits_{i=1}^{p} \| \mathbf{o}_i - \mathbf{t}_i \|^2.
 \end{align}
-During the training process a local minimum of the error function $E$ is sought. At this minimum the difference between the network output $\mathbf{o}$ and the target values $\mathbf{t}$ is as small. This value might not be the smallest possible value, termination can happen at the global or a local minimum. 
+However generally the more complex cross-entropy is used as a cost function. Cross entropy is defined as \cite[page 245]{Bishop1995}:
+\begin{equation}
+E = - \sum\limits_{i=1}^{p} {\mathbf{t}_i \log(\mathbf{o}_i)} + (1 - \mathbf{t}_i)\log(1 - \mathbf{o}_i)
+\end{equation}
+In order to understand why the cross entropy is a measure of output error, the two scalar cases $t=0$ and $t=1$ are considered. For $t = 0$ the cross entropy simplifies to $-\log(1 - o)$. Looking at figure~\ref{fig:logPlot}, this expression turns out to be a good cost function, because for values close to the desired output $o = 0$, $-\log(1 - o)$ will be close to zero. If the output moves away from the desired value zero, the cost grows asymptotically. If $t = 1$ is considered the cost function simplifies to $-\log(o)$ which will be zero for the desired output and once more displays asymptotic growth for undesired values far away from one. If the target probability is somewhere between these two extreme cases the cost will be the sum of the two cases considered earlier. Cross entropy is statistically motivated, the output vectors $\mathbf{o}$ describe probability distributions over the possible labels, their elements must therefore be $\in (0,1)$ and sum op to one.  
+\begin{figure}
+\centering
+\includestandalone[width=6cm]{../tikz/logPlot}
+\caption{Plot of $y = -\log(x)$ for $x \in (0,1)$.}
+\label{fig:logPlot}
+\end{figure}
+
+During the training process a local minimum of the error function $E$ is sought. At this minimum the difference between the network output $\mathbf{o}$ and the target values $\mathbf{t}$ is small. This value might not be the smallest possible value, termination can happen at the global or a local minimum. 
 After the training process has completed the network is expected to identify similarities to data seen during the training process and produce a similar output. 
 In order to reach a local minimum, the gradient of the error function is needed. The key idea of gradient descent is to follow the negative gradient until a local minimum is reached. 
-Neural networks can be considered as large composite functions, which are made up of elementary operations. The evaluation of the network can be written as a graph. Computations are done at each node and information travels trough the network along directed edges from node to node. In order to create a computational graph for the training process each of the output units of the network under consideration are connected to a new node which computes $\frac{1}{2}(o_{ij} - t_{ij})^2$\cite[page 157]{Rojas1996}. These new nodes in turn are connected to one more node, which sums up all error values and produces $E_i$. The process described above must be repeated for all training data pairs. One final node is added, which sums up all values $E_i$. Its output gives the value for the error function $E$ which is now in the form of a large graph.\\
+Neural networks can be considered as large composite functions, which are made up of elementary operations. The evaluation of the network can be written as a graph. Computations are done at each node and information travels trough the network along directed edges from node to node. In order to create a computational graph for the training process each of the output units of the network under consideration are connected to a new node which computes $\frac{1}{2}(o_{ij} - t_{ij})^2$\cite[page 157]{Rojas1996} or the cross-entropy term or one data target pair. These new nodes in turn are connected to one more node, which sums up all error values and produces $E_i$. The process described above must be repeated for all training data pairs. One final node is added, which sums up all values $E_i$. Its output gives the value for the error function $E$ which is now in the form of a large graph.\\
 Reverse mode algorithmic differentiation or back-propagation is an algorithm to compute the gradient of a graph consisting of basic elementary operations. As an example its operation is now illustrated using the function \cite[page 69]{Diehl2013}:
 \begin{align}
 f(x_1,x_2,x_3) = \sin(x_1 x_2) + \exp(x_1 x_2 x_3)
@@ -79,26 +91,28 @@ To be able to perform the first forward sweep the network weights are initialize
 
 \subsection{Deep Neural Networks}
 \subsubsection{Stochastic gradient descent}
-When training networks on very large training sets, working with the full data set to compute the current gradient becomes very inefficient. As a remedy its is good practice in machine learning to work with so called mini-batches. A mini-batch includes a random subset of the training data set. This procedure is known as randomized gradient descent. During training the stochastic process goes trough the data mini-batch by mini-batch. 
+When training networks on very large training sets, working with the full data set to compute the current gradient becomes very inefficient. As a remedy its is good practice in machine learning to work with so called mini-batches. A mini-batch includes a random subset of the training data set. This procedure is known as randomized gradient descent. During training the stochastic process goes trough the data mini-batch by mini-batch, the gradient is accumulated and applied for the entire batch after all mini-batches have been processed. 
 
 \subsection{Recurrent Neural Networks}
 \begin{figure}
 \centering
+\includestandalone[width=7cm]{../tikz/recurrentCell}
+\caption{Visualization of a single recurrent cell.}
+\label{fig:singleRecCell}
 \includestandalone[width=9cm]{../tikz/recNet}
 \caption{Rolled (left) and unrolled (right) recurrent neural net with two units.}
 \label{fig:unrolledNet}
 \end{figure}
 When processing speech its is important to take context into account. When spelling the letters which make up a word, it is important to know what the previous letter was, in order to make the right decision. 
-Feed-forward neural nets do not possess memory. These networks make decisions, starting from zero every time. In oder to fix this a cell state variable can be introduced. This state is fed back into the cell together with new inputs every time step. Such a layout is shown in figure~\ref{fig:unrolledNet} on the left. 
-Another way to depict the same network is to not only consider the spacial dimension, but add the time axis as well. Figures, which show the spacial and time dimension are called unrolled network diagrams, shown in figure~\ref{fig:unrolledNet} on the right. The unrolled form shows a direct dependency of the output at time $t$ on the previous output at $t-1$. This causes $y_t$ and $y_{t-1}$ to change together. Or in other words: The introduction of recurrent connections leads to correlation of the two outputs. 
+Feed-forward neural nets do not possess memory. These networks make decisions, starting from zero every time. In oder to fix this a cell state variable can be introduced. A simple recurrent cell where the current state is set to the previous output is shown in figure~\ref{fig:singleRecCell}. Another way to depict the same architecture is shown in Figure~\ref{fig:unrolledNet}, here the cell state is not labeled explicitly, the single cell on the left is just a simplified version of the figure above. If the network is unrolled in time the flow of the state becomes apparent, which is done in figure~\ref{fig:unrolledNet} on the right.
+The unrolled form shows a direct dependency of the output at time $t$ on the previous output at $t-1$. This causes $y_t$ and $y_{t-1}$ to change together. Or in other words: The introduction of recurrent connections leads to correlation of the two outputs. 
 
 
 \subsubsection{The exploding and vanishing gradient problem}
-Even tough past information is available in theory, learning long time dependencies is problematic with classical neural nets. Due to problems with gradient descent on correlated data, the back-propagated derivative can sometimes become waker and weaker until it ultimately vanishes \cite{Hochreiter1998}. Another problem is that sometimes classical recurrent neural nets produce a gradient that blows up \cite{Pascanu2012}. The exploding gradients can be fixed by clipping, but vanishing gradients require more sophisticated treatment \cite{Bengio1993}.     
+Even tough past information is available in theory, learning long time dependencies is problematic with classical neural nets. Due to problems with gradient descent on correlated data, the back-propagated derivative can sometimes become weaker and weaker until it ultimately vanishes \cite{Hochreiter1998}. Another problem is that sometimes classical recurrent neural nets produce a gradient that blows up \cite{Pascanu2012}. The exploding gradients can be fixed by clipping, but vanishing gradients require more sophisticated treatment \cite{Bengio1993}.     
 
 \subsubsection{Long short-term memory}
-Research seemed to be focused on solving the problem by making changes to the back-propagation algorithm. However a good solution to the problem turned out to
-be changing the network instead. Long short-term memory (LSTM) cells as proposed in \cite{Hochreiter1995} are more complex network units.
+Initially researchers tried to solve the vanishing gradient problem by making changes to the back-propagation algorithm. However a good solution to the problem turned out to be changing the network architecture instead. Long short-term memory (LSTM) cells as proposed in \cite{Hochreiter1995} are more complex network units.
 These cells use the equation system \cite[page 5]{Graves2013}\footnote{ Various versions of LSTM cells exist. This one is commonly referred to as the \textquotedblleft peephole\textquotedblright $ \: $ variant. }:
 \begin{align}
 \mathbf{i_t} &= \sigma (\mathbf{W}_{ix} \mathbf{x}_t + \mathbf{W}_{ih} \mathbf{h_{t-1}} + \mathbf{W}_{ic} \mathbf{c_{t-1}} +\mathbf{ b}_i) \\
@@ -127,12 +141,12 @@ Which this relation in mind the equations above can be rewritten, by creating co
 \caption{Visualization of the LSTM architecture.}
 \label{fig:lstm}
 \end{figure}
-This system of equations is visualized in figure~\ref{fig:lstm}. The diagram is read from bottom to top. The most important part is the line from $\mathbf{c}_{t-1}$ to $\mathbf{c}_{t}$ \cite{Colah2015}. It records operations on the cell state $\mathbf{c_t}$. The cell state contains information from the past which helps the block make decisions regarding the current output $\mathbf{h}_t$. The sigmoid functions $\sigma(\cdot)$ are applied element wise on the input vectors and produce outputs between zero and one. In the case of the forget gate output $\mathbf{f}_t$ these values $\in (0,1)$ well serve as a measure of how much of the past state the cell would like to remember. One means keep this variable and zero throw it away \cite{Colah2015}. 
+This system of equations is visualized in figure~\ref{fig:lstm}. The just like diagram~\ref{fig:singleRecCell} this depiction is read from bottom to top. The most important part is the line from $\mathbf{c}_{t-1}$ to $\mathbf{c}_{t}$ \cite{Colah2015}. It records operations on the cell state $\mathbf{c_t}$. The cell state contains information from the past which helps the block make decisions regarding the current output $\mathbf{h}_t$. The sigmoid functions $\sigma(\cdot)$ are applied element wise on the input vectors and produce outputs between zero and one. In the case of the forget gate output $\mathbf{f}_t$ these values $\in (0,1)$ well serve as a measure of how much of the past state the cell would like to remember. One means keep this variable and zero throw it away \cite{Colah2015}. 
 The following task is to determine what should be added to the memory. This information can be found in the input gate result $\mathbf{i}_t$. $\mathbf{i}_t$ is multiplied element wise with the candidate values $\mathbf{\bar{c}}_t$. These are computed by a hyperbolic tangent neuron.  The $\tanh(\cdot)$ function makes sure all vector elements are between $-1$ and $1$. The neuron computing the candidate state values $\mathbf{\bar{c}}_t$ looks at input data and the past outputs. Both are labeled $\mathbf{w}$ in figure~\ref{fig:lstm}, $\mathbf{w}$ contains all information that could possibly be included in the new state. Finally the weighted candidate values are added to what was previously stored. This operation leads to the updated memory state $\mathbf{c}_t$. 
-Last but not least the new output value has to be computed, which will be a filtered version of the cell state. The decision of which and how much of each state variable will be send outside is made by output gate. It's output $\mathbf{o}_t$ is multiplied with a rescaled version of the cell state. The rescaling is done using another hyperbolic tangent, which again sets all values between minus one and one. The product of this rescaled state and the weights found in $\mathbf{o}_t$ then yields the new output $\mathbf{h}_t$. 
+Last but not least the new output value has to be computed, which will be a filtered version of the cell state. The decision of which and how much of each state variable will be send outside is made by the output gate. It's output $\mathbf{o}_t$ is multiplied with a rescaled version of the cell state. The rescaling is done using another hyperbolic tangent, which again sets all values between minus one and one. The product of this rescaled state and the weights found in $\mathbf{o}_t$ then yields the new output $\mathbf{h}_t$. 
 
 \subsubsection{Bidirectional Long Short Term Memory}
-With the advent of LSTMs deep recurrent networks became feasible in speech recognition \cite{Graves2013b}. RNNs are always deep in time, because their hidden state depends on past inputs. To enable abstraction their structure must also be deep in space. A bidirectional LSTM layer is shown in figure~\ref{fig:blstm}. It is important to note, that linear neurons are used to compute the LSTM input as well as the outputs according to the equations \cite{Graves2013b}:
+With the advent of LSTMs deep recurrent networks became feasible in speech recognition \cite{Graves2013b}. RNNs are always deep in time, because their hidden state depends on past inputs. To enable abstraction their structure must also be deep in space. A bidirectional LSTM layer is shown in figure~\ref{fig:blstm}. It is important to note, that several LSTM layers are often followed by a single linear layer, as is the case in \cite{Graves2013b}:
 \begin{align}
 \overrightarrow{\mathbf{h}}_t &= \text{LSTM}(\mathbf{W}_{\overrightarrow{\mathbf{h}}_t} [\mathbf{x}_t \; \mathbf{h}_{t-1}]^T + \mathbf{b}_{\overrightarrow{\mathbf{h}}_t}) 
 \\
@@ -152,14 +166,13 @@ If stacked on top of each other, these bidirectional LSTM layers form a deep rec
 \\
 \overleftarrow{\mathbf{h}}_t^n &= \text{LSTM}(\mathbf{W}_{\overleftarrow{\mathbf{h}}_t}^n [\mathbf{h}_t^{n-1} \; \mathbf{h}_{t+1}^n]^T + \mathbf{b}_{\overleftarrow{\mathbf{h}}_t}^n)
 \\
-\mathbf{h}_t^n &= \mathbf{W}_{y}^n [\overrightarrow{\mathbf{h}}_t \; \overleftarrow{\mathbf{h}}_t]^T + \mathbf{b}_y^n
+\mathbf{h}_t^N &= \mathbf{W}_{y}^N [\overrightarrow{\mathbf{h}}_t \; \overleftarrow{\mathbf{h}}_t]^T + \mathbf{b}_y^N
 \end{align}
 In this setting each LSTM cell has access to information from before or after it. For this to work the speech sequence, which is analyzed has to be recorded completely. In this case future information is available and should be used for recognition purposes.
 
 \section{Tensor-flow}
 In this section is devoted to the toolbox, which will be used to implement the Listen Attend and spell, architecture. According to the Tensor-flow authors \cite{Agarwal2015}: 
-\textquotedblleft TensorFlow is an interface for expressing machine learning algorithms, and an implementation for executing such algorithms\textquotedblright . It was released by Google in 2015 and after installation can be used from within Python or C++. 
-
+\textquotedblleft TensorFlow is an interface for expressing machine learning algorithms, and an implementation for executing such algorithms\textquotedblright . It was released by Google in 2015 and can be used from within Python or C++. 
 
 
 \section{Listen, Attend and Spell}
@@ -168,7 +181,7 @@ The Listen Attend and Spell architecture (LAS) is the main Idea around which thi
 %vectors and produces an output sequence \cite{Sutskever2014}.
 
 \subsection{The listener}
-The listener shown in figure~\ref*{fig:las} on the bottom, consists of Bidirectional Long Short Term Memory RNN (BLSTM) blocks. This choice implies that only fully recorded data can be analyzed.  These blocks are arranged in a pyramidal structure, such that the time resolution is cut in half in every layer. This operation reduces the length $U$ of the high level features $\mathbf{H}$. Without this compression the following attend and spell operation has a hard time extracting the relevant information. Additionally the compression reduces the problem complexity, which speeds up the training process significantly \cite[page 4]{Chan2015}.
+The listener shown in figure~\ref*{fig:las} on the bottom, consists of Bidirectional Long Short Term Memory RNN (BLSTM) blocks. This choice implies that only fully recorded data can be analyzed.  These blocks are arranged in a pyramidal structure, such that the time resolution is cut in half in every layer. This operation reduces the length $U$ of the high level features $\mathbf{H}$. Without this compression the following attend and spell operation has a hard time extracting the relevant information, because a longer time span has to be considered to decode a single character. Additionally the compression reduces the problem complexity, which speeds up the training process significantly \cite[page 4]{Chan2015}.
 
 \subsection{Attend and spell}
 The speller takes the features and produces a distribution over Latin character sequences as output. The computation of this output involves the context vector $\mathbf{c}_i$, the decoder state $\mathbf{s}_i$, the features $\mathbf{H}$ and the previous output $\mathbf{y}_i$. The index $i$ denotes time, $i-1$ is used to refer to results from the last time step. \\
@@ -208,7 +221,7 @@ Which leads to the objective \cite[page 5]{Chan2015}:
 \end{align}
 The novelty in comparison to the previous expression is that $\hat{y}_{<i}$ is sometimes taken from the past network outputs instead of the ground truth. An idea which Chan et al. found in \cite{Bengio2015}.
 
-\subsection{Decoding with Beam search}
+\subsection{Decoding with beam search}
 In order to generate a readable text, it is necessary to choose characters from the generated character distributions. One way to do this is to simply pick the most likely letter from each distribution. This method ignores the possibility of generating better results by also considering less likely options. Therefore a broader search trough the most likely options is considered. Unfortunately memory limitations make it impossible to search trough all possible combinations. Therefore only the $n$ most likely options are explored and the rest is disregarded. Adding the most likely options for each letter produces a tree of possible transcriptions. The different routes along this tree are called hypotheses. A score for each hypothesis can be computed, by multiplication of the probability values the las-network assigned to each branch along its path. In beam search only the m most likely hypotheses are kept. Using only las-probabilities would be equivalent to picking the most likely letter at every node. Therefore a language model is required to pick the best hypothesis. Such models can be trained on text data only. A selection can then be made according to\cite[page 6]{Chan2015}:
 \begin{align}
 s(\mathbf{y}|\mathbf{x}) = \frac{\log P(\mathbf{y}|\mathbf{x})}{ |\mathbf{y}|_c} + \lambda \log P_{LM}(\mathbf{y})
@@ -216,6 +229,7 @@ s(\mathbf{y}|\mathbf{x}) = \frac{\log P(\mathbf{y}|\mathbf{x})}{ |\mathbf{y}|_c}
 Here $P_{LM}$ denotes the weight the language model assigns to each hypothesis. And $\lambda$ is a weight factor, which determines the language model importance. 
 
 
-
+\section{CTC}
+Connectionist temporal classification. Get's us feature target alignments :-D.
 
 

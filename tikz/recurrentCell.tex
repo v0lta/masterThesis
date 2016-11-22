@@ -8,8 +8,8 @@
 \tikzstyle{times}=[rectangle,fill=red!50,minimum size=17pt,inner sep=0pt]
 \tikzstyle{plus}=[rectangle,fill=blue!50,minimum size=17pt,inner sep=0pt]
 
-\node (x)    at (0,0) {$\mathbf{x}_t$};
-\node (hOld) at (4,0) {$\mathbf{h}_{t-1}$};
+\node (x)    at (4,0) {$\mathbf{x}_t$};
+\node (hOld) at (0,0) {$\mathbf{c}_{t-1}$};
 
 
 \node[merge] (mergeW) at (2,2) {$\mathbf{w} = [\mathbf{x}_t; \mathbf{h}_{t-1}]$};
@@ -20,10 +20,10 @@
 \node[fun] (fun) at (4,4) {$\tanh(\mathbf{W} \mathbf{w} + \mathbf{b})$};
 \draw[->] (mergeW) -- (2,3) -- (4,3) -- (fun);
 
-\node (hNew) at (4,6) {$\mathbf{h}_{t}$};
-\node (yNew) at (0,6) {$\mathbf{y}_{t}$};
-\draw[->] (fun) -- (hNew);
-\draw[->] (fun) (4,5)-- (0,5) -- (yNew);
+\node (hNew) at (0,6) {$\mathbf{c}_{t}$};
+\node (yNew) at (4,6) {$\mathbf{y}_{t}$};
+\draw[->] (fun) -- (yNew);
+\draw[->] (fun) (4,5)-- (0,5) -- (hNew);
 
 \end{tikzpicture}
 \end{document}
