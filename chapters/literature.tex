@@ -132,12 +132,11 @@ Above $m \in [0,1]$ denotes the momentum. In order to understand the effect of t
 Using the fact that the sum of the geometric series is known and $|m| < 1$ must hold. The momentum term therefore changes the effective learning rate from $\alpha$ to $\frac{\alpha}{ 1 - m}$ in regions of low curvature. Elsewhere the gradient is oscillatory, which leads to cancellation of successive contribution of the momentum term \cite[page 267]{Bishop1995}.
 
 \subsection{Deep Neural Networks}
-In machine learning increasing the network depth yields better results than the width. Additionally avoiding separately trained systems, in favor of end-to-end systems can lead to deep networks.
-%TODO: Come up with a good definition of deep learning?! 
-
-
+Deep learning deals with the design of computational nets, consisting of multiple layers, which learn representations of data. Deep networks are often used when abstract
+patterns must be found. Simple networks are often unable to cope with the problem complexity, and fail to recognize the underlying structure. Human speech features such complex patterns, therefore deep networks must be considered. Increasing the network depth leads to many additional weights, for which a suitable value must be found.
+In addition to the added memory load caused by the extra weights, the optimization process must look trough large data sets until a suitable optimum is reached.
 \subsubsection{Stochastic gradient descent}
-When training deep  networks on very large training sets, working with the full data set to compute the current gradient becomes very inefficient. As a remedy its is good practice in machine learning to work with so called mini-batches. A mini-batch includes a random subset of the training data set. This procedure is known as randomized gradient descent. During training the stochastic process goes trough the data mini-batch by mini-batch, the gradient is accumulated and applied for the entire batch after all mini-batches have been processed. 
+When training deep  networks on very large data sets, working with the full data set to compute the current gradient becomes very inefficient. It is common practice to use stochastic gradient descent instead of the classic algorithm. The idea is to select small subsets of the full data set. These so called mini-batches are the used to compute the outputs and errors, as well as the gradients for these smaller examples. Instead of working with the gradient of the union of these mini-batches the average gradient is computed and used to update the network weights. This approach dramatically reduces the memory requirements of the training process, which makes it possible to work with more sophisticated network designs.
 
 \subsection{Recurrent Neural Networks}
 \begin{figure}
@@ -251,7 +250,7 @@ In a first step all a mapping $\mathcal{B}$ is introduced, which simplifies the 
 p(\mathbf{l|\mathbf{x}}) = \sum\limits_{\pi \in \mathcal{B}^{-1}(\mathbf{l})}p(\pi|\mathbf{x}).
 \end{equation} 
 Generally speaking this collapsing process is what makes it possible to use CTC with unaligned data. 
-
+%TODO: expand this section.
 
 CTC takes into account only the features and (depending on how the beam search is done) ignores the label it previously produced. Additionally the network output is coupled to the input frames. This shortcoming lead to the development of so called transducers. These models decouple the decoding time from the input time and use past labels to improve performance.
 
