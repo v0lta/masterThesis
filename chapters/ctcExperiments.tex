@@ -14,40 +14,40 @@ The transcriptions contain a total of 64 possible phonetic labels, in the litera
 
 \begin{figure}
 \centering
-\includegraphics[width=0.7\linewidth]{../png/phoneTable}
+\includegraphics[width=0.7\linewidth]{png/phoneTable}
 \caption{48 to 39 phoneme folding as shown in \cite{Lee1989}.}
 \label{fig:phoneTable}
 \end{figure}
 
-For all experiments the timit data set is split into a training, validation and test set. Containing 3696, 400 and 192 sentences \cite[page  80]{Graves2012}.  
+For all experiments the timit data set is split into a training, validation and test set. Containing 3696, 400 and 192 sentences \cite[page  80]{Graves2012}.
 
 
 \section{BLSTM-CTC}
 This section explores bidirectional long short term memory layers with CTC output on the timit corpus \cite{Graves2012, Graves2006}. Training began after transforming of the speech data into Mel frequency cepstral coefficients (\textit{MFCCC}s) augmented with first and second derivative information. The phonemes where folded as described above. Two \textit{BLSTM} layers where stacked on top of each other. The logits computed by the two layers where then fed into a CTC output layer, finally beam search decoding with a beam width of 100 was used for find the phoneme predictions. The whole network was optimized using gradient descent and a learning rate of $10^(-3)$. To ensure generalization normal input noise $\mathcal{N}(\mu = 0,\sigma = 0.65)$ was added to the inputs. All feed-forward weights where initialized using another Gaussian $\mathcal{N}(0, 0.1)$, lstm weights were initialized using a random uniform distribution $\mathcal{U}(-0.1, 0.1)$. Gradients where clipped such that all gradient elements are within $(-1,1)$.
 \begin{figure}
 \centering
-\includestandalone[width=0.49\linewidth]{../tikz/listener_no_pyramid}
-\includestandalone[width=0.49\linewidth]{../tikz/listener_no_pyramid810}
+\includestandalone[width=0.49\linewidth]{tikz/listener_no_pyramid}
+\includestandalone[width=0.49\linewidth]{tikz/listener_no_pyramid810}
 \caption{Validation and Test set error while training a two layer BLSTM network with CTC output layer on the TIMIT speech corpus with 39 folded phonemes.}
 \label{fig:ctc2BLSTM41}
 \end{figure}
-Results of the training process are shown in figure~\ref*{fig:ctc2BLSTM41}. In the experiment the training process was stopped after 10 epochs to be able to compare the result to the pyramidal listener experiment in the next chapter, at this point the phoneme error rate of this layout was at $29\%$. However if the training process is continued with decreasing learning rates the error rate values close to $24\%$ eventually.  
+Results of the training process are shown in figure~\ref*{fig:ctc2BLSTM41}. In the experiment the training process was stopped after 10 epochs to be able to compare the result to the pyramidal listener experiment in the next chapter, at this point the phoneme error rate of this layout was at $29\%$. However if the training process is continued with decreasing learning rates the error rate values close to $24\%$ eventually.
 
 \subsection{Efficient sequence to sequence implementations}
-When working with sequence to sequence methods such as CTC, data processing problems arise naturally. For efficiency reasons it is beneficial to work with 
-fixed size data tensors. However the number of frames varies significantly between utterances. The same holds true for the target lengths. In order to still be able to work with fixes size tensors, the inputs and targets are padded with zeros or unknown tokens to fill up the length differences. 
+When working with sequence to sequence methods such as CTC, data processing problems arise naturally. For efficiency reasons it is beneficial to work with
+fixed size data tensors. However the number of frames varies significantly between utterances. The same holds true for the target lengths. In order to still be able to work with fixes size tensors, the inputs and targets are padded with zeros or unknown tokens to fill up the length differences.
 In order to keep the speed benefit of working with tensors it is important to
 keep track of the sequence lengths of every individual utterance.
 The sequence length information must be used to avoid actually processing any of the padded data, that the tensors where filled up with in order to allocate memory faster.
 The listener produces a three dimensional logit tensor of size $[B, T, F]$, where $B$ denotes the batch size, $T$ the largest occuring frame number and $F$ the feature dimension size. When implementing the output layer the na\"{\i}ve approach would be to loop over the time dimension, and evaluate the linear layer T times with a $B$ times $F$ matrix. Which is simple to implement but very inefficient. Instead the sequence information should be used to remove the padding and concatenate the batch dimension into a matrix $\mathbf{X}$ of size $[S, F]$, where $S$ denotes the sum of all sequence lengths. The linear layer can then be evaluated as:
 \begin{equation}
-\mathbf{W}\mathbf{X} + \mathbf{b} = \mathbf{R} 
-\end{equation}   
+\mathbf{W}\mathbf{X} + \mathbf{b} = \mathbf{R}
+\end{equation}
 The result matrix $R$ can then be converted back into a padded tensor using the sequence length information one more time.
 An alternative approach which avoids reshaping is to implement a linear recurrent network cell with a state size of zero and use dynamic unrollings the evaluate the linear layer. The resulting memory requirements and speed are comparable.
 
 
-  
+
 
 
 

@@ -5,7 +5,7 @@
 \subsubsection{Filter-Bank features}
 \begin{figure}
 \centering
-\includegraphics[width=1.0\linewidth]{../png/timitInput}
+\includegraphics[width=1.0\linewidth]{/png/timitInput}
 \caption{Frequency Bank input computed from a sentence contained in the \textit{TIMIT} dataset. Time is shown on x and Frequency on the y-Axis.}
 \label{fig:timitInput}
 \end{figure}
@@ -18,8 +18,8 @@ A normalized plot of this function is shown in figure~\ref{fig:mel} on the left.
 According to the Mel-scale, humans are able to distinguish more lower frequencies than higher frequencies. In the plot the first four thousand Herz occupy roughly eighty percent of the scale. The band from four thousand to eight thousand Herz is left with only about twenty percent of the scale, even tough half of the considered frequencies are in this band.
 \begin{figure}
 \centering
-\includestandalone[width=6cm]{../tikz/melScale}
-\includestandalone[width=6cm]{../tikz/melBank}
+\includestandalone[width=6cm]{tikz/melScale}
+\includestandalone[width=6cm]{tikz/melBank}
 \caption{The Mel-scale (blue) with Mel-Frequency Cepstrum Coefficients (red)  on the left. Filterbank with Mel-spaced filters (right).}
 \label{fig:mel}
 \end{figure}
@@ -74,7 +74,7 @@ E = - \sum\limits_{i=1}^{p} {\mathbf{t}_i \ln(\mathbf{o}_i)} + (1 - \mathbf{t}_i
 In order to understand why the cross entropy is a measure of output error, the two scalar cases $t=0$ and $t=1$ are considered. For $t = 0$ the cross entropy simplifies to $-\ln(1 - o)$. Looking at figure~\ref{fig:logPlot}, this expression turns out to be a good cost function, because for values close to the desired output $o = 0$, $-\ln(1 - o)$ will be close to zero. If the output moves away from the desired value zero, the cost grows asymptotically. If $t = 1$ is considered the cost function simplifies to $-\ln(o)$ which will be zero for the desired output and once more displays asymptotic growth for undesired values far away from one. If the target probability is somewhere between these two extreme cases the cost will be the sum of the two cases considered earlier. Cross entropy is statistically motivated, the output vectors $\mathbf{o}$ describe probability distributions over the possible labels, their elements must therefore be $\in (0,1)$ and sum op to one.
 \begin{figure}
 \centering
-\includestandalone[width=6cm]{../tikz/logPlot}
+\includestandalone[width=6cm]{tikz/logPlot}
 \caption{Plot of $y = -\ln(x)$ for $x \in (0,1)$.}
 \label{fig:logPlot}
 \end{figure}
@@ -106,10 +106,10 @@ Computing the gradient means computing the partial derivatives of $f$ with respe
 Above the derivatives have been found by hand using the chain rule. Now these will be computed using back-propagation. Figure~\ref{fig:networkGraph} shows a graphical representation of equation~\ref{eq:backFun}. The partial derivatives needed for the backwards sweep can be found on the edges. \\
 \begin{figure}
 \centering
-\includestandalone[width=12cm]{../tikz/gd_exampleNet}
+\includestandalone[width=12cm]{tikz/gd_exampleNet}
 \caption{Example funciton network with partial derivatives.}
 \label{fig:networkGraph}
-\includestandalone[width=12cm]{../tikz/gd_reverseSweep}
+\includestandalone[width=12cm]{tikz/gd_reverseSweep}
 \caption{Reverse sweep.}
 \label{fig:reverseSweep}
 \end{figure}
@@ -152,10 +152,10 @@ When training deep  networks on very large data sets, working with the full data
 \subsection{Recurrent Neural Networks}
 \begin{figure}
 \centering
-\includestandalone[width=7cm]{../tikz/recurrentCell}
+\includestandalone[width=7cm]{tikz/recurrentCell}
 \caption{Visualization of a single recurrent cell.}
 \label{fig:singleRecCell}
-\includestandalone[width=9cm]{../tikz/recNet}
+\includestandalone[width=9cm]{tikz/recNet}
 \caption{Rolled (left) and unrolled (right) recurrent neural net with two units.}
 \label{fig:unrolledNet}
 \end{figure}
@@ -193,7 +193,7 @@ Which this relation in mind the equations above can be rewritten, by creating co
 \mathbf{h_t} &= \mathbf{o_t} \tanh(\mathbf{c_t})
 \end{align}
 \begin{figure}
-\includestandalone[width=\textwidth]{../tikz/lstm}
+\includestandalone[width=\textwidth]{tikz/lstm}
 \caption{Visualization of the LSTM architecture.}
 \label{fig:lstm}
 \end{figure}
@@ -234,7 +234,7 @@ With the advent of LSTMs deep recurrent networks became feasible in speech recog
 \end{align}
 \begin{figure}
 \centering
-\includestandalone[height=7 cm]{../tikz/blstm2}
+\includestandalone[height=7 cm]{tikz/blstm2}
 \caption{A bidirectional Long short term memory layer, according to \cite{Graves2013b} }
 \label{fig:blstm}
 \end{figure}
@@ -299,7 +299,7 @@ e_{i,u} = \phi(\mathbf{s}_i)^T \psi(\mathbf{h_u}) \\
 $\alpha$ is produced by running $\mathbf{e}$ trough a softmax function, which scales $\mathbf{e}$ such that all elements are within $(0,1)$ and add up to one. These scaled weights, can then be used to form the context vector $\mathbf{c}_i$. When the training process converges the $\alpha_i$s typically follow a distribution with sharp edges\cite[page 5]{Chan2015}. Thus it is justified to think of the alphas as a sliding window. This window contains only the currently relevant parts of the condensed input data set.
 
 \begin{figure}
-\includestandalone[width=\textwidth]{../tikz/lasArcBottomUp}
+\includestandalone[width=\textwidth]{tikz/lasArcBottomUp}
 \caption{The LAS architecture \cite[page 3]{Chan2015}. BLSTM blocks are shown in red. LSTM blocks in blue and attention nets in green.}
 \label{fig:las}
 \end{figure}
@@ -325,8 +325,8 @@ s(\mathbf{y}|\mathbf{x}) = \frac{\log P(\mathbf{y}|\mathbf{x})}{ |\mathbf{y}|_c}
 \end{align}
 Here $P_{LM}$ denotes the weight the language model assigns to each hypothesis. And $\lambda$ is a weight factor, which determines the language model importance.
 
-\subsection{Levenstein distance}
-%TODO!!!
+\subsection{Levenshtein distance}
+A metric is required to measure the quality is label sequences. The Levenshtein or edit distance is such a metric. It can be thought of as the minimum number insertions, deletions or substitutions required to transform one sequence into the other.
 
 \section{Tensor-flow}
 In this section is devoted to the toolbox, which will be used to implement the Listen Attend and spell, architecture. According to the Tensor-flow authors \cite{Agarwal2015}:

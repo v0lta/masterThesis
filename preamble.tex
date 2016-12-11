@@ -32,7 +32,8 @@
 \usetikzlibrary{positioning,arrows,calc}
 \usetikzlibrary{external}
 \tikzset{external/system call={lualatex -shell-escape -halt-on-error -interaction=batchmode -jobname "\image" "\texsource"}}
-\tikzexternalize
+\tikzexternalize[prefix=figures/]
+
 
 \usepackage{pgfplots}
 \usepackage{pgf}

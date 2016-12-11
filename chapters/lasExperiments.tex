@@ -1,23 +1,30 @@
 \section{Listen attend and spell experiments}
+In this section experiments use the full listen attend and spell architecture. After verification of the listener using a CTC output layer, the listen attend and spell network is first tested using greedy decoding. In contrast to beam search greedy decoding, does not maintain several hypotheses, instead it works with the most likely label each time step.
+
+\subsection{Non experimental verification of the code}
+Testing code implementing artificial neural networks is difficult, because experiments only start to work once all issues in the code have been fixed. A single bug can prevent experiments from working, in such a case the only feedback the programmer gets is a negative experimental result. In order to prevent incorrect implementations in recurrent neural networks it is important to strictly enforce shape invariants of state tensors in loops. This means that the shape of the tensors going into an RNN cell must have the same size when they leave. This way one can be certain, that for example the network does not change the number of label probabilities it predicts over time.
+
 \subsection{Testing the Listener}
 A crucial part of the listen attend and spell architecture is formed by the listener. Before working with a fully-fledged las a CTC-layer will be attached to the listener.
 The idea is to verify the implementation. If CTC can extract relevant information from the listener, the attend and spell code should be able to do the same in later experiments. In order to keep memory requirements manageable in later experiments with the same listener all LSTM cells where set up with 64 hidden units. As the listener layers are bidirectional this means 64 in each direction so the hidden dimension is 128 in total. This sum is important, because the feature dimension of the lstm outputs is concatenated for each time step. If not further action is taken the listener produces features with a dimension of two times the number of elements per lstm.
 CTC runs the logits it is given trough a softmax layer to compute label probabilities. To function it must therefore be given a logit tensor, where the feature dimension is equal to the number of labels, the system is supposed to output. To meet this requirement an extra linear output layer has been added to the listener which maps the feature dimension to 40, as required.
 \begin{figure}
-\includestandalone[width=0.49\linewidth]{../tikz/listenerCTC}
-\includestandalone[width=0.49\linewidth]{../tikz/listenerCTC810}
+\includestandalone[width=0.49\linewidth]{tikz/listenerCTC}
+\includestandalone[width=0.49\linewidth]{tikz/listenerCTC810}
 \caption{The training progress shown for the Listener with added CTC layer. The loss values show in blue and green have been scaled with $\frac{1}{100}$. On the right a closeup on the last two training process is shown.}
 \label{fig:listenCTC}
 \end{figure}
 Figure~\ref{fig:listenCTC}, shows the optimization algorithms progress, as measured by trainig loss, validation loss and validation set decoding phoneme error rate. The training was stopped, when the decoding results where no longer improving. During testing a phoneme error rate of \texttt{0.268} was observed, which is a pretty good results compared to the twenty four percent error rate of a comparable full BLSTM architecture given that the pyramidal layer compressed the time dimension into half of its original size. During decoding the CTC beam width was once more set to 100.
 
-\subsection{Greedy Decoding}
+\subsection{Design of the decoding loop logic}
+
+\subsection{Greedy Decoding Experiments}
 Using the tested listener with 64 hidden lstm units per direction and one pyramidal layer, the CTC layer is replaced with attend and spell functions. For computational efficiency these functions have been implemented within a customized RNN cell. Using an RNN framework makes it possible to use optimized code to unroll the attend and spell
 computations. Among other things dynamically unrolling the second part of the network this way ensures efficient memory utilization and sequence length management. Within the new cell the decoder state size was chosen to be 128, considering the fact that the listener outputs features of size 128, which in turn determines the context vectors to have this same dimension.  Hoping to provide sufficient memory to remember past context vectors the decoder state RNN was set to the same dimension.
 The state and feature networks, $\phi$ and $\psi$ were given one hidden layer each, with a hidden dimension of 64. This choice was made mainly to conserve memory. During training the network output was used instead of the true target with a probability of 0.7.
 \begin{figure}
-\includestandalone[width=0.49\linewidth]{../tikz/lasGreedyp07}
-\includestandalone[width=0.49\linewidth]{../tikz/lasGreedyp07e3540}
+\includestandalone[width=0.49\linewidth]{tikz/lasGreedyp07}
+\includestandalone[width=0.49\linewidth]{tikz/lasGreedyp07e3540}
 \caption{The training progress shown for the full las architecture with greedy decoding. The loss values show in blue and green have been scaled with $\frac{1}{100}$. On the right a closeup on the last two training process is shown.}
 \label{fig:lasGreedy}
 \end{figure}
@@ -37,21 +44,34 @@ From the input features the las network decodes:
        sil  t  uw  sil
 <eos>
 \end{lstlisting}
-The decoding and target sequences clearly bead some resemblance. However significant errors do exist in the network output in particular within the last third. The phoneme sequence dx  iy  ng  ih is incorrectly transcribed as iy  iy  iy  iy  iy  iy  iy iy,
+The decoding and target sequences clearly bead some resemblance. However significant errors do exist in the network output in particular in the last third. The phoneme sequence dx  iy  ng  ih is incorrectly transcribed as iy  iy  iy  iy  iy  iy  iy iy,
 which has a large impact on the error. The levenstein distance between the two labellings is 21. Given that the target sequence contains 42 labels including the start and end of sentence tokens, the error rate of this example is 0.5, it is therefore slightly better than the average of 0.553362, which is the average decoding error rate over the entire validation set.
 
+
+\subsection{The effect of the groundtruth selection probability during training}
+In the previous experiment the groundtruth was only used instead of the network output in 0.3 percent of the cases. As the network output is often incorrect during training, less emphasis will be put on past outputs later during decoding. This section investigates
+other values. The same las network is retrained for 10 epochs using output probabilities of $0.2,0.4,0.6,0.8$.
+\begin{figure}
+\includestandalone[width=0.49\linewidth]{tikz/LAS_no_reg_e10_p04}
+\includestandalone[width=0.49\linewidth]{tikz/LAS_no_reg_e10_p06}
+\includestandalone[width=0.49\linewidth]{tikz/LAS_no_reg_e10_p08}
+\caption{Repetitions of the same experiment with network output reuse probabilities $0.4,0.6,0.8$. }
+\label{fig:lasGreedy}
+\end{figure}
+Results are shown in figure ~\ref{fig:lasGreedy}. It can be observed, that decoding results improve when reduced emphasis is placed on past labels during training. This observation is confirmed by the phoneme error rates of $\text{TODO}, 1.97, 1.1168, 0.87$, which where observed on the validation set.
+
+Ideally one would like to observe the opposite. If the output labels where correct more often during decoding, the networks trained to rely on them should outperform those which do not. Based on the observations above we conclude that beam search should be implemented in order to obtain labels of higher quality during decoding, which in turn should be beneficial to networks, which learned to rely on past outputs.
 
 \subsection{Comparing two attend and spell variants}
 \begin{figure}
 \centering
-\includestandalone[width=0.49\linewidth]{../tikz/asCellType1}
-\includestandalone[width=0.49\linewidth]{../tikz/asCellType2}
+\includestandalone[width=0.49\linewidth]{tikz/asCellType1}
+\includestandalone[width=0.49\linewidth]{tikz/asCellType2}
 \caption{Two different attend and spell cell configurations.}
 \label{fig:lasVariants}
 \end{figure}
 
 
-\subsection{Verifying the code}
 
 \subsection{Beam-search Decoding}
 
