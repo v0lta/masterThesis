@@ -20,4 +20,6 @@
 *.mtc
 *.mtc1
 *.out
+*.dpth
+*.auxlog
 *.synctex.gz

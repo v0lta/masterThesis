@@ -1,8 +1,8 @@
 \section{Listen attend and spell experiments}
 \subsection{Testing the Listener}
 A crucial part of the listen attend and spell architecture is formed by the listener. Before working with a fully-fledged las a CTC-layer will be attached to the listener.
-The idea is to verify the implementation. If CTC can extract relevant information from the listener, the attend and spell code should be able to do the same in later experiments. In order to keep memory requirements manageable in later experiments with the same listener all LSTM cells where set up with 64 hidden units. As the listener layers are bidirectional this means 64 in each direction so the hidden dimension is 128 in total. This sum is important, because the feature dimension of the lstm outputs is concatenated for each time step. If not further action is taken the listener produces features with a dimension of two times the number of elements per lstm.  
-CTC runs the logits it is given trough a softmax layer to compute label probabilities. To function it must therefore be given a logit tensor, where the feature dimension is equal to the number of labels, the system is supposed to output. To meet this requirement an extra linear output layer has been added to the listener which maps the feature dimension to 40, as required.   
+The idea is to verify the implementation. If CTC can extract relevant information from the listener, the attend and spell code should be able to do the same in later experiments. In order to keep memory requirements manageable in later experiments with the same listener all LSTM cells where set up with 64 hidden units. As the listener layers are bidirectional this means 64 in each direction so the hidden dimension is 128 in total. This sum is important, because the feature dimension of the lstm outputs is concatenated for each time step. If not further action is taken the listener produces features with a dimension of two times the number of elements per lstm.
+CTC runs the logits it is given trough a softmax layer to compute label probabilities. To function it must therefore be given a logit tensor, where the feature dimension is equal to the number of labels, the system is supposed to output. To meet this requirement an extra linear output layer has been added to the listener which maps the feature dimension to 40, as required.
 \begin{figure}
 \includestandalone[width=0.49\linewidth]{../tikz/listenerCTC}
 \includestandalone[width=0.49\linewidth]{../tikz/listenerCTC810}
@@ -12,13 +12,46 @@ CTC runs the logits it is given trough a softmax layer to compute label probabil
 Figure~\ref{fig:listenCTC}, shows the optimization algorithms progress, as measured by trainig loss, validation loss and validation set decoding phoneme error rate. The training was stopped, when the decoding results where no longer improving. During testing a phoneme error rate of \texttt{0.268} was observed, which is a pretty good results compared to the twenty four percent error rate of a comparable full BLSTM architecture given that the pyramidal layer compressed the time dimension into half of its original size. During decoding the CTC beam width was once more set to 100.
 
 \subsection{Greedy Decoding}
+Using the tested listener with 64 hidden lstm units per direction and one pyramidal layer, the CTC layer is replaced with attend and spell functions. For computational efficiency these functions have been implemented within a customized RNN cell. Using an RNN framework makes it possible to use optimized code to unroll the attend and spell
+computations. Among other things dynamically unrolling the second part of the network this way ensures efficient memory utilization and sequence length management. Within the new cell the decoder state size was chosen to be 128, considering the fact that the listener outputs features of size 128, which in turn determines the context vectors to have this same dimension.  Hoping to provide sufficient memory to remember past context vectors the decoder state RNN was set to the same dimension.
+The state and feature networks, $\phi$ and $\psi$ were given one hidden layer each, with a hidden dimension of 64. This choice was made mainly to conserve memory. During training the network output was used instead of the true target with a probability of 0.7.
+\begin{figure}
+\includestandalone[width=0.49\linewidth]{../tikz/lasGreedyp07}
+\includestandalone[width=0.49\linewidth]{../tikz/lasGreedyp07e3540}
+\caption{The training progress shown for the full las architecture with greedy decoding. The loss values show in blue and green have been scaled with $\frac{1}{100}$. On the right a closeup on the last two training process is shown.}
+\label{fig:lasGreedy}
+\end{figure}
+Figure~\ref{fig:lasGreedy} shows an overview of the training process. When considering the last five epochs, the decoding error  ranges between 0.5 and 0.9. This means that in the best case half of the labels produced by the system must be modified in order to
+get to the target sequence. Considering timit utterance \texttt{fmld0\_sx295} the folded transcription with additional start and end of sentence tokens is given by:
+\begin{lstlisting}[caption={Targets}]
+<sos>  sil  ih  f  sil  k  eh  r  l  sil  k  ah  m  z
+       sil  t  ah  m  aa  r  ah  hh  ae  v  er  r  ey
+       n  jh  f  er  m  iy  dx  iy  ng  ih  sil  t  uw  sil
+<eos>
+\end{lstlisting}
+From the input features the las network decodes:
+\begin{lstlisting}[caption={Network output}]
+<sos>  sil  hh  ih  f  sil  k  er  r  ow  ow  sil  sil
+       t  ah  m  aa  hh  hh  ae  v  er  r  r  n  n  sil
+       f  er  er  m  iy  iy  iy  iy  iy  iy  iy iy  sil
+       sil  t  uw  sil
+<eos>
+\end{lstlisting}
+The decoding and target sequences clearly bead some resemblance. However significant errors do exist in the network output in particular within the last third. The phoneme sequence dx  iy  ng  ih is incorrectly transcribed as iy  iy  iy  iy  iy  iy  iy iy,
+which has a large impact on the error. The levenstein distance between the two labellings is 21. Given that the target sequence contains 42 labels including the start and end of sentence tokens, the error rate of this example is 0.5, it is therefore slightly better than the average of 0.553362, which is the average decoding error rate over the entire validation set.
+
+
+\subsection{Comparing two attend and spell variants}
 \begin{figure}
 \centering
 \includestandalone[width=0.49\linewidth]{../tikz/asCellType1}
 \includestandalone[width=0.49\linewidth]{../tikz/asCellType2}
 \caption{Two different attend and spell cell configurations.}
+\label{fig:lasVariants}
 \end{figure}
 
+
+\subsection{Verifying the code}
 
 \subsection{Beam-search Decoding}
 
