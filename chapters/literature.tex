@@ -132,13 +132,44 @@ Above $m \in [0,1]$ denotes the momentum. In order to understand the effect of t
 Using the fact that the sum of the geometric series is known and $|m| < 1$ must hold. The momentum term therefore changes the effective learning rate from $\alpha$ to $\frac{\alpha}{ 1 - m}$ in regions of low curvature. Elsewhere the gradient is oscillatory, which leads to cancellation of successive contribution of the momentum term \cite[page 267]{Bishop1995}.
 
 \subsection{Regularization}
-\subsubsection{Input Noise}
+The optimization process works on the training set, but later the trained network should be able to recognize patterns seen in the training data set in other inputs and produce similar outputs. In order to achieve this goal it is important not to memorize training data samples. Another problem with complex networks is that they are able to track noise in the training data.
+Regularization techniques aim to counteract sample memorization and noise tracking in order to ensure that progress on the training data carries over to new data sets or in other words regularization aims to improve generalization.
 
-%TODO
+\subsubsection{Early stopping}
+The idea of early stopping is to observe the training and validation loss during training. As long as both are falling simultaneously, we assume that
+the network will also generalize well to other data. This is a reasonable assumption, because the validation data set plays no part in computing the weight updates. When the training set loss continues fall, but the validation loss rises, the network is overfitting \cite[page 31]{Graves2012}. The training process should be stopped early in theses cases.
+A test set should be used to guard against parameter choices that work well only on the training and validation set. Ideally the performance on the test set should only be evaluated, once the training process has finished.
+
+\subsubsection{Input Noise}
+Training with input noise means that fixed variance, zero mean Gaussian noise is added to the inputs during training \cite[page 32]{Graves2012}. The targets remain unchanged. The idea is to reuse the training data set more efficiently. When the artifical noise is similar to the noise already present in the data set, reusing the noisy samples is better than reusing the original samples. The artificial noise will help the network to deal with similar noise in the future.
+A problem with input noise is that it is difficult to determine how large the variance should be, one option is to manually tune the parameter using the validation performance as a metric.
+
 \subsubsection{Weight noise}
-%TODO
-\subsubsection{$l_2$ regularization}
-%TODO
+When using weight noise zero mean fixed variance Gaussian noise is added to the weights during training. The idea is to reduce the precision, with which the network weights can be described \cite[page 32]{Graves2012}. The reduced precision makes it impossible for the network to model small variations in the training samples, which are likely to be noise. Instead it will only be able to model larger changes and generalize better.
+When using input noise the following algorithm should be used \cite[page 33]{Graves2012}:
+\begin{lstlisting}[language=python]
+while stopping condition is False:
+    Shuffle training data pairs
+    for each training sample pair:
+        Add Gaussian noise to weights
+        compute the gradient
+        restore original weights
+        update the original weights
+\end{lstlisting}
+However weight noise should be used with care, because it can lead to very slow convergence.
+
+\subsubsection{Regularized loss minimization}
+Regularized loss minimization includes a model complexity penalty term in the cost function. Instead of minimizing the loss $E$ an augmented loss \cite[p. 338]{Bishop1995}\cite[p. 171]{Ben-david2014}:
+\begin{equation}
+\hat{E} = E + v\Omega
+\end{equation}
+is used. $\Omega$ stands for a penalty term, which should grow, when the network is likely to over-fit the training data. $v \in (0,1)$ denotes the weight parameter, which determines how much emphasis the optimization algorithm should place on regularization. A straightforward choice for $\Omega$ is the $l_2$ norm of the model weights:
+\begin{equation}
+\Omega_{l2} = \|\mathbf{w}\|^2 = (\sqrt{ \sum w^2})^2
+\end{equation}
+The weight norm serves as a measure for the model complexity. The idea of choosing the simplest possible model which can explain the data, often referred to as Occam's razor is expressed in the modified cost function $\hat{E}$, the result of the optimization process will be a compromise between fit to the training data and model complexity.
+
+
 \subsubsection{Dropout}
 %TODO
 
