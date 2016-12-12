@@ -52,15 +52,25 @@ which has a large impact on the error. The levenstein distance between the two l
 In the previous experiment the groundtruth was only used instead of the network output in 0.3 percent of the cases. As the network output is often incorrect during training, less emphasis will be put on past outputs later during decoding. This section investigates
 other values. The same las network is retrained for 10 epochs using output probabilities of $0.2,0.4,0.6,0.8$.
 \begin{figure}
+\includestandalone[width=0.49\linewidth]{tikz/LAS_no_reg_e10_p02}
 \includestandalone[width=0.49\linewidth]{tikz/LAS_no_reg_e10_p04}
 \includestandalone[width=0.49\linewidth]{tikz/LAS_no_reg_e10_p06}
 \includestandalone[width=0.49\linewidth]{tikz/LAS_no_reg_e10_p08}
-\caption{Repetitions of the same experiment with network output reuse probabilities $0.4,0.6,0.8$. }
-\label{fig:lasGreedy}
+\caption{Repetitions of the same experiment with network output reuse probabilities $0.2, 0.4, 0.6, 0.8$. }
+\label{fig:lasGreedy2468}
 \end{figure}
-Results are shown in figure ~\ref{fig:lasGreedy}. It can be observed, that decoding results improve when reduced emphasis is placed on past labels during training. This observation is confirmed by the phoneme error rates of $\text{TODO}, 1.97, 1.1168, 0.87$, which where observed on the validation set.
+Results are shown in figure ~\ref{fig:lasGreedy2468}. It can be observed, that decoding results improve when reduced emphasis is placed on past labels during training. This observation is confirmed by the phoneme error rates of $2.08, 1.97, 1.1168, 0.87$, which where observed on the validation set.
+To explore the effect of a low reuse probability over longer training periods the experiment has been repeated one more time with a $0.5$ groundtruth probability over 40 epochs.
+\begin{figure}
+\includestandalone[width=0.49\linewidth]{tikz/LAS_no_reg_e40_p05}
+\includestandalone[width=0.49\linewidth]{tikz/LAS_no_reg_e40_p05_3540}
+\caption{Training full las over 40 epochs with a network output reuse probability of $0.5$}
+\label{fig:lasGreedy05}
+\end{figure}
+Figure~\ref{fig:lasGreedy05} depicts the training process. In comparison to the experiment show in figure~\ref{fig:lasGreedy} the network does significantly better during training, but
+this improvement does not translate into a better decoding performance.
 
-Ideally one would like to observe the opposite. If the output labels where correct more often during decoding, the networks trained to rely on them should outperform those which do not. Based on the observations above we conclude that beam search should be implemented in order to obtain labels of higher quality during decoding, which in turn should be beneficial to networks, which learned to rely on past outputs.
+Ideally one would like to observe the opposite. If the output labels where correct more often during decoding, the networks trained to rely on them should outperform those which where not. Based on the observations above we conclude that beam search should be implemented in order to obtain labels of higher quality during decoding, which in turn should be beneficial to networks, which learned to rely on past outputs.
 
 \subsection{Comparing two attend and spell variants}
 \begin{figure}

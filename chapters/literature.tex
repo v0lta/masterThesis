@@ -326,7 +326,40 @@ s(\mathbf{y}|\mathbf{x}) = \frac{\log P(\mathbf{y}|\mathbf{x})}{ |\mathbf{y}|_c}
 Here $P_{LM}$ denotes the weight the language model assigns to each hypothesis. And $\lambda$ is a weight factor, which determines the language model importance.
 
 \subsection{Levenshtein distance}
-A metric is required to measure the quality is label sequences. The Levenshtein or edit distance is such a metric. It can be thought of as the minimum number insertions, deletions or substitutions required to transform one sequence into the other.
+\begin{table}
+\centering
+\begin{tabular}{ |l|c|c|c|c|r| } \hline
+             & $\epsilon$ & h & u & i & s \\ \hline
+$\epsilon$   & 0          & 1 & 2 & 3 & 4 \\ \hline
+         h   & 1          & 0 & 1 & 2 & 3 \\ \hline
+         o   & 2          & 1 & 1 & 2 & 3 \\ \hline
+         u   & 3          & 2 & 1 & 2 & 3 \\ \hline
+         s   & 4          & 3 & 2 & 2 & 2 \\ \hline
+         e   & 5          & 4 & 3 & 3 & \textbf{3} \\ \hline
+\end{tabular}
+\caption{An example of the edit distance matrix for the dutch word huis and
+its english translation house. The edit distance can be found in the cell
+in the lower right of the table.}
+\label{tab:editDistExample}
+\end{table}
+A metric is required to measure the quality is label sequences. The Levenshtein or edit distance is such a metric. It can be thought of as the minimum number insertions, deletions or substitutions required to transform one sequence into another.
+An example computation for the two words huis and house is shown in table~\ref{tab:editDistExample}. The table cells count replacements, deletions or insertions. At position $i,j$ in the table the first sequence is taken into account until element $i$, likewise the second sequence is considered up to position $j$. In order to compute the entries in the table the first row and column of the distance matrix $D$ are initialized to:
+\begin{equation}
+D[0,j] = j \text{ and } D[i,0] = 0.
+\end{equation}
+These entries are known beforehand, because if one index is kept at zero,
+no elements of the corresponding sequence are considered and $i$ or $j$ insertions will always be necessary.
+If $i \neq 0$ and $j \neq 0$ the following update rule is used \cite[slide 10]{Langmead2016}:
+\begin{align}
+D[i,j] = \min\left\{
+  \begin{array}{@{}ll@{}}
+    D[i-1, j] + 1, & \text{deletion} \\
+    D[i,j-1] + 1, & \text{insertion} \\
+    D[i-1,j-1] + \delta(x[i-1], y[j-1]) & \text{match or replacement}
+  \end{array}\right. \\
+\text{with } \delta(a,b) = 0 \text{ if } a=b \text{ else } 0
+\end{align}
+Based in these rules the table~\ref{tab:editDistExample}, has been computed. Intuitively the distance three makes sense, because to go from huis to house, an o has to be inserted, the i replaced with an s and finally and an extra e has to be added, which amounts to three edits.
 
 \section{Tensor-flow}
 In this section is devoted to the toolbox, which will be used to implement the Listen Attend and spell, architecture. According to the Tensor-flow authors \cite{Agarwal2015}:
