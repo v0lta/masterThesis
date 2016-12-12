@@ -1,8 +1,14 @@
 @article{Agarwal2015,
+archivePrefix = {arXiv},
+arxivId = {arXiv:1603.04467},
 author = {Agarwal, Ashish and Barham, Paul and Brevdo, Eugene and Chen, Zhifeng and Citro, Craig and Corrado, Greg S and Davis, Andy and Dean, Jeffrey and Devin, Matthieu and Ghemawat, Sanjay and Goodfellow, Ian and Harp, Andrew and Irving, Geoffrey and Isard, Michael and Jia, Yangqing and Jozefowicz, Rafal and Kaiser, Lukasz and Kudlur, Manjunath and Levenberg, Josh and Monga, Rajat and Moore, Sherry and Murray, Derek and Olah, Chris and Schuster, Mike and Shlens, Jonathon and Steiner, Benoit and Sutskever, Ilya and Talwar, Kunal and Tucker, Paul and Vanhoucke, Vincent and Vasudevan, Vijay and Vinyals, Oriol and Warden, Pete and Wattenberg, Martin and Wicke, Martin and Yu, Yuan and Zheng, Xiaoqiang},
-file = {:home/moritz/Documents/Mendeley/Agarwal et al/Unknown/Agarwal et al. - 2015 - TensorFlow Large-Scale Machine Learning on Heterogeneous Distributed Systems.pdf:pdf},
+eprint = {arXiv:1603.04467},
+file = {:home/moritz/Documents/Mendeley/Agarwal et al/CoRR/Agarwal et al. - 2016 - TensorFlow Large-Scale Machine Learning on Heterogeneous Distributed Systems.pdf:pdf},
+journal = {CoRR},
 title = {{TensorFlow: Large-Scale Machine Learning on Heterogeneous Distributed Systems}},
-year = {2015}
+url = {http://arxiv.org/abs/1603.04467},
+volume = {abs/1603.0},
+year = {2016}
 }
 @article{Bahdanau2015,
 abstract = {Neural machine translation is a recently proposed approach to machine transla- tion. Unlike the traditional statistical machine translation, the neural machine translation aims at building a single neural network that can be jointly tuned to maximize the translation performance. The models proposed recently for neu- ral machine translation often belong to a family of encoder–decoders and encode a source sentence into a fixed-length vector from which a decoder generates a translation. In this paper, we conjecture that the use of a fixed-length vector is a bottleneck in improving the performance of this basic encoder–decoder architec- ture, and propose to extend this by allowing a model to automatically (soft-)search for parts of a source sentence that are relevant to predicting a target word, without having to form these parts as a hard segment explicitly. With this new approach, we achieve a translation performance comparable to the existing state-of-the-art phrase-based system on the task of English-to-French translation. Furthermore, qualitative analysis reveals that the (soft-)alignments found by the model agree well with our intuition.},
@@ -10,10 +16,13 @@ archivePrefix = {arXiv},
 arxivId = {arXiv:1409.0473v7},
 author = {Bahdanau, Dzmitry and Cho, Kyunghyun and Bengio, Yoshua},
 eprint = {arXiv:1409.0473v7},
-file = {:home/moritz/Documents/Mendeley/Bahdanau, Cho, Bengio/Unknown/Bahdanau, Cho, Bengio - 2015 - NEURAL MACHINE TRANSLATION BY JOINTLY LEARNING TO ALIGN AND TRANSLATE.pdf:pdf},
+file = {:home/moritz/Documents/Mendeley/Bahdanau, Cho, Bengio/CoRR/Bahdanau, Cho, Bengio - 2014 - NEURAL MACHINE TRANSLATION BY JOINTLY LEARNING TO ALIGN AND TRANSLATE.pdf:pdf},
+journal = {CoRR},
 pages = {1--15},
 title = {{NEURAL MACHINE TRANSLATION BY JOINTLY LEARNING TO ALIGN AND TRANSLATE}},
-year = {2015}
+url = {http://arxiv.org/abs/1409.0473},
+volume = {abs/1409.0},
+year = {2014}
 }
 @book{Ben-david2014,
 abstract = {Machine learning is one of the fastest growing areas of computer science, with far-reaching applications. The aim of this textbook is to introduce machine learning, and the algorithmic paradigms it offers, in a princi- pled way. The book provides an extensive theoretical account of the fundamental ideas underlying machine learning and the mathematical derivations that transform these principles into practical algorithms. Fol- lowing a presentation of the basics of the field, the book covers a wide array of central topics that have not been addressed by previous text- books. These include a discussion of the computational complexity of learning and the concepts of convexity and stability; important algorith- mic paradigms including stochastic gradient descent, neural networks, and structured output learning; and emerging theoretical concepts such as the PAC-Bayes approach and compression-based bounds.Designed for an advanced undergraduate or beginning graduate course, the text makes the fundamentals and algorithms of machine learning accessible to stu- dents and nonexpert readers in statistics, computer science,mathematics, and engineering. Shai},
@@ -342,10 +351,12 @@ year = {1995}
 }
 @book{Huang2001,
 abstract = {From the Publisher:New advances in spoken language processing: theory and practice In-depth coverage of speech processing, speech recognition, speech synthesis, spoken language understanding, and speech interface design Many case studies from state-of-the-art systems, including examples from Microsoft's advanced research labs Spoken Language Processing draws on the latest advances and techniques from multiple fields: computer science, electrical engineering, acoustics, linguistics, mathematics, psychology, and beyond. Starting with the fundamentals, it presents all this and more: Essential background on speech production and perception, probability and information theory, and pattern recognition Extracting information from the speech signal: useful representations and practical compression solutions Modern speech recognition techniques: hidden Markov models, acoustic and language modeling, improving resistance to environmental noises, search algorithms, and large vocabulary speech recognition Text-to-speech: analyzing documents, pitch and duration controls; trainable synthesis, and more Spoken language understanding: dialog management, spoken language applications, and multimodal interfaces To illustrate the book's methods, the authors present detailed case studies based on state-of-the-art systems, including Microsoft's Whisper speech recognizer, Whistler text-to-speech system, Dr. Who dialog system, and the MiPad handheld device. Whether you're planning, designing, building, or purchasing spoken language technology, this is the state of the artfromalgorithms through business productivity.},
+address = {Redmond},
 author = {Huang, Xuedong and Acero, Alex and Hon, Hsiao-Wuen},
 booktitle = {Processing},
 isbn = {0130226165},
 pages = {933},
+publisher = {Prentice Hall PTR},
 title = {{Spoken Language Processing: A Guide to Theory, Algorithm and System Development}},
 url = {http://www.amazon.ca/exec/obidos/redirect?tag=citeulike09-20{\&}path=ASIN/0130226165},
 year = {2001}
@@ -456,11 +467,14 @@ title = {{Long Short-Term Memory Based Recurrent Neural Network Architectures fo
 year = {2014}
 }
 @article{Srivastava2014,
+abstract = {Deep neural nets with a large number of parameters are very powerful machine learning systems. However, over tting is a serious problem in such networks. Large networks are also slow to use, making it dicult to deal with over tting by combining the predictions of many di erent large neural nets at test time. Dropout is a technique for addressing this problem. The key idea is to randomly drop units (along with their connections) from the neural network during training. This prevents units from co-adapting too much. During training, dropout samples from an exponential number of di erent $\backslash$thinned" networks. At test time, it is easy to approximate the e ect of averaging the predictions of all these thinned networks by simply using a single unthinned network that has smaller weights. This signi cantly reduces over tting and gives major improvements over other regularization methods. We show that dropout improves the performance of neural networks on supervised learning tasks in vision, speech recognition, document classi cation and computational biology, obtaining state of-the-art results on many benchmark data sets.},
 author = {Srivastava, Nitish and Hinton, Geoffrey and Krizhevsky, Alex and Sutskever, Ilya and Salakhutdinov, Ruslan},
-file = {:home/moritz/Documents/Mendeley/Srivastava et al/Unknown/Srivastava et al. - 2014 - Dropout prevent NN from overfitting.pdf:pdf},
+file = {:home/moritz/Documents/Mendeley/Srivastava et al/Journal of Machine Learning Research/Srivastava et al. - 2014 - Dropout A Simple Way to Prevent Neural Networks from Over tting.pdf:pdf},
+journal = {Journal of Machine Learning Research},
 keywords = {deep learning,model combination,neural networks,regularization},
 pages = {1929--1958},
-title = {{Dropout: prevent NN from overfitting}},
+title = {{Dropout: A Simple Way to Prevent Neural Networks from Over tting}},
+url = {http://www.jmlr.org/papers/volume15/srivastava14a.old/source/srivastava14a.pdf},
 volume = {15},
 year = {2014}
 }
@@ -495,6 +509,17 @@ pages = {1689--1699},
 pmid = {25246403},
 title = {{CONVOLUTIONAL, LONG SHORT-TERM MEMORY, FULLY CONNECTED DEEP NEURAL NETWORKS}},
 volume = {53},
+year = {2013}
+}
+@article{Wager2013,
+abstract = {Dropout and other feature noising schemes control overfitting by artificially cor- rupting the training data. For generalized linear models, dropout performs a form of adaptive regularization. Using this viewpoint, we show that the dropout regular- izer is first-order equivalent to an L 2 regularizer applied after scaling the features by an estimate of the inverse diagonal Fisher information matrix. We also establish a connection to AdaGrad, an online learning algorithm, and find that a close rel- ative of AdaGrad operates by repeatedly solving linear dropout-regularized prob- lems. By casting dropout as regularization, we develop a natural semi-supervised algorithm that uses unlabeled data to create a better adaptive regularizer. We ap- ply this idea to document classification tasks, and show that it consistently boosts the performance of dropout training, improving on state-of-the-art results on the IMDB reviews dataset.},
+author = {Wager, Stefan and Wang, Sida and Liang, Percy and Science, Computer},
+file = {:home/moritz/Documents/Mendeley/Wager et al/Advances in Neural Information Processing Systems/Wager et al. - 2013 - Dropout Training as Adaptive Regularization.pdf:pdf},
+journal = {Advances in Neural Information Processing Systems},
+pages = {351----359},
+title = {{Dropout Training as Adaptive Regularization}},
+url = {http://papers.nips.cc/paper/4882-dropout-training-as-adaptive-regularization.pdf},
+volume = {26},
 year = {2013}
 }
 @article{Werbos2006,

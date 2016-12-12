@@ -59,7 +59,7 @@ Input standardization is beneficial to network performance, because it puts the 
 Mel-Frequency banks are considered high level feature inputs. When the recognition system is found to work with these, features on a lower level or even raw data could be used as input. The idea behind doing fewer preprocessing, is that the network might be able to come up with something better on its own.
 
 \section{Neural Networks}
-Artificial neural networks where originally designed to model biological neurons. Even tough it is now known that artificial neural networks have little in common with their counterparts in biology, the models are still popular due to their useful pattern recognition properties \cite[page 13]{Graves}. All neural networks consist of elementary functions with weighted and biased inputs, the operations necessary to evaluate them form a computational graph. In a nutshell the idea is to choose the weights and biases such that the network output corresponds to patterns seen in the input data. The process of finding good weights is called training. Training in turn is done using gradient descent.
+Artificial neural networks where originally designed to model biological neurons. Even tough it is now known that artificial neural networks have little in common with their counterparts in biology, the models are still popular due to their useful pattern recognition properties \cite[page 13]{Graves2008}. All neural networks consist of elementary functions with weighted and biased inputs, the operations necessary to evaluate them form a computational graph. In a nutshell the idea is to choose the weights and biases such that the network output corresponds to patterns seen in the input data. The process of finding good weights is called training. Training in turn is done using gradient descent.
 
 \subsection{Gradient descent}
 The optimization process of neural networks works with a training data set $\{\{\mathbf{x}_1,\mathbf{t}_1\}, \dots , \{\mathbf{x}_p,\mathbf{t}_p\} \}$ \cite[page 156]{Rojas1996}. The elements of this set are the input- and output-patters $\mathbf{x}$ and $\mathbf{t}$ respectively. Ideally the network output should be the same as the desired one for all data pairs. The difference between target and current outputs could be measured by the cost function \cite[page 156]{Rojas1996}:
@@ -171,7 +171,16 @@ The weight norm serves as a measure for the model complexity. The idea of choosi
 
 
 \subsubsection{Dropout}
-%TODO
+\begin{figure}
+\includegraphics[width=1.0\linewidth]{/png/dropout}
+\caption{\enquote{Dropout Neural Net Model. Left: A standard neural net with 2 hidden layers. Right: An example of a thinned net produced by applying dropout to the network on the left. Crossed units have been dropped.} \cite{Srivastava2014}, image and caption taken from the same source.}
+\label{fig:Dropout}
+\end{figure}
+Like input noise and weight noise dropout is part of the group of regularization techniques, that artificially corrupt training data to improve prediction performance \cite{Wager2013}. When applying dropout between two layers, some units and their connections are zeroed out at random during training. The process is illustrated in figure~\ref{fig:Dropout}.
+One dropout interpretation relates dropout networks to committee networks. Network committees consist of several independently trained networks, each of which makes predictions on its own. The committee prediction is then produced by using the mean output of the committee members or by feeding the committee outputs into another neural net, which decides on the final output.
+When training large deep networks however committee networks become infeasible due to their large memory requirements. Dropout networks are related to committee networks, because when some units are dropped the remaining units will have to learn to work with the remaining units. Just like committee networks, dropout networks contain multiple mechanism to recognize the same pattern, and thus gains some of the prediction robustness that committee networks are know to have.
+Another motivation for dropout comes from the theory of sexual selection \cite{Srivastava2014}. The theory assumes that the superiority of sexual reproduction is caused by the fact that removes strong interconnections between genes. After all a specific gene might not be there a generation from now. To function over many generations, genes must therefore develop redundant ways that work with different genes.
+Following this interpretation dropout forces network units to do the same thing.
 
 \subsection{Deep Neural Networks}
 Deep learning deals with the design of computational nets, consisting of multiple layers, which learn representations of data. Deep networks are often used when abstract
@@ -330,7 +339,7 @@ e_{i,u} = \phi(\mathbf{s}_i)^T \psi(\mathbf{h_u}) \\
 $\alpha$ is produced by running $\mathbf{e}$ trough a softmax function, which scales $\mathbf{e}$ such that all elements are within $(0,1)$ and add up to one. These scaled weights, can then be used to form the context vector $\mathbf{c}_i$. When the training process converges the $\alpha_i$s typically follow a distribution with sharp edges\cite[page 5]{Chan2015}. Thus it is justified to think of the alphas as a sliding window. This window contains only the currently relevant parts of the condensed input data set.
 
 \begin{figure}
-\includestandalone[width=\textwidth]{tikz/lasArcBottomUp}
+\includestandalone[width=0.9\textwidth]{tikz/lasArcBottomUp}
 \caption{The LAS architecture \cite[page 3]{Chan2015}. BLSTM blocks are shown in red. LSTM blocks in blue and attention nets in green.}
 \label{fig:las}
 \end{figure}
@@ -394,4 +403,9 @@ Based in these rules the table~\ref{tab:editDistExample}, has been computed. Int
 
 \section{Tensor-flow}
 In this section is devoted to the toolbox, which will be used to implement the Listen Attend and spell, architecture. According to the Tensor-flow authors \cite{Agarwal2015}:
-\textquotedblleft TensorFlow is an interface for expressing machine learning algorithms, and an implementation for executing such algorithms\textquotedblright . It was released by Google in 2015 and can be used from within Python or C++.
+
+\enquote{TensorFlow is an interface for expressing machine learning algorithms, and an implementation for executing such algorithms}.
+
+In tensorflow a directed graph is constructed based on the input operations which define a computational model. The graph represents how data flows trough the model. Each node of the graph has zero or more inputs and zero or more outputs. The nodes represent operations. Tensors flow along the edges of the graph.
+Graphs are executed in sessions. When running a graph the desired output values or operations must be specified. Tensorflow then checks if all inputs required to compute the requested output values or perform the desired operation are present. Afterwards its evaluates only the operations including the requested node to find the desired output value or complete the requested operation.
+Generally tensors do not outlive a single execution of the graph. Variables however are persistent. The model parameters must be stored in variables. The gradient can then be applied to these variables to improve the model parameters over multiple graph executions.
