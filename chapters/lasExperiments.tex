@@ -1,9 +1,6 @@
 \section{Listen attend and spell experiments}
 In this section experiments use the full listen attend and spell architecture. After verification of the listener using a CTC output layer, the listen attend and spell network is first tested using greedy decoding. In contrast to beam search greedy decoding, does not maintain several hypotheses, instead it works with the most likely label each time step.
 
-\subsection{Non experimental verification of the code}
-Testing code implementing artificial neural networks is difficult, because experiments only start to work once all issues in the code have been fixed. A single bug can prevent experiments from working, in such a case the only feedback the programmer gets is a negative experimental result. In order to prevent incorrect implementations in recurrent neural networks it is important to strictly enforce shape invariants of state tensors in loops. This means that the shape of the tensors going into an RNN cell must have the same size when they leave. This way one can be certain, that for example the network does not change the number of label probabilities it predicts over time.
-
 \subsection{Testing the Listener}
 A crucial part of the listen attend and spell architecture is formed by the listener. Before working with a fully-fledged las a CTC-layer will be attached to the listener.
 The idea is to verify the implementation. If CTC can extract relevant information from the listener, the attend and spell code should be able to do the same in later experiments. In order to keep memory requirements manageable in later experiments with the same listener all LSTM cells where set up with 64 hidden units. As the listener layers are bidirectional this means 64 in each direction so the hidden dimension is 128 in total. This sum is important, because the feature dimension of the lstm outputs is concatenated for each time step. If not further action is taken the listener produces features with a dimension of two times the number of elements per lstm.
@@ -16,7 +13,7 @@ CTC runs the logits it is given trough a softmax layer to compute label probabil
 \end{figure}
 Figure~\ref{fig:listenCTC}, shows the optimization algorithms progress, as measured by trainig loss, validation loss and validation set decoding phoneme error rate. The training was stopped, when the decoding results where no longer improving. During testing a phoneme error rate of \texttt{0.268} was observed, which is a pretty good results compared to the twenty four percent error rate of a comparable full BLSTM architecture given that the pyramidal layer compressed the time dimension into half of its original size. During decoding the CTC beam width was once more set to 100.
 
-\subsection{Design of the decoding loop logic}
+
 
 \subsection{Greedy Decoding Experiments}
 Using the tested listener with 64 hidden lstm units per direction and one pyramidal layer, the CTC layer is replaced with attend and spell functions. For computational efficiency these functions have been implemented within a customized RNN cell. Using an RNN framework makes it possible to use optimized code to unroll the attend and spell
@@ -75,9 +72,8 @@ Ideally one would like to observe the opposite. If the output labels where corre
 \subsection{Comparing two attend and spell variants}
 \begin{figure}
 \centering
-\includestandalone[width=0.49\linewidth]{tikz/asCellType1}
 \includestandalone[width=0.49\linewidth]{tikz/asCellType2}
-\caption{Two different attend and spell cell configurations.}
+\caption{A different attend and spell cell configuration, featuring an additional post context RNN.}
 \label{fig:lasVariants}
 \end{figure}
 

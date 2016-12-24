@@ -1,0 +1,25 @@
+\chapter{Implementation}
+This implementation chapter covers key architecture aspects and the reasoning behind design decisions made while implementing the speech recognition system. 
+
+\section{Loading data and feature extraction}
+During system training as well as decoding usage at later stages, an infrastructure must be in place to load and process the input data. In the training phase the target data must be loaded, normalized, encoded and made available to the optimization algorithm in the correct form. The shape and encoding of the targets depends on the algorithm used. Connectionist temporal classification requires a blank output label for example, which listen attend and spell does not need.
+The code written to handle the data preprocessing fulfills these requirements.\footnote{Its development history as well as the process of harminizing the interfaces of the thesis code with the rest of the toolbox is recorded in the project git branch at \url{https://github.com/vrenkens/tfkaldi/commits/las}.}
+
+\section{Design of the BLSTM-CTC model}
+Sequence labeling using connectionist temporal classification happens in two phases. 
+
+
+
+\section{Implementing Listen attend and Spell  }
+
+\section{The Listener}
+
+\section{The Speller}
+
+\begin{figure}
+\centering
+\includestandalone[width=0.49\linewidth]{tikz/asCellType1}
+\caption{Schematic of the attend and spell cell components.}
+\end{figure}
+
+\subsection{Design of the decoding loop logic}
