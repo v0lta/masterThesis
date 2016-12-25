@@ -1,4 +1,37 @@
 \chapter{Problem statement}
 \label{cha:problemStatement}
+Automatic speech recognition is concerned with finding ways to enable computers to recognize spoken language and transcribe it to text. Speech recognition asks the question: 
+
+\noindent \textit{What is being said?}
+
+In order to answer this question one must determine, which parts of a recording contain relevant information. These parts should then be decoded and the rest ignored. In order to answer the first question one must ask a second: 
+
+\noindent \textit{Which parts are interesting in a recording?}
+
+If interesting parts are found in the recording the system should label them correctly. During the labeling process a sequence of inputs is assigned a sequence of labels. Following this train of thought a sequence to sequence labeling problem must be solved. Speech data consists of frames. Transcription means grouping the interesting frames of the input sequence and assigning labels to these groups. Once input sequences groups are found and matched with a label sequence, the two are considered to be aligned. In order to do the alignment one must know: 
+
+\noindent \textit{How can sequence to sequence alignment be established?} 
+
+This thesis relies on machine learning methods in its attempt to determine what is being said. Machine learning models typically consists of many unknown weights, which are initially chosen at random. The good values for each weight are determined using a form of gradient descent. The process of using gradient descent to determine good model parameters is often referred to as training. Unfortunately gradient descent does not always lead to an acceptable solution. Only if the training algorithm is run with carefully chosen hyper-parameters on a model complex enough form an internal representation of the patters it is trained to extract, the optimization process will terminate at a good optimum. Using machine learning methods leads to another important question: 
+
+\noindent \textit{What model architecture is capable of handling the complex patterns found in speech data?}
+\textit{Which hyper-parameters should be chosen to train such a model?}
+
+\newpage
+
+Working with raw speech data should be possible in principle, in the speech literature researchers often use frequency domain representations of the original speech data. These representations are also called features, which leads to another question:
+
+\noindent \textit{What kind of feature representation of the input signal should be used if any?}
+
+At this point there are a lot of open questions and finding answers might not always be easy, it would therefore be interesting to know: 
+
+\noindent \textit{Which methods will allow the solution of any of the questions above?}
+
+Last but not least, this thesis should be useful to others. It's code contributions should benefit future researchers, which leads to one last question:
+
+\noindent \textit{How should software be developed in order to produce useful and maintainable results?}
+
+This thesis is an attempt answer the questions above, trough literature study, coding and experimentation.
+
 
 
