@@ -74,23 +74,35 @@
 \begin{flushleft}
   \renewcommand{\arraystretch}{1.1}
   \begin{tabularx}{\textwidth}{@{}p{12mm}X@{}}
-    ASR & Automatic speech recognition \\
+    ASR   & Automatic speech recognition \\
     CNN   & Convolutional neural network \\
     RNN   & Recurrent neural network \\
-    MSE   & Mean Square error \\
-    PSNR  & Peak Signal-to-Noise ratio \\
+    LSTM  & Long short term memory \\
+    BLSTM & Bidirectional long short term memory \\
+    PLSTM & Pyramidal long short term memory \\
+    LAS	  & Listen attend and spell \\
   \end{tabularx}
 \end{flushleft}
 \section*{Symbols}
 \begin{flushleft}
   \renewcommand{\arraystretch}{1.1}
   \begin{tabularx}{\textwidth}{@{}p{12mm}X@{}}
+	$\mathbf{m}$ & Mean vector \\
+	$\sigma$	 & Standart deviation vector \\
+	$\mathbf{x}$ & System input vector \\
+	$\hat{\mathbf{x}}$ & Standardized input vector \\
+	$\hat{\mathbf{y}}$ & Label probability distribution vector \\
+	$\mathbf{y}$ & Label output vector \\
+	$E$			 & Cost function \\
+	$\mathbf{w}$ & Model weight vector \\
+	$\triangle$	 & Gradient \\
+	$\mathbf{c}$  & Recurrent cell state and las context \\
+	$\mathbf{h}$  & Hidden value vector \\
+	$\alpha$	 & Attention vector \\
+
     42    & ``The Answer to the Ultimate Question of Life, the Universe,
-            and Everything'' according to  \\
-    $c$   & Speed of light \\
-    $E$   & Energy \\
-    $m$   & Mass \\
-    $\pi$ & The number pi \\
+            and Everything'' \\
+
   \end{tabularx}
 \end{flushleft}
 

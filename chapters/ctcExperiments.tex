@@ -40,18 +40,7 @@ This section explores bidirectional long short term memory layers with CTC outpu
 \end{figure}
 Results of the training process are shown in figure~\ref*{fig:ctc2BLSTM41}. In the experiment the training process was stopped after 10 epochs to be able to compare the result to the pyramidal listener experiment in the next chapter, at this point the phoneme error rate of this layout was at $29\%$. However if the training process is continued with decreasing learning rates the error rate values end up close to $26\%$ eventually. Performance can be increased further by assigning the LSTM cells a larger dimension.
 
-\subsection{Efficient sequence to sequence implementations}
-When working with sequence to sequence methods such as CTC, data processing problems arise naturally. For efficiency reasons it is beneficial to work with
-fixed size data tensors. However the number of frames varies significantly between utterances. The same holds true for the target lengths. In order to still be able to work with fixes size tensors, the inputs and targets are padded with zeros or unknown tokens to fill up the length differences.
-In order to keep the speed benefit of working with tensors it is important to
-keep track of the sequence lengths of every individual utterance.
-The sequence length information must be used to avoid actually processing any of the padded data, that the tensors where filled up with in order to allocate memory faster.
-The listener produces a three dimensional logit tensor of size $[B, T, F]$, where $B$ denotes the batch size, $T$ the largest occuring frame number and $F$ the feature dimension size. When implementing the output layer the na\"{\i}ve approach would be to loop over the time dimension, and evaluate the linear layer T times with a $B$ times $F$ matrix. Which is simple to implement but very inefficient. Instead the sequence information should be used to remove the padding and concatenate the batch dimension into a matrix $\mathbf{X}$ of size $[S, F]$, where $S$ denotes the sum of all sequence lengths. The linear layer can then be evaluated as:
-\begin{equation}
-\mathbf{W}\mathbf{X} + \mathbf{b} = \mathbf{R}
-\end{equation}
-The result matrix $R$ can then be converted back into a padded tensor using the sequence length information one more time.
-An alternative approach which avoids reshaping is to implement a linear recurrent network cell with a state size of zero and use dynamic unrollings the evaluate the linear layer. The resulting memory requirements and speed are comparable.
+
 
 
 
