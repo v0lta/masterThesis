@@ -69,14 +69,19 @@ this improvement does not translate into a better decoding performance.
 
 Ideally one would like to observe the opposite. If the output labels where correct more often during decoding, the networks trained to rely on them should outperform those which where not. Based on the observations above we conclude that beam search should be implemented in order to obtain labels of higher quality during decoding, which in turn should be beneficial to networks, which learned to rely on past outputs.
 
-\subsection{Comparing two attend and spell variants}
+\subsection{A second attend and spell cell type}
+Looking at figure~\ref{fig:las} it is not perfectly clear weather the blocks after the context computations represent LSTM-cell or are simply part of the feedforward labeling network. Until now it has been assumed that no additional recurrent LSTM network after the context is part of LAS. In this section such an extra RNN will be investigated briefly. The attend and spell cell variation is shown in figure~\ref{fig:lasVariants}. The state of the extra memory cell is labeled with $\mathbf{d}$.
 \begin{figure}
 \centering
-\includestandalone{tikz/asCellType2}
-\caption{A different attend and spell cell configuration, featuring an additional post context RNN.}
+\includestandalone[width=0.5\linewidth]{tikz/asCellType2}
+\caption{A different attend and spell cell configuration, featuring an additional post context RNN}
 \label{fig:lasVariants}
+\includestandalone[width=0.5\linewidth]{tikz/LAS_no_reg_e10_p07_post_context_rnn}
+\caption{Learning curves over 10 epoch using greedy decoding and a training network output reuse probability of 0.7.}
+\label{fig:variantResult}
 \end{figure}
-
+A learning curve over 10 epochs using a ground-truth probability of 0.3 with greedy decoding is shown in figure~\ref{fig:variantResult}. The results are slightly worse then what was observed with the original setup, despite the extra weights. This result indicated that the extra post context RNN has no additional value.
+It can therefore be concluded that the decoder state $\mathbf{s}_i$ is sufficient to remember past context information.
 
 
 \subsection{Beam-search Decoding}
