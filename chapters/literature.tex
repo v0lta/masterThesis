@@ -67,7 +67,7 @@ The optimization process of neural networks works with a training data set $\{\{
 \begin{align}
 E = \frac{1}{2}\sum\limits_{i=1}^{p} \| \mathbf{o}_i - \mathbf{t}_i \|^2.
 \end{align}
-However generally the more complex cross-entropy is used as a cost function. For classification tasks, cross entropy is defined as \cite[page 245]{Bishop1995}:
+However generally the more complex cross-entropy is used as a cost function, because it leads to faster convergence and better results in practice \cite{Golik2013}. For classification tasks, cross entropy is defined as \cite[page 245]{Bishop1995}:
 \begin{equation}
 E = - \sum\limits_{i=1}^{p} {\mathbf{t}_i \ln(\mathbf{o}_i)} + (1 - \mathbf{t}_i)\ln(1 - \mathbf{o}_i)
 \label{eq:corssEntropy}
@@ -295,19 +295,26 @@ If stacked on top of each other, these bidirectional LSTM layers form a deep rec
 In this setting each LSTM cell has access to information from before or after it. For this to work the speech sequence, which is analyzed has to be recorded completely. In this case future information is available and should be used for recognition purposes.
 
 \section{Connectionist temporal classification}
-A bidirectional LSTM layer establishes access to past and future input information, but the alignment of the speech inputs and it's transcription remains unknown. Connectionist temporal classification is an output layer, which in tandem with the BLSTM layer enables the network to work around this problem, while at the same time allowing the gradient to propagate trough it. The resulting network can be trained end-to-end. This entire section is based on \cite[chapter 7]{Graves2008}.
+A bidirectional LSTM layer establishes access to past and future input information, but the alignment of the speech inputs and it's transcription remains unknown. Connectionist temporal classification is an output layer, which in tandem with the BLSTM layer enables the network to work around this problem, while at the same time allowing the gradient to propagate trough it. The resulting network can be trained end-to-end.
 
 CTC consists of a softmax layer with one output per alphabet element plus one for blank our no label. The idea is to allow the network to output a label at any input time step, and post process these outputs to get the overall sequence of labels correct, while ignoring the timing of each label.
 More formally $L$ denotes the used alphabet and $L'$ = $L \cup \oslash $ the alphabet with the empty label. The network output vectors are denoted by $\mathbf{y}^t$ and will have length $|L'|$. Given the training set S and the input sequence $\mathbf{x}$ the probability for observing a sequence $\pi$ consisting of elements from $L'$ with length T is given by \cite[page 56]{Graves2008}:
 \begin{equation}
 p(\pi| \mathbf{x}, S) = \Pi_{t=1}^T y^t_{\pi_t}.
 \end{equation}
-In a first step all a mapping $\mathcal{B}$ is introduced, which simplifies the allowed paths trough the label probabilities, by removing duplicates. For example $\mathcal{B}(x \oslash xy \oslash) = \mathcal{B}(\oslash x x \oslash xyy) = xxy$. In other words a new label is only produced if the output label changed in the path. The probability of a labeling $l$ can be computed using \cite[page 57]{Graves2008}:
+In a first step all a mapping $\mathcal{B}$ is introduced, which simplifies the allowed paths trough the label probabilities, by removing duplicates. For example $\mathcal{B}(x \oslash xy \oslash) = \mathcal{B}(\oslash x x \oslash xyy) = xxy$. In other words a new label is only produced if the output label changed in the path. The probability of a labeling $l$ can be computed by summing up the probabilities of all paths, which map to the same labeling \cite[page 57]{Graves2008}:
 \begin{equation}
 p(\mathbf{l|\mathbf{x}}) = \sum\limits_{\pi \in \mathcal{B}^{-1}(\mathbf{l})}p(\pi|\mathbf{x}).
+\label{eq:CTCPaths}
 \end{equation}
-Generally speaking this collapsing process is what makes it possible to use CTC with unaligned data.
-%TODO: expand this section.
+Generally speaking this collapsing process of different paths is what makes it possible to use CTC with unaligned data.
+
+Equation~\ref{eq:CTCPaths} must be evaluated efficiently, which can be done by using a forward-backward algorithm. Such algorithms compute forward and backward pass variables $\alpha_t(s)$ and $\beta_t(s)$. The two variables break the probability of correctly predicting the sequence into a prefix $\alpha$ and suffix $\beta$ part. 
+During training their product at any time step $t$ and sequence position $s$ yields the probability sum of all label paths found in the network output $\mathbf{y}$ and mapped onto $\mathbf{t}$ by $\mathcal{B}$.  The probability of predicting the targets given the inputs is then given by:
+\begin{equation}
+p(\mathbf{t}|\mathbf{x}) = \sum\limits_{s=1}^{| \mathbf{t}' |} \alpha_t(s) \beta_t(s) 
+\end{equation}   
+Which is running tough the $| \mathbf{t}' |$ elements of the target sequence with added blanks at the start, end and between all labels. The sum checks all possible alignments, which could follow from the mapped outputs. Adding up the negative logarithm of the probabilities above leads to the CTC cost function. Decoding can be done using simlpe greedy decoding or a more complex beam search variant called prefix search. More details can be found in  \cite[chapter 7]{Graves2008}, \cite[chapter 7]{Graves2012} and \cite{Graves2006}.
 
 CTC takes into account only the features and (depending on how the beam search is done) ignores the label it previously produced. Additionally the network output is coupled to the input frames. This shortcoming lead to the development of so called transducers. These models decouple the decoding time from the input time and use past labels to improve performance.
 

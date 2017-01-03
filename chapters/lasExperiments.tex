@@ -42,7 +42,7 @@ From the input features the las network decodes:
 <eos>
 \end{lstlisting}
 The decoding and target sequences clearly bead some resemblance. However significant errors do exist in the network output in particular in the last third. The phoneme sequence dx  iy  ng  ih is incorrectly transcribed as iy  iy  iy  iy  iy  iy  iy iy,
-which has a large impact on the error. The levenstein distance between the two labellings is 21. Given that the target sequence contains 42 labels including the start and end of sentence tokens, the error rate of this example is 0.5, it is therefore slightly better than the average of 0.553362, which is the average decoding error rate over the entire validation set.
+which has a large impact on the error. The levenstein distance between the two labellings is 21. Given that the target sequence contains 42 labels including the start and end of sentence tokens, the error rate of this example is 0.5, it is therefore slightly better than the average of $\approx 0.55$, which is the average decoding error rate over the entire validation set.
 
 
 \subsection{The effect of the groundtruth selection probability during training}

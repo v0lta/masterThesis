@@ -10,6 +10,21 @@ url = {http://arxiv.org/abs/1603.04467},
 volume = {abs/1603.0},
 year = {2016}
 }
+@article{Amodei2015,
+abstract = {We show that an end-to-end deep learning approach can be used to recognize either English or Mandarin Chinese speech—two vastly different languages. Be- cause it replaces entire pipelines of hand-engineered components with neural net- works, end-to-end learning allows us to handle a diverse variety of speech includ- ing noisy environments, accents and different languages. Key to our approach is our application of HPC techniques, resulting in a 7x speedup over our previous system [26]. Because of this efficiency, experiments that previously took weeks now run in days. This enables us to iterate more quickly to identify superior ar- chitectures and algorithms. As a result, in several cases, our system is competitive with the transcription of human workers when benchmarked on standard datasets. Finally, using a technique called Batch Dispatch with GPUs in the data center, we show that our system can be inexpensively deployed in an online setting, deliver- ing low latency when serving users at scale.},
+archivePrefix = {arXiv},
+arxivId = {1512.02595},
+author = {Amodei, Dario and Anubhai, Rishita and Battenberg, Eric and Case, Carl and Casper, Jared and Catanzaro, Bryan and Chen, Jingdong and Chrzanowski, Mike and Coates, Adam and Diamos, Greg and Elsen, Erich and Engel, Jesse and Fan, Linxi and Fougner, Christopher and Han, Tony and Hannun, Awni and Jun, Billy and LeGresley, Patrick and Lin, Libby and Narang, Sharan and Ng, Andrew and Ozair, Sherjil and Prenger, Ryan and Raiman, Jonathan and Satheesh, Sanjeev and Seetapun, David and Sengupta, Shubho and Wang, Yi and Wang, Zhiqian and Wang, Chong and Xiao, Bo and Yogatama, Dani and Zhan, Jun and Zhu, Zhenyao},
+doi = {10.1145/1143844.1143891},
+eprint = {1512.02595},
+file = {:home/moritz/Documents/Mendeley/Amodei et al/Unknown/Amodei et al. - 2015 - Deep Speech 2 End-to-End Speech Recognition in English and Mandarin Baidu.pdf:pdf},
+isbn = {1595933832},
+issn = {10987576},
+pmid = {1000285842},
+title = {{Deep Speech 2: End-to-End Speech Recognition in English and Mandarin Baidu}},
+url = {http://portal.acm.org/citation.cfm?doid=1143844.1143891},
+year = {2015}
+}
 @article{Bahdanau2015,
 abstract = {Neural machine translation is a recently proposed approach to machine transla- tion. Unlike the traditional statistical machine translation, the neural machine translation aims at building a single neural network that can be jointly tuned to maximize the translation performance. The models proposed recently for neu- ral machine translation often belong to a family of encoder–decoders and encode a source sentence into a fixed-length vector from which a decoder generates a translation. In this paper, we conjecture that the use of a fixed-length vector is a bottleneck in improving the performance of this basic encoder–decoder architec- ture, and propose to extend this by allowing a model to automatically (soft-)search for parts of a source sentence that are relevant to predicting a target word, without having to form these parts as a hard segment explicitly. With this new approach, we achieve a translation performance comparable to the existing state-of-the-art phrase-based system on the task of English-to-French translation. Furthermore, qualitative analysis reveals that the (soft-)alignments found by the model agree well with our intuition.},
 archivePrefix = {arXiv},
@@ -154,6 +169,24 @@ title = {{TIMIT Acoustic-Phonetic Continuous Speech Corpus}},
 url = {https://catalog.ldc.upenn.edu/ldc93s1},
 year = {1993}
 }
+@article{Golik2013,
+abstract = {In this paper we investigate the error criteria that are optimized during the training of artificial neural networks (ANN). We compare the bounds of the squared error (SE) and the crossentropy (CE) criteria being the most popular choices in stateof- The art implementations. The evaluation is performed on automatic speech recognition (ASR) and handwriting recognition (HWR) tasks using a hybrid HMM-ANN model. We find that with randomly initialized weights, the squared error based ANN does not converge to a good local optimum. However, with a good initialization by pre-training, the word error rate of our best CE trained system could be reduced from 30.9{\%} to 30.5{\%} on the ASR, and from 22.7{\%} to 21.9{\%} on the HWR task by performing a few additional "fine-tuning" iterations with the SE criterion. Copyright {\textcopyright} 2013 ISCA.},
+archivePrefix = {arXiv},
+arxivId = {arXiv:1503.01842v1},
+author = {Golik, Pavel and Doetsch, Patrick and Ney, Hermann},
+doi = {10.1145/1102351.1102422},
+eprint = {arXiv:1503.01842v1},
+file = {:home/moritz/Documents/Mendeley/Golik, Doetsch, Ney/Proceedings of the Annual Conference of the International Speech Communication Association, INTERSPEECH/Golik, Doetsch, Ney - 2013 - Cross-entropy vs. Squared error training A theoretical and experimental comparison.pdf:pdf},
+isbn = {1595931805},
+issn = {19909772},
+journal = {Proceedings of the Annual Conference of the International Speech Communication Association, INTERSPEECH},
+keywords = {Automatic speech recognition,Handwriting recognition,Hybrid approach,Training criterion for ANN training},
+number = {2},
+pages = {1756--1760},
+title = {{Cross-entropy vs. Squared error training: A theoretical and experimental comparison}},
+volume = {2},
+year = {2013}
+}
 @article{Graves2013b,
 abstract = {Recurrent neural networks (RNNs) are a powerful model for sequential data. End-to-end training methods such as Connectionist Temporal Classification make it possible to train RNNs for sequence labelling problems where the input-output alignment is unknown. The combination of these methods with the Long Short-term Memory RNN architecture has proved particularly fruitful, delivering state-of-the-art results in cursive handwriting recognition. However RNN performance in speech recognition has so far been disappointing, with better results returned by deep feedforward networks. This paper investigates deep recurrent neural networks, which combine the multiple levels of representation that have proved so effective in deep networks with the flexible use of long range context that empowers RNNs. When trained end-to-end with suitable regularisation, we find that deep Long Short-term Memory RNNs achieve a test set error of 17.7{\%} on the TIMIT phoneme recognition benchmark, which to our knowledge is the best recorded score.},
 archivePrefix = {arXiv},
@@ -180,11 +213,12 @@ booktitle = {Technische Universit{\{}{\"{a}}{\}}t M{\{}{\"{u}}{\}}nchen Fakult{\
 doi = {10.1007/978-3-642-24797-2},
 eprint = {arXiv:1308.0850v1},
 file = {:home/moritz/Documents/Mendeley/Graves/Technische Universit{\"{a}}t M{\"{u}}nchen Fakult{\"{a}}t f{\"{u}}r Informatik/Graves - 2008 - Supervised Sequence Labelling with Recurrent Neural Networks.pdf:pdf},
+institution = {Technische Universitaet Muenchen},
 isbn = {2000201075},
 issn = {01406736},
 pages = {124},
 pmid = {7491034},
-title = {{Supervised Sequence Labelling with Recurrent Neural Networks}},
+title = {{Supervised Sequence Labelling with Recurrent Neural Networks, Phd Thesis}},
 url = {http://scholar.google.com/scholar?hl=en{\%}7B{\&}{\%}7DbtnG=Search{\%}7B{\&}{\%}7Dq=intitle:with+Recurrent+Neural+Networks{\%}7B{\#}{\%}7D0{\%}7B{\%}25{\%}7D5Cnhttp://books.google.com/books?hl=en{\%}7B{\&}{\%}7Dlr={\%}7B{\&}{\%}7Did=4UauNDGQWN4C{\%}7B{\&}{\%}7Doi=fnd{\%}7B{\&}{\%}7Dpg=PR1{\%}7B{\&}{\%}7Ddq=Supervised+Sequence+Labellin},
 year = {2008}
 }
@@ -201,6 +235,7 @@ isbn = {2000201075},
 issn = {01406736},
 pages = {124},
 pmid = {7491034},
+publisher = {Springer Berlin Heidelberg},
 title = {{Supervised Sequence Labelling with Recurrent Neural Networks}},
 url = {http://scholar.google.com/scholar?hl=en{\%}7B{\&}{\%}7DbtnG=Search{\%}7B{\&}{\%}7Dq=intitle:with+Recurrent+Neural+Networks{\%}7B{\#}{\%}7D0{\%}7B{\%}25{\%}7D5Cnhttp://books.google.com/books?hl=en{\%}7B{\&}{\%}7Dlr={\%}7B{\&}{\%}7Did=4UauNDGQWN4C{\%}7B{\&}{\%}7Doi=fnd{\%}7B{\&}{\%}7Dpg=PR1{\%}7B{\&}{\%}7Ddq=Supervised+Sequence+Labellin},
 year = {2012}
@@ -443,6 +478,27 @@ howpublished = {http://distill.pub/2016/augmented-rnns/},
 title = {{Attention and Augmented Recurrent Neural Networks}},
 year = {2016}
 }
+@book{Oliveira2006,
+author = {Oliveira, Suely and Stewart, David},
+file = {:home/moritz/Documents/Mendeley/Oliveira, Stewart/Unknown/Oliveira, Stewart - 2006 - Writing Scientific Software.pdf:pdf},
+isbn = {9780521858960},
+pages = {292},
+publisher = {Cambridge Cambridge university press},
+title = {{Writing Scientific Software}},
+year = {2006}
+}
+@article{Palaz2015,
+abstract = {Automatic speech recognition systems typically model the rela-tionship between the acoustic speech signal and the phones in two separate steps: feature extraction and classifier training. In our recent works, we have shown that, in the framework of con-volutional neural networks (CNN), the relationship between the raw speech signal and the phones can be directly modeled and ASR systems competitive to standard approach can be built. In this paper, we first analyze and show that, between the first two convolutional layers, the CNN learns (in parts) and models the phone-specific spectral envelope information of 2-4 ms speech. Given that we show that the CNN-based approach yields ASR trends similar to standard short-term spectral based ASR sys-tem under mismatched (noisy) conditions, with the CNN-based approach being more robust.},
+author = {Palaz, Dimitri and Magimai-Doss, Mathew and Collobert, Ronan},
+file = {:home/moritz/Documents/Mendeley/Palaz, Magimai-Doss, Collobert/Proceedings of the Annual Conference of the International Speech Communication Association, INTERSPEECH/Palaz, Magimai-Doss, Collobert - 2015 - Analysis of CNN-based speech recognition system using raw speech as input.pdf:pdf},
+issn = {19909772},
+journal = {Proceedings of the Annual Conference of the International Speech Communication Association, INTERSPEECH},
+keywords = {Automatic speech recognition,Convolutional neural networks,Raw signal,Robust speech recognition},
+pages = {11--15},
+title = {{Analysis of CNN-based speech recognition system using raw speech as input}},
+volume = {2015-January},
+year = {2015}
+}
 @article{Pascanu2012,
 abstract = {There are two widely known issues with prop- erly training Recurrent Neural Networks, the vanishing and the exploding gradient prob- lems detailed in Bengio et al. (1994). In this paper we attempt to improve the under- standing of the underlying issues by explor- ing these problems from an analytical, a geo- metric and a dynamical systems perspective. Our analysis is used to justify a simple yet ef- fective solution. We propose a gradient norm clipping strategy to deal with exploding gra- dients and a soft constraint for the vanishing gradients problem. We validate empirically our hypothesis and proposed solutions in the experimental section.},
 archivePrefix = {arXiv},
@@ -536,7 +592,7 @@ abstract = {This document gives coding conventions for the Python code comprisin
 author = {van Rossum, Guido and Warsaw, Barry and Coghlan, Nick},
 title = {{PEP 8 -- Style Guide for Python Code}},
 url = {https://www.python.org/dev/peps/pep-0008/},
-urldate = {23.12.20016},
+urldate = {2001-01-01},
 year = {2001}
 }
 @article{Wager2013,
