@@ -42,7 +42,28 @@ From the input features the las network decodes:
 <eos>
 \end{lstlisting}
 The decoding and target sequences clearly bead some resemblance. However significant errors do exist in the network output in particular in the last third. The phoneme sequence dx  iy  ng  ih is incorrectly transcribed as iy  iy  iy  iy  iy  iy  iy iy,
-which has a large impact on the error. The levenstein distance between the two labellings is 21. Given that the target sequence contains 42 labels including the start and end of sentence tokens, the error rate of this example is 0.5, it is therefore slightly better than the average of $\approx 0.55$, which is the average decoding error rate over the entire validation set.
+which has a large impact on the error. The levenstein distance between the two labellings is 21. Given that the target sequence contains 45 labels including the start and end of sentence tokens, the error rate of this example is 0.5, it is therefore slightly better than the average of $\approx 0.55$, which is the average decoding error rate over the entire validation set.
+
+\subsection{The attention mechanism}
+\begin{figure}
+\centering
+\includestandalone[width=0.6\linewidth]{tikz/alpha}
+\caption{Plot of the alignment vectors computed by the network for all 45 labels assigned to timit utterance \texttt{fmld0\_sx295}.}
+\label{fig:fullAttention}
+\end{figure}
+In order to further verify implementation of the speller the attention weights $\alpha$ (equation~\ref{eq:alphas}), have been extracted during decoding. A visualization of the attention vectors computed during decoding is shown in figure~\ref{fig:fullAttention}. The speller assigns 45 labels. During each decoding time step one label is produced, therefore the attention matrix has the same number of columns. The y-Axis shows compressed input time. This dimension depends on the length of the input utterance under consideration and the compression level, which is set by the number of pyramidal LSTM layers. The attention weights are normalized using a softmax function, hence all elements must sum to one. The scale shown next to figure~\ref{fig:fullAttention} therefore ends at one, values close to one indicate that the network is focusing on a single feature. Generally the attention weights should gradually cover all relevant features over time, this is definitely the case, as the attention weight is clustered around the diagonal. 
+Furthermore only a limited number of compressed frames can be relevant at any given time, ideally each vector should contain a sharp peak at the most relevant frame.     
+\begin{figure}
+\centering
+\includestandalone[height=0.2\paperheight]{tikz/alphaZoom}
+\caption{Closeup on interesting parts of the first third of the attention matrix.}
+\includestandalone[height=0.2\paperheight]{tikz/alphaZoom2}
+\caption{Closeup on interesting parts of the second third of the attention matrix.}
+\includestandalone[height=0.2\paperheight]{tikz/alphaZoom3}
+\caption{Closeup on interesting parts of the last third of the attention matrix.}
+\label{fig:attention3}
+\end{figure}
+With the parameters set as described the in the previous section the attention mechanism breaks down towards the end, which can be seen in the closeup shown in figure~\ref{fig:attention3}. When the speller produces the incorrect sequence of iys the attention weights are spread out over roughly 15 feature vectors. 
 
 
 \subsection{The effect of the groundtruth selection probability during training}
@@ -68,6 +89,9 @@ Figure~\ref{fig:lasGreedy05} depicts the training process. In comparison to the 
 this improvement does not translate into a better decoding performance.
 
 Ideally one would like to observe the opposite. If the output labels where correct more often during decoding, the networks trained to rely on them should outperform those which where not. Based on the observations above we conclude that beam search should be implemented in order to obtain labels of higher quality during decoding, which in turn should be beneficial to networks, which learned to rely on past outputs.
+
+
+
 
 \subsection{A second attend and spell cell type}
 Looking at figure~\ref{fig:las} it is not perfectly clear weather the blocks after the context computations represent LSTM-cell or are simply part of the feedforward labeling network. Until now it has been assumed that no additional recurrent LSTM network after the context is part of LAS. In this section such an extra RNN will be investigated briefly. The attend and spell cell variation is shown in figure~\ref{fig:lasVariants}. The state of the extra memory cell is labeled with $\mathbf{d}$.

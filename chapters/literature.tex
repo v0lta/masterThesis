@@ -310,13 +310,13 @@ p(\mathbf{l|\mathbf{x}}) = \sum\limits_{\pi \in \mathcal{B}^{-1}(\mathbf{l})}p(\
 Generally speaking this collapsing process of different paths is what makes it possible to use CTC with unaligned data.
 
 Equation~\ref{eq:CTCPaths} must be evaluated efficiently, which can be done by using a forward-backward algorithm. Such algorithms compute forward and backward pass variables $\alpha_t(s)$ and $\beta_t(s)$. The two variables break the probability of correctly predicting the sequence into a prefix $\alpha$ and suffix $\beta$ part. 
-During training their product at any time step $t$ and sequence position $s$ yields the probability sum of all label paths found in the network output $\mathbf{y}$ and mapped onto $\mathbf{t}$ by $\mathcal{B}$.  The probability of predicting the targets given the inputs is then given by:
+During training their product at any time step $t$ and sequence position $s$ yields the probability sum of all label paths found in the network output $\mathbf{y}$ and mapped onto $\mathbf{t}$ by $\mathcal{B}$.  The probability of predicting the targets ($\mathbf{l} = \mathbf{t}$) given the inputs is then given by:
 \begin{equation}
 p(\mathbf{t}|\mathbf{x}) = \sum\limits_{s=1}^{| \mathbf{t}' |} \alpha_t(s) \beta_t(s) 
 \end{equation}   
 Which is running tough the $| \mathbf{t}' |$ elements of the target sequence with added blanks at the start, end and between all labels. The sum checks all possible alignments, which could follow from the mapped outputs. Adding up the negative logarithm of the probabilities above leads to the CTC cost function. Decoding can be done using simlpe greedy decoding or a more complex beam search variant called prefix search. More details can be found in  \cite[chapter 7]{Graves2008}, \cite[chapter 7]{Graves2012} and \cite{Graves2006}.
 
-CTC takes into account only the features and (depending on how the beam search is done) ignores the label it previously produced. Additionally the network output is coupled to the input frames. This shortcoming lead to the development of so called transducers. These models decouple the decoding time from the input time and use past labels to improve performance.
+CTC takes into account only the features and (depending on how the beam search is done) ignores the label it previously produced. Additionally the number of network outputs is coupled to the input frames. This shortcoming lead to the development of so called transducers. These models decouple the decoding time from the input time and use past labels to improve performance.
 
 
 
@@ -349,6 +349,7 @@ This computation starts with the determination of the scalar energy $e_{i,u}$, w
 \begin{align}
 e_{i,u} = \phi(\mathbf{s}_i)^T \psi(\mathbf{h_u}) \\
 \alpha_{i,u} = \frac{ \exp(e_{i,u})}{ \sum\limits_{u} \exp(e_{i,u})} \\
+\label{eq:alphas}
 \mathbf{c}_i = \sum\limits_{u} \alpha_{i,u} \mathbf{h}_u
 \end{align}
 $\alpha$ is produced by running $\mathbf{e}$ trough a softmax function, which scales $\mathbf{e}$ such that all elements are within $(0,1)$ and add up to one. These scaled weights, can then be used to form the context vector $\mathbf{c}_i$. When the training process converges the $\alpha_i$s typically follow a distribution with sharp edges\cite[page 5]{Chan2015}. Thus it is justified to think of the alphas as a sliding window. This window contains only the currently relevant parts of the condensed input data set.
