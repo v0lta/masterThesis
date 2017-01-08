@@ -101,21 +101,27 @@ Looking at figure~\ref{fig:las} it is not perfectly clear weather the blocks aft
 \caption{A different attend and spell cell configuration, featuring an additional post context RNN}
 \label{fig:lasVariants}
 \includestandalone[width=0.5\linewidth]{tikz/LAS_no_reg_e10_p07_post_context_rnn}
-\caption{Learning curves over 10 epoch using greedy decoding and a training network output reuse probability of 0.7.}
+\caption{Learning curves over 10 epochs using greedy decoding and a training network output reuse probability of 0.7.}
 \label{fig:variantResult}
 \end{figure}
 A learning curve over 10 epochs using a ground-truth probability of 0.3 with greedy decoding is shown in figure~\ref{fig:variantResult}. The results are slightly worse then what was observed with the original setup, despite the extra weights. This result indicated that the extra post context RNN has no additional value.
 It can therefore be concluded that the decoder state $\mathbf{s}_i$ is sufficient to remember past context information.
 
 \subsection{Beam-search Decoding}
-The decoding process depends on the past outputs. Considering only the most probable output value at $i-1$ is not the best approach possible, as the second or 
+The decoding process depends on the past outputs. Considering only the most probable output value at $i-1$ is not the best approach possible, as the second or third label, might lead to more accurate predictions in the future, therefore a set of the $n$ most likely labels and network states are stored at each decoding time step. Finally the most likely beam hypothesis is selected. Results of a repetition of the previous experiment are shown in figure~\ref{fig:beamSearchExperiment}. The decoding error curve has fewer outliers, which could be an indication that the beam search implementation is working. Additionally the decoding errors to lie under $50\%$ often, but more experiments are required to make sure the improvement stems in fact from beam search. Furthermore a bug the was accidentally introduced during a code restructure. It removed the feature compression in the listener for this experiment, therefore care must be taken when comparing this result with previous ones.
 
-
+\begin{figure}
+\centering
+\includestandalone[width=0.49\linewidth]{tikz/beam_search_e40_b39_p05_v10}
+\includestandalone[width=0.49\linewidth]{tikz/beam_search_e3540_b39_p05_v10}
+\caption{Learning curves using beam search decoding. }
+\label{fig:beamSearchExperiment}
+\end{figure}
 
 
 \subsection{Dropout}
 Dropout is an important tool used to regularize deep neural networks, in a first experiment dropout has been added to all network pars as shown in figure~\ref{fig:lasDropout}. The dropout probability has been set to 0.2 for input and to 0.5 for hidden layers \cite{Srivastava2014}. Dropout should make longer training possible without risking over-fitting to the training data.
-
+TODO: Add experimental results once they become available.
 \begin{figure}
 \centering
 \includestandalone{tikz/las_dropout}
