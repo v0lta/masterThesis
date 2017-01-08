@@ -1,6 +1,7 @@
 \documentclass[crop,tikz]{standalone}% 'crop' is the default for v1.0, before it was 'preview'
 %\usetikzlibrary{...}% tikz package already loaded by 'tikz' option
 \usetikzlibrary{shapes,snakes}
+\usepackage{amsmath}
 \begin{document}
 \begin{tikzpicture}
 \tikzstyle{operation}=[rectangle,fill=yellow!50,minimum size=17pt,inner sep=0pt]
@@ -52,7 +53,7 @@
 
 \node (distribution_value) at (2.5,15) {$\mathbf{p} = P(y_i|\mathbf{x}, y_{<i})$};
 \draw[->] (character_distribution) -- (distribution_value);
-\node[operation] (one_hot_char) at (2.5,17) {$\max(\mathbf{p}) \Rightarrow \mathbf{y}_i $};
+\node[operation] (one_hot_char) at (2.5,17) {$\text{decode}(\mathbf{p}) \Rightarrow \mathbf{y}_i $};
 \draw[->] (distribution_value) -- (one_hot_char);
 
 
