@@ -47,12 +47,14 @@ which has a large impact on the error. The levenstein distance between the two l
 \subsection{The attention mechanism}
 \begin{figure}
 \centering
-\includestandalone[width=0.6\linewidth]{tikz/alpha}
-\caption{Plot of the alignment vectors computed by the network for all 45 labels assigned to timit utterance \texttt{fmld0\_sx295}.}
+\includestandalone[width=0.49\linewidth]{tikz/alpha}
+\includestandalone[width=0.42\linewidth]{tikz/align}
+\caption{Plot of the alignment vectors computed by the network for all 45 labels assigned to timit utterance \texttt{fmld0\_sx295} (left), and alignments assigned by a human listener (right).}
 \label{fig:fullAttention}
 \end{figure}
-In order to further verify the implementation of the speller all attention weights $\alpha$ (equation~\ref{eq:alphas}), have been extracted during decoding. Figure~\ref{fig:fullAttention} shows these vectors in concatenated matrix form. The speller assigns 45 labels. During each decoding time step one label is produced, therefore the attention matrix has the same number of columns. The y-Axis shows compressed input time. This dimension depends on the length of the input utterance under consideration and the compression level, which is set by the number of pyramidal LSTM layers. The attention weights are normalized using a softmax function, hence all elements must sum to one. The scale shown next to figure~\ref{fig:fullAttention} therefore ends at one, values close to one indicate that the network is focusing on a single feature. Generally the attention weights should gradually cover all relevant features over time, this is definitely the case, as the attention weight is clustered around the matrix diagonal. 
-Furthermore only a limited number of compressed frames can be relevant at any given time, ideally each vector should contain a sharp peak at the most relevant frame.     
+In order to further verify the implementation of the speller all attention weights $\alpha$ (equation~\ref{eq:alphas}), have been extracted during decoding. The left side of figure~\ref{fig:fullAttention} shows these vectors in concatenated matrix form. The speller assigns 45 labels. During each decoding time step one label is produced, therefore the attention matrix has the same number of columns. The y-Axis shows compressed input time. This dimension depends on the length of the input utterance under consideration and the compression level, which is set by the number of pyramidal LSTM layers. The attention weights are normalized using a softmax function, hence all elements must sum to one. The scale shown next to figure~\ref{fig:fullAttention} therefore ends at one, values close to one indicate that the network is focusing on a single feature. Generally the attention weights should gradually cover all relevant features over time, this is definitely the case, as the attention weight is clustered around the matrix diagonal. 
+Furthermore only a limited number of compressed frames can be relevant at any given time, ideally each vector should contain a sharp peak at the most relevant frame.   
+The timit data corpus comes with alignments found by human listeners. The recoding of utterance \texttt{fmld0\_sx295} lasts for $3.018s$. During the feature computation one frame is placed every $0.01s$. Therefore this utterance will come with 302 frames. Using a listener with a single pyramidal layer 151 high level feature vectors will be computed for this utterance. The right side of figure~\ref{fig:fullAttention} shows the rescaled human alignment. The two plots show some resemblance, which indicates that the implemented attention mechanism is working properly. 
 \begin{figure}
 \centering
 \includestandalone[height=0.2\paperheight]{tikz/alphaZoom}
@@ -91,8 +93,6 @@ this improvement does not translate into a better decoding performance.
 Ideally one would like to observe the opposite. If the output labels where correct more often during decoding, the networks trained to rely on them should outperform those which where not. Based on the observations above we conclude that beam search should be implemented in order to obtain labels of higher quality during decoding, which in turn should be beneficial to networks, which learned to rely on past outputs.
 
 
-
-
 \subsection{A second attend and spell cell type}
 Looking at figure~\ref{fig:las} it is not perfectly clear weather the blocks after the context computations represent LSTM-cell or are simply part of the feedforward labeling network. Until now it has been assumed that no additional recurrent LSTM network after the context is part of LAS. In this section such an extra RNN will be investigated briefly. The attend and spell cell variation is shown in figure~\ref{fig:lasVariants}. The state of the extra memory cell is labeled with $\mathbf{d}$.
 \begin{figure}
@@ -107,27 +107,7 @@ Looking at figure~\ref{fig:las} it is not perfectly clear weather the blocks aft
 A learning curve over 10 epochs using a ground-truth probability of 0.3 with greedy decoding is shown in figure~\ref{fig:variantResult}. The results are slightly worse then what was observed with the original setup, despite the extra weights. This result indicated that the extra post context RNN has no additional value.
 It can therefore be concluded that the decoder state $\mathbf{s}_i$ is sufficient to remember past context information.
 
-\subsection{Beam-search Decoding}
-The decoding process depends on the past outputs. Considering only the most probable output value at $i-1$ is not the best approach possible, as the second or third label, might lead to more accurate predictions in the future, therefore a set of the $n$ most likely labels and network states are stored at each decoding time step. Finally the most likely beam hypothesis is selected. Results of a repetition of the previous experiment are shown in figure~\ref{fig:beamSearchExperiment}. The decoding error curve has fewer outliers, which could be an indication that the beam search implementation is working. Additionally the decoding errors to lie under $50\%$ often, but more experiments are required to make sure the improvement stems in fact from beam search. Furthermore a bug the was accidentally introduced during a code restructure. It removed the feature compression in the listener for this experiment, therefore care must be taken when comparing this result with previous ones.
-
-\begin{figure}
-\centering
-\includestandalone[width=0.49\linewidth]{tikz/beam_search_e40_b39_p05_v10}
-\includestandalone[width=0.49\linewidth]{tikz/beam_search_e3540_b39_p05_v10}
-\caption{Learning curves using beam search decoding. }
-\label{fig:beamSearchExperiment}
-\end{figure}
-
-
-\subsection{Dropout}
-Dropout is an important tool used to regularize deep neural networks, in a first experiment dropout has been added to all network pars as shown in figure~\ref{fig:lasDropout}. The dropout probability has been set to 0.2 for input and to 0.5 for hidden layers \cite{Srivastava2014}. Dropout should make longer training possible without risking over-fitting to the training data.
-TODO: Add experimental results once they become available.
-\begin{figure}
-\centering
-\includestandalone{tikz/las_dropout}
-\caption{Dropout application to the listen attend and spell network. Recurrent connections are not shown.}
-\label{fig:lasDropout}
-\end{figure}
+\subsection{Dropout and Beam-search Decoding}
 
 
 
