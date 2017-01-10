@@ -1,1 +1,10 @@
 \chapter{Conclusion}
+In chapter~\ref{cha:problemStatement} important questions where asked, which this thesis attempts to answer.
+Based on the experimental evidence gathered it can be said that the implemented listen attend and spell model is able to recognize speech and determine relevant parts of input recordings. The attention weights computed by the model as well as the actual labeling do resemble results obtained by human listeners. This result suggests that \cite{Chan2015} correctly claims that neural attention mechanisms can be used to align text to speech data. In terms of network regularization dropout \cite{Srivastava2014} has been found to be a useful tool. Working network parameters turned out to be scaled down versions of the ones stated in the original las paper \cite{Chan2015}. for the feedforward parameters which are not mentioned it has been found that 128 units and one hidden layer leads to convergence on timit. However the author is confident that further tuning and exploring deeper configurations will lead to additional improvements.
+
+The goals of this thesis project where to implement a skeleton las model, beam search decoding, and explore different regularization models if possible.
+Experimental evidence has been gathered, which suggest that the all three goals have indeed been achieved. Some further experimental validation is required. In particular additional separate testing of the beam search and dropout code, which has been tested together in order to satisfy time constraints. 
+
+
+
+Another important part of this thesis, was to improve the authors insight into software development methods. The thesis deliverables include more than thousand lines of documented and pylinted python code. The code fully integrates into the existing toolbox under development in the speech group at esat. The author hopes, that this work will serve as a good foundation for future development.  

@@ -16,6 +16,7 @@ Figure~\ref{fig:listenCTC}, shows the optimization algorithms progress, as measu
 
 
 \subsection{Greedy Decoding Experiments}
+\label{sec:greedy}
 Using the tested listener with 64 hidden lstm units per direction and one pyramidal layer, the CTC layer is replaced with attend and spell functions. For computational efficiency these functions have been implemented within a customized RNN cell. Using an RNN framework makes it possible to use optimized code to unroll the attend and spell
 computations. Among other things dynamically unrolling the second part of the network this way ensures efficient memory utilization and sequence length management. Within the new cell the decoder state size was chosen to be 128, considering the fact that the listener outputs features of size 128, which in turn determines the context vectors to have this same dimension.  Hoping to provide sufficient memory to remember past context vectors the decoder state RNN was set to the same dimension.
 The state and feature networks, $\phi$ and $\psi$ were given one hidden layer each, with a hidden dimension of 64. This choice was made mainly to conserve memory. During training the network output was used instead of the true target with a probability of 0.7.
@@ -107,8 +108,39 @@ Looking at figure~\ref{fig:las} it is not perfectly clear weather the blocks aft
 A learning curve over 10 epochs using a ground-truth probability of 0.3 with greedy decoding is shown in figure~\ref{fig:variantResult}. The results are slightly worse then what was observed with the original setup, despite the extra weights. This result indicated that the extra post context RNN has no additional value.
 It can therefore be concluded that the decoder state $\mathbf{s}_i$ is sufficient to remember past context information.
 
-\subsection{Dropout and Beam-search Decoding}
+\subsection{Beam-search and Dropout}
+Two measures have been taken to increase system performance. First a beam of las labels and states is kept, in order to explore several labeling hypotheses as described in chapter~\ref{sec:beamsearch}. However the current version of the code does not use language model rescoring.
 
+\begin{figure}
+\centering
+\includestandalone[width=0.8\linewidth]{tikz/las_dropout}
+\caption{Listen attend and spell forward connections with added dropout. No recurrences are shown.}
+\label{fig:dropout}
+\end{figure}
+Second dropout has been added as shown in figure~\ref{fig:dropout}. The rationale behind using dropout regularization is to allow larger networks to be trained longer without running into over-fitting problems. In comparison to the previous experiments all network parameters have been doubled. Which means that all BLSTM layers used 128 units, all LSTM layers used 265 and all feedforward layers again 128 units. Due to good results in previous experiments the network output reuse probability during training was kept at 0.6. 
+\begin{figure}
+\includestandalone[width=0.5\linewidth]{tikz/LAS_dropout0805_in00_p06_e120_double_loss}
+\includestandalone[width=0.5\linewidth]{tikz/LAS_dropout0805_in00_p06_e120_double_error}
+\caption{LAS learning curves with a listener LSTM using 128 units per direction and one PLSTM. The speller LSTM state size was set to 256. All feed-forward networks in the speller had 128 units per layer and two layers overall.}
+\label{fig:dropBeamRes}
+\end{figure}
+The settings described above led to the learning curves shown in figure~\ref{fig:dropBeamRes}. The validation error drops consistently under 50 percent, without large outliers. Considering once more utterance \texttt{fmld0\_sx295}.
+\begin{lstlisting}[caption={Targets}]
+<sos>  sil  ih  f  sil  k  eh  r  l  sil  k  ah  m  z
+       sil  t  ah  m  aa  r  ah  hh  ae  v  er  r  ey
+       n  jh  f  er  m  iy  dx  iy  ng  ih  
+       sil  t  uw  sil
+<eos>
+\end{lstlisting}
+The network now decodes:
+\begin{lstlisting}[caption={Network output}]
+<sos> sil hh ih f sil k ih r ow sil k ah m sil 
+	  sil t ah m aa aa hh hh v v er ey 
+	  n n sil f f er m iy iy iy iy sil
+	  sil t uw sil sil
+<eos>
+\end{lstlisting}
+Which is considerably better than the result obtained earlier. The levenstein distance over target length ratio drops to 0.36 for this utterance. However over the entire validation set 0.45 has been measured. This result is considerably better than the 0.55 which where observed in section \ref{sec:greedy} using a much simpler model with greedy decoding and input noise regularization.  
 
 
 
