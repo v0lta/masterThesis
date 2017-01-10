@@ -48,8 +48,8 @@ A visualization of the attend and spell cell implementation is shown in figure~\
 The ground-truth labels are known during training. The attend and spell cell must therefore be evaluated until a sequence of the same length as the ground-truth has been obtained. Taking knowledge of the target sequence length into account the unrolling can be done in a \texttt{for} loop. 
 Running in decoding mode is harder, because the length of the sequence the model will assign to the input is unknown. 
 
-\subsubsection{Design of the decoding loop logic}
-The attend and spell cell must be evaluated until it produces an end of sentence token or an iteration maximum has been reached. The system should be able to decode multiple sequences in parallel. In order to keep track of the active sequences a done vector $\mathbf{d}$ is introduced.  $\mathbf{d}$ contains one entry per sequence, each entry should contain \texttt{True} if an \texttt{<eos>} token has been produced during decoding of the corresponding input and \texttt{False} if not. 
+\subsubsection{Design of the greedy decoding loop logic}
+The attend and spell cell must be evaluated until it produces an end of sentence token or an iteration maximum has been reached. The system should be able to decode multiple sequences in parallel. In order to keep track of the active sequences a done-vector $\mathbf{d}$ is introduced.  $\mathbf{d}$ contains one entry per sequence, each entry should contain \texttt{True} if an \texttt{<eos>} token has been produced during decoding of the corresponding input and \texttt{False} if not. 
 To achieve the desired behavior the following loop logic has been devised:
 \begin{lstlisting}[language=python]
 while keep_working:
@@ -58,7 +58,7 @@ while keep_working:
 	stop_loop = logical_or(done, greater(time, max_steps))
 	keep_working = logical_not(stop_loop)
 \end{lstlisting}
-The pseudocode above uses relies on the mask $\mathbf{d}$ and an upper step limit to check if the while loop should continue running. In order to implement decoding efficiently inside of a graph it is important to keep track of the sequence lengths. The decoding loop implementation does this when it determines the done mask $\mathbf{d}$. During every iteration the loop body updates the sequence lengths with the current decoding time, unless $\mathbf{d}$ contains \texttt{True} at the position corresponding to the current utterance.
+The pseudocode above uses relies on the mask $\mathbf{d}$ and an upper step limit to check if the while loop should continue running. In order to implement decoding efficiently inside of a graph it is important to keep track of the sequence lengths. The decoding loop implementation does this when it determines the done-mask $\mathbf{d}$. During every iteration the loop body updates the sequence lengths with the current decoding time, unless $\mathbf{d}$ contains \texttt{True} at the position corresponding to the current utterance.
 \begin{lstlisting}[language=python]
      decoded = decode(logits)
      mask = tf.equal(decoded, <eos>)
@@ -70,6 +70,11 @@ The pseudocode above uses relies on the mask $\mathbf{d}$ and an upper step limi
      d = logical_or(mask, d)
 \end{lstlisting}
 The code listing above updates $\mathbf{d}$ after the sequence lengths have been updated, because the \texttt{<eos>} token should be recorded as well. It is assumed that the decoded function returns a one hot vector and \texttt{<eos>} represents an encoded end of sentence token. $\mathbf{d}$ is initialized to \texttt{False} for all sequences. 
+
+\subsubsection{Design of the beam search decoding loop}
+The author is unaware of a debugging tool, which would allow to stop executing a tensorflow graph at a given point and examine the graph variables. The beam search operations have therefore been designed using print statements only. 
+In order to reduce the workload the loop logic has been kept exactly the same as the one used for greedy decoding. Instead of processing multiple utterances at the same time, beam width different hypotheses of the same utterance are dealt with. Decoding of this single sample stops, if all beam elements produced an end of sentence token. 
+Furthermore the beam search code keeps the labels, probabilities, cell-states, sequence lengths and done-masks in sorted order for the entire beam. 
 
 \subsubsection{Cell efficiency improvements}
 In figure~\ref{fig:asCell} the feature net output $\psi(\mathbf{h_u})$ is evaluated inside the cell. While closely following the equations in \cite{Chan2015}, evaluating the feature net inside the cell means accessing $\mathbf{H}$ and evaluating an MLP at every decoding time step. Instead the $\psi(\mathbf{h_u})$ can be computed outside of the cell ahead of decoding time and a matrix $\hat{\mathbf{H}}$ consisting of $\psi(\mathbf{h_u})$ for all $u$ is used inside the cell.

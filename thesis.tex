@@ -1,8 +1,8 @@
 \documentclass[master=ewit,english]{kulemt}
 \setup{title={Building an end-to-end speech recognizer},
   author={Moritz Wolter},
-  promotor={Prof.\,dr.\,ir.\ Patrick Wambacq \and Prof.\,dr.\,ir.\ Hugo van Hamme},
-  assessor={Prof.\,dr.\,ir.\ Johan Suykens},
+  promotor={Prof.\,dr.\,ir.\ Johan Suykens \and Prof.\,dr.\,ir.\ Hugo Van hamme},
+  assessor={Prof.\,dr.\,ir. Raf Vandenbrid \and Prof.\,dr.\,ir. Patrik Wambacq},
   assistant={Ir. Vincent Renkens}}
 % The following \setup may be removed entirely if no filing card is wanted
 \setup{filingcard,
@@ -33,10 +33,12 @@
 
 
 \begin{preface}
-  I would like to thank everybody who kept me busy the last year,
-  especially my promotor and my assistants. I would also like to thank the
-  jury for reading the text. My sincere gratitude also goes to my family
-  for supporting me trough my studies.
+	This thesis is about attention mechanisms in speech recognition. Attention allows artificial neural nets to focus on audio, video or text data. The concept is therefore not only important in speech processing. It also appears in amazing feats of engineering such a neural Turing machines \cite{Graves2014}, automatic translators \cite{Bahdanau2015} or self programming computers \cite{Neelakantan2016}. I hope you will enjoy reading about this exciting topic.
+	
+	I would like to thank my supervisor Vincent Renkens, for introducing me to the subject and the constant stream of good ideas and code he contributed to this project. I would like to extend my gratitude to my supervisor Prof. Van hamme for his feedback, debugging ideas, and for believing into this project even when nothing was working. Furthermore would like to thank everyone at the speech group in Leuven for their feedback during numerous lunch meetings. 
+	
+	My sincere gratitude also goes to my parents for supporting me all the way trough my studies. 
+	  
 \end{preface}
 
 \tableofcontents*
@@ -59,7 +61,7 @@
   the recording, but where in the recoding which word or sound is said is unknown.
   In other words text to speech alignment is missing. They key problem in this thesis
   is data alignment. Potential solutions such as connectionist temporal classification
-  as well as attention based transducers will be discussed.
+  as well as attention based transducers will be discussed, with the latter being the main concept of this thesis.
 
 \end{abstract}
 
