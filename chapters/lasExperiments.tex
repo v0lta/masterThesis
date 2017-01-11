@@ -68,6 +68,23 @@ The timit data corpus comes with alignments found by human listeners. The recodi
 With the parameters set as described the in the previous section the attention mechanism breaks down towards the end, which can be seen in the closeup shown in figure~\ref{fig:attention3}. When the speller produces the incorrect sequence of iys the attention weights are spread out over roughly 10 feature vectors. Given the poor quality of the resulting labels at these decoding steps this is probably not sharp enough.
 
 
+\subsection{A second attend and spell cell type}
+Looking at figure~\ref{fig:las} it is not perfectly clear weather the blocks after the context computations represent LSTM-cells or are simply part of the feedforward labeling network. Until now it has been assumed that no additional recurrent LSTM network after the context is part of LAS. In this section such an extra RNN will be investigated briefly. 
+%The attend and spell cell variation is shown in figure~\ref{fig:lasVariants}. The state of the extra memory cell is labeled with $\mathbf{d}$.
+\begin{figure}
+%\centering
+%\includestandalone[width=0.4\linewidth]{tikz/asCellType2}
+%\caption{A different attend and spell cell configuration, featuring an %additional post context RNN}
+%\label{fig:lasVariants}
+\includestandalone[width=0.45\linewidth]{tikz/LAS_no_reg_e10_p07_post_context_rnn_loss}
+\includestandalone[width=0.45\linewidth]{tikz/LAS_no_reg_e10_p07_post_context_rnn_error}
+\caption{Learning curves of the las architecture with an additional post context LSTM block. Greedy decoding was used as well as training network output reuse probability of 0.7.}
+\label{fig:variantResult}
+\end{figure}
+A learning curve over 10 epochs using a ground-truth probability of 0.3 with greedy decoding is shown in figure~\ref{fig:variantResult}. The results are slightly worse then what was observed with the original setup, despite the extra weights. This result indicated that the extra post context RNN has no additional value.
+It is therefore concluded that the decoder state $\mathbf{s}_i$ is sufficient to remember past context information.
+
+
 \subsection{The effect of the groundtruth selection probability during training}
 In the previous experiment the groundtruth was only used instead of the network output in 0.3 percent of the cases. As the network output is often incorrect during training, less emphasis will be put on past outputs later during decoding. This section investigates
 other values. The same las network is retrained for 10 epochs using output probabilities of $0.2,0.4,0.6,0.8$.
@@ -97,22 +114,6 @@ this improvement does not translate into a better decoding performance.
 
 Ideally one would like to observe the opposite. If the output labels where correct more often during decoding, the networks trained to rely on them should outperform those which where not. Based on the observations above we conclude that beam should decoding should yield labels of higher quality, while networks, which learned to rely on past outputs, should benefit in particular.
 
-
-\subsection{A second attend and spell cell type}
-Looking at figure~\ref{fig:las} it is not perfectly clear weather the blocks after the context computations represent LSTM-cell or are simply part of the feedforward labeling network. Until now it has been assumed that no additional recurrent LSTM network after the context is part of LAS. In this section such an extra RNN will be investigated briefly. The attend and spell cell variation is shown in figure~\ref{fig:lasVariants}. The state of the extra memory cell is labeled with $\mathbf{d}$.
-\begin{figure}
-\centering
-\includestandalone[width=0.5\linewidth]{tikz/asCellType2}
-\caption{A different attend and spell cell configuration, featuring an additional post context RNN}
-\label{fig:lasVariants}
-\includestandalone[width=0.45\linewidth]{tikz/LAS_no_reg_e10_p07_post_context_rnn_loss}
-\includestandalone[width=0.45\linewidth]{tikz/LAS_no_reg_e10_p07_post_context_rnn_error}
-\caption{Learning curves of the las architecture with an additional post context LSTM block. Greedy decoding was used as well as training network output reuse probability of 0.7.}
-\label{fig:variantResult}
-\end{figure}
-A learning curve over 10 epochs using a ground-truth probability of 0.3 with greedy decoding is shown in figure~\ref{fig:variantResult}. The results are slightly worse then what was observed with the original setup, despite the extra weights. This result indicated that the extra post context RNN has no additional value.
-It is therefore concluded that the decoder state $\mathbf{s}_i$ is sufficient to remember past context information.
-
 \subsection{Beam-search and Dropout}
 Two measures have been taken to increase system performance. First a beam of las labels and states is kept, in order to explore several labeling hypotheses as described in chapter~\ref{sec:beamsearch}. However the current version of the code does not use language model rescoring.
 
@@ -126,7 +127,7 @@ Second dropout has been added as shown in figure~\ref{fig:dropout}. The rational
 \begin{figure}
 \includestandalone[width=0.5\linewidth]{tikz/LAS_dropout0805_in00_p06_e120_double_loss}
 \includestandalone[width=0.5\linewidth]{tikz/LAS_dropout0805_in00_p06_e120_double_error}
-\caption{LAS learning curves with a listener LSTM using 128 units per direction and one PLSTM. The speller LSTM state size was set to 256. All feed-forward networks in the speller had 128 units per layer and two layers overall.}
+\caption{Dropout LAS learning curves with a listener LSTM using 128 units per direction and one PLSTM. The speller LSTM state size was set to 256. All feed-forward networks in the speller had 128 units per layer and two layers overall.}
 \label{fig:dropBeamRes}
 \end{figure}
 The settings described above led to the learning curves shown in figure~\ref{fig:dropBeamRes}. The validation error drops consistently under 50 percent, without large outliers. Considering once more utterance \texttt{fmld0\_sx295}.
@@ -146,6 +147,5 @@ The network now decodes:
 <eos>
 \end{lstlisting}
 Which is considerably better than the result obtained earlier. The levenstein distance over target length ratio drops to 0.36 for this utterance. However over the entire test set 0.45 has been measured. This result is considerably better than the 0.55 which where observed in section \ref{sec:greedy} using a much simpler model with greedy decoding and input noise regularization.  
-
 
 
