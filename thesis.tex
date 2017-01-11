@@ -35,7 +35,7 @@
 \begin{preface}
 	This thesis is about attention mechanisms in speech recognition. Attention allows artificial neural nets to focus on audio, video or text data. The concept is therefore not only important in speech processing. It also appears in amazing feats of engineering such a neural Turing machines \cite{Graves2014}, automatic translators \cite{Bahdanau2015} or self programming computers \cite{Neelakantan2016}. I hope you will enjoy reading about this exciting topic.
 	
-	I would like to thank my supervisor Vincent Renkens, for introducing me to the subject and the constant stream of good ideas and code he contributed to this project. I would like to extend my gratitude to my supervisor Prof. Van hamme for his feedback, debugging ideas, and for believing into this project even when nothing was working. Furthermore would like to thank everyone at the speech group in Leuven for their feedback during numerous lunch meetings. 
+	I would like to thank my supervisor Vincent Renkens, for introducing me to the subject and the constant stream of good ideas and code he contributed to this project. I would like to extend my gratitude to my supervisor Prof. Van hamme for his feedback, debugging ideas, and for believing into this project even when nothing was working. Furthermore would like to thank everyone at the speech group in Leuven for their feedback during numerous lunch meetings and for granting me access to the group's computing power, without which this project would have been impossible.
 	
 	My sincere gratitude also goes to my parents for supporting me all the way trough my studies. 
 	  
@@ -52,16 +52,11 @@
   the transcription. \\
   The meaning of speech depends on context, therefore a good system needs to
   take it into account. Classical feed-forward networks fail to do that, which
-  is why this system will mainly consist of recurrently connected Long Short Term
-  Memory (LSTM) blocks. Inspired by the recurrent connects of neurons in the human
-  brain, LSTM-RNNs have the ability to store information over long time periods,
-  an important requirement in take context into account. \\
+  is why systems in this thesis will mainly consist of recurrently connected Long Short Term  Memory (LSTM) blocks. Inspired by the recurrent connections of neurons in the human brain, LSTM-RNNs have the ability to store information over long time periods. \\
   In order to train machine learning systems, speech and transcription text
   pairs are used. The text contains the exact information of what is said in
   the recording, but where in the recoding which word or sound is said is unknown.
-  In other words text to speech alignment is missing. They key problem in this thesis
-  is data alignment. Potential solutions such as connectionist temporal classification
-  as well as attention based transducers will be discussed, with the latter being the main concept of this thesis.
+  In other words text to speech alignment is missing. They key problem in this thesis is data alignment. Potential solutions such as connectionist temporal classification as well as attention based transducers will be discussed, with a focus on the latter.
 
 \end{abstract}
 
@@ -91,6 +86,7 @@
 \begin{flushleft}
   \renewcommand{\arraystretch}{1.1}
   \begin{tabularx}{\textwidth}{@{}p{12mm}X@{}}
+	$\mathbf{f}$ & Mel feature vector \\
 	$\mathbf{m}$ & Mean vector \\
 	$\sigma$	 & Standard deviation vector \\
 	$\mathbf{x}$ & System input vector \\
@@ -100,9 +96,11 @@
 	$E$			 & Cost function \\
 	$\mathbf{w}$ & Model weight vector \\
 	$\triangle$	 & Gradient \\
-	$\mathbf{c}$  & Recurrent cell state and las context \\
+	$\mathbf{c}$  & LAS context vector \\
+	$\mathbf{s}$  & Recurrent cell state \\
 	$\mathbf{h}$  & Hidden value vector \\
-	$\alpha$	 & Attention vector 
+	$\alpha$	 & Attention vector \\
+	
   \end{tabularx}
 \end{flushleft}
 

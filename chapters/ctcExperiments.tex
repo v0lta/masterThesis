@@ -5,7 +5,7 @@ The \textit{timit} speech corpus \cite{Garofolo1993}, contains recordings of ten
 \textquotedblleft She had your dark suit in greasy wash water all year. \textquotedblright
 \end{quotation}
 For each sentence a transcription of the spoken phonemes is also available. Phonemes are sets of sounds, which
-are considered equivalent in a given language. In alphabetic writing systems such as the latin one the phoneme to letter mappings should ideally be one. Due to the fact that the Latin script was devised for classical Latin as well as the fact that when pronunciation changes the spelling often remains the same, the phoneme to letter mappings are often far from one. Therefore the \texttt{timit} data set comes with phonetic transcriptions for all sentences. For the sentence considered above the spoken phonemes are:
+are considered equivalent in a given language. In alphabetic writing systems such as the latin one the phoneme to letter mappings should ideally be bijective. Bijective functions map one input to only one target and vice versa. Due to the fact that the Latin script was devised for classical Latin as well as the fact that when pronunciation changes the spelling often remains the same, the phoneme to letter mappings are often far from ideal. Therefore the \texttt{timit} data set comes with phonetic transcriptions for all sentences. For the sentence considered above the spoken phonemes are:
 \begin{quotation}
 \textquotedblleft h\# sh ix hv eh dcl jh ih dcl d ah kcl k s ux q en gcl g r ix s ix w ao sh epi w ao dx axr ao l y ih axr h\# \textquotedblright
 \end{quotation}
@@ -38,7 +38,7 @@ This section explores bidirectional long short term memory layers with CTC outpu
 \caption{Validation and Test set error while training a two layer BLSTM network with CTC output layer on the TIMIT speech corpus with 39 folded phonemes.}
 \label{fig:ctc2BLSTM41}
 \end{figure}
-Results of the training process are shown in figure~\ref*{fig:ctc2BLSTM41}. In the experiment the training process was stopped after 10 epochs to be able to compare the result to the pyramidal listener experiment in the next chapter, at this point the phoneme error rate of this layout was at $29\%$. However if the training process is continued with decreasing learning rates the error rate values end up close to $26\%$ eventually. Performance can be increased further by assigning the LSTM cells a larger dimension.
+Results of the training process are shown in figure~\ref*{fig:ctc2BLSTM41}. In the experiment the training process was stopped after 10 epochs to be able to compare the result to the pyramidal listener experiment in the next chapter, at this point the phoneme error rate of this layout was at $29\%$. However if the training process is continued with decreasing learning rates the error rate values end up close to $26\%$ eventually. Performance can be increased further by assigning the LSTM cells a larger state dimension.
 
 
 

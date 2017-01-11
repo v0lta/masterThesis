@@ -1,17 +1,16 @@
 \chapter{Implementation}
-This implementation chapter covers key architecture aspects and the reasoning behind design decisions made while implementing the speech recognition system. 
+This chapter covers key architecture aspects and the reasoning behind design decisions made while implementing the LAS speech recognition system. 
 
-\section{Loading data and feature extraction}
+\section{Loading data and extracting features}
 During system training as well as decoding usage at later stages, an infrastructure must be in place to load and process the input data. In the training phase the target data must be loaded, normalized, encoded and made available to the optimization algorithm in the correct form. The shape and encoding of the targets depends on the algorithm used. Connectionist temporal classification requires a blank output label for example, which listen attend and spell does not need.
 The code written to handle the data preprocessing fulfills these requirements.\footnote{Its development history as well as the process of harminizing the interfaces of the thesis code with the rest of the toolbox is recorded in the project git branch at \url{https://github.com/vrenkens/tfkaldi/commits/las}.}
 
 \section{Efficient sequence to sequence implementations}
-When working with sequence to sequence methods such as CTC, data processing problems arise naturally. For efficiency reasons it is beneficial to work with
-fixed size data tensors. However the number of frames varies significantly between utterances. The same holds true for the target lengths. In order to still be able to work with fixed size tensors, the inputs and targets must be padded with zeros or unknown tokens to fill up the length differences.
+When working with sequence to sequence methods such as LAS or CTC, data processing problems arise naturally. For efficiency reasons it is beneficial to work with fixed size data tensors. However the number of frames varies significantly between utterances. The same holds true for the target lengths. In order to still be able to work with fixed size tensors, the inputs and targets must be padded with zeros or unknown tokens to fill up the length differences.
 In order to keep the speed benefit of working with tensors it is important to
-keep track of the sequence lengths of every individual utterance.
+keep track of the sequence lengths of every tensor flowing along forward connections of the underlying graph.
 The sequence length information must be used to avoid actually processing any of the padded data, that the tensors where filled up with in order to allocate memory faster.
-The listener produces a three dimensional logit tensor of size $[B, T, F]$, where $B$ denotes the batch size, $T$ the largest occuring frame number and $F$ the feature dimension size. When implementing the output layer the na\"{\i}ve approach would be to loop over the time dimension, and evaluate the linear layer T times with a $B$ times $F$ matrix. Which is simple to implement but very inefficient. Instead the sequence information should be used to remove the padding and concatenate the batch dimension into a matrix $\mathbf{X}$ of size $[S, F]$, where $S$ denotes the sum of all sequence lengths. The linear layer can then be evaluated as:
+The listener for example produces a three dimensional logit tensor of size $[B, T, F]$, where $B$ denotes the batch size, $T$ the largest occuring frame number and $F$ the feature dimension size. When implementing the output layer the na\"{\i}ve approach would be to loop over the time dimension, and evaluate the linear layer T times with a $B$ times $F$ matrix. Which is simple to implement but very inefficient. Instead the sequence information should be used to remove the padding and concatenate the batch dimension into a matrix $\mathbf{X}$ of size $[S, F]$, where $S$ denotes the sum of all sequence lengths. The linear layer can then be evaluated as:
 \begin{equation}
 \mathbf{W}\mathbf{X} + \mathbf{b} = \mathbf{R}
 \end{equation}
@@ -19,7 +18,7 @@ The result matrix $R$ can then be converted back into a padded tensor using the 
 An alternative approach which avoids reshaping is to implement a linear recurrent network cell with a state size of zero and use dynamic unrollings the evaluate the linear layer. The resulting memory requirements and speed are comparable.
 
 \section{Design of the BLSTM-CTC model}
-Sequence labeling using confectionist temporal classification happens in two phases. First BLSTM layers compute annotations based in the input vectors. These annotations are then handed to a CTC layer which runs the annotations trough a softmax to produce normalized label probabilities and computes the loss during training or searches trough the probability distributions during decoding. 
+Sequence labeling using connectionist temporal classification happens in two phases. First BLSTM layers compute annotations based in the input vectors. These annotations are then handed to a CTC layer which runs the annotations trough a softmax to produce normalized label probabilities and computes the loss during training or searches trough the probability distributions during decoding. 
 The BLSTM-CTC implementation reflects this procedure by splitting the BLSTM layers as well as the training and decoding code into model, trainer and decoding classes. \footnote{It was not necessary to implement CTC decoding. Tested code is already available at \url{www.tensorflow.org/api_docs/python/nn/connectionist\_temporal\_classification\_\_ctc\_}} 
 
 
@@ -32,7 +31,7 @@ The Listener consists of an initial bidirectional long short term memory layer (
 For use with CTC a liner output layer can optionally be added to the listener, which maps the output from two times the state size to the number of required labels. 
 
 \subsection{The Speller}
-Based on the high level features $\mathbf{H}$ computed by the listener the speller evaluates an internal attention mechanism. This mechanism which can be interpreted as a learned sliding window. The speller learns where to place this window based on the decoder state $\mathbf{s}_i$. This state therefore represents a query, which asks the attention mechanism to provide certain information. This query in turn is computed by the spellers internal RNN.  Using the attention factors a context vector $\mathbf{c}$ is computed, which together with the state is used to assign a label. 
+Based on the high level features $\mathbf{H}$ computed by the listener the speller evaluates an internal attention mechanism. This mechanism can be interpreted as a learned sliding window. The speller learns where to place this window based on the decoder state $\mathbf{s}_i$. This state therefore represents a query, which asks the attention mechanism to provide certain information. This query in turn is computed by the spellers internal RNN.  Using the attention factors a context vector $\mathbf{c}$ is computed, which together with the state is used to assign a label. 
 The attention computations described above and in more detail in \ref{subsec:AttendAndSpell}, do only depend on data available at the current time and previously computed values. The spellers key functions can therefore be implemented within an RNN cell. The state of this augmented RNN cell at decoding time step $i$ is given by:
 \begin{align}
 \text{state} =  [\mathbf{y}_{i-1}, \mathbf{s}_{i-1}, \mathbf{c}_{i-1}]

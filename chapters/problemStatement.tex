@@ -8,11 +8,11 @@ In order to answer this question one must determine, which parts of a recording 
 
 \noindent \textit{Which parts are interesting in a recording?}
 
-If interesting parts are found in the recording the system should label them correctly. During the labeling process a sequence of inputs is assigned a sequence of labels. Following this train of thought a sequence to sequence labeling problem must be solved. Speech data consists of frames. Transcription means grouping the interesting frames of the input sequence and assigning labels to these groups. Once input sequences groups are found and matched with a label sequence, the two are considered to be aligned. In order to do the alignment one must know: 
+If interesting parts are found in the recording the system should label them correctly. During the labeling process a sequence of inputs is assigned a sequence of labels. Following this train of thought a sequence to sequence labeling problem must be solved. Speech data consists of frames. Transcription means grouping the interesting frames of the input sequence and assigning labels to these groups. Once input sequence groups are found and matched with a label sequence, the two are considered to be aligned. In order to do the alignment one must know: 
 
 \noindent \textit{How can sequence to sequence alignment be established?} 
 
-This thesis relies on machine learning methods in its attempt to determine what is being said. Machine learning models typically consists of many unknown weights, which are initially chosen at random. The good values for each weight are determined using a form of gradient descent. The process of using gradient descent to determine good model parameters is often referred to as training. Unfortunately gradient descent does not always lead to an acceptable solution. Only if the training algorithm is run with carefully chosen hyper-parameters on a model complex enough form an internal representation of the patters it is trained to extract, the optimization process will terminate at a good optimum. Using machine learning methods leads to another important question: 
+This thesis relies on machine learning methods in its attempt to determine what is being said. Machine learning models typically consists of many unknown weights, which are initially chosen at random. Better values for each weight are determined using a form of gradient descent. The process of using gradient descent to determine good model parameters is often referred to as training. Unfortunately gradient descent does not always lead to an acceptable solution. Only if the training algorithm is run with carefully chosen hyper-parameters on a model complex enough to form an internal representation of the patters it is trained to extract, the optimization process will terminate at a good optimum. Using machine learning methods leads to more important questions: 
 
 \noindent \textit{What model architecture is capable of handling the complex patterns found in speech data?}
 \textit{Which hyper-parameters should be chosen to train such a model?}
@@ -34,7 +34,7 @@ Last but not least, this thesis should be useful to others. It's code contributi
 
 \noindent \textit{How should software be developed in order to produce useful and maintainable results?}
 
-This thesis is an attempt answer the questions above, trough literature study, coding and experimentation.
+This thesis is an attempt answer the questions above, trough literature study, coding, and experimentation.
 
 
 
