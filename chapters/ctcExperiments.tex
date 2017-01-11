@@ -18,7 +18,7 @@ The transcriptions contain a total of 64 possible phonetic labels, in the litera
 \label{fig:phoneTable}
 \end{figure}
 
-For all experiments the timit data set is split into a training, validation and test set. Containing 3696, 400 and 192 sentences \cite[page  80]{Graves2012}.
+The timit data set is split into a training, validation and test set. Containing 3696, 400 and 192 sentences \cite[page  80]{Graves2012}.
 
 
 \section{BLSTM-CTC}
@@ -33,8 +33,8 @@ For all experiments the timit data set is split into a training, validation and 
 This section explores bidirectional long short term memory layers with CTC output on the timit corpus \cite{Graves2012, Graves2006}. Training began after transforming of the speech data into Mel frequency cepstral coefficients (\textit{MFCCC}s) augmented with first and second derivative information. The raw time domain signal as well as the feature vectors are shown in figure~\ref{fig:timitFeats}. The phonemes where folded as described above. Two \textit{BLSTM} layers where stacked on top of each other, both using LSTM cells with a dimension of 64 in each direction. The logits computed by the two layers where then fed into a CTC output layer, finally beam search decoding with a beam width of 100 was used for find the phoneme predictions. The whole network was optimized using gradient descent and a learning rate of $10^{-3}$. To ensure generalization normal input noise $\mathcal{N}(\mu = 0,\sigma = 0.65)$ was added to the inputs. All feed-forward weights where initialized using another Gaussian $\mathcal{N}(0, 0.1)$, lstm weights were initialized using a random uniform distribution $\mathcal{U}(-0.1, 0.1)$. Gradients where clipped such that all gradient elements are within $(-1,1)$.
 \begin{figure}
 \centering
-\includestandalone[width=0.49\linewidth]{tikz/listener_no_pyramid}
-\includestandalone[width=0.49\linewidth]{tikz/listener_no_pyramid810}
+\includestandalone[width=0.49\linewidth]{tikz/CTC_Listener_plot_e10_no_pyramid_loss}
+\includestandalone[width=0.49\linewidth]{tikz/CTC_Listener_plot_e10_no_pyramid_error}
 \caption{Validation and Test set error while training a two layer BLSTM network with CTC output layer on the TIMIT speech corpus with 39 folded phonemes.}
 \label{fig:ctc2BLSTM41}
 \end{figure}

@@ -4,11 +4,11 @@ In this section experiments use the full listen attend and spell architecture. A
 \subsection{Testing the Listener}
 A crucial part of the listen attend and spell architecture is formed by the listener. Before working with a fully-fledged las a CTC-layer will be attached to the listener.
 The idea is to verify the implementation. If CTC can extract relevant information from the listener, the attend and spell code should be able to do the same in later experiments. In order to keep memory requirements manageable in later experiments with the same listener all LSTM cells where set up with 64 hidden units. As the listener layers are bidirectional this means 64 in each direction so the hidden dimension is 128 in total. This sum is important, because the feature dimension of the lstm outputs is concatenated for each time step. If no further action is taken the listener produces features with a dimension of two times the number of elements per lstm.
-CTC runs the logits it is given trough a softmax layer to compute label probabilities. To function it must therefore be given a logit tensor, where the feature dimension is equal to the number of labels, the system is supposed to output. To meet this requirement an extra linear output layer has been added to the listener which maps the feature dimension to 40, as required.
+CTC runs the logits it is given trough a softmax layer to compute label probabilities. To function it must therefore be given a logit tensor, where the feature dimension is equal to the number of labels, the system is supposed to output. To meet this requirement an extra linear output layer has been added to the listener which maps the feature dimension to 40, as required. The beam width during decoding was set to 100. 
 \begin{figure}
-\includestandalone[width=0.49\linewidth]{tikz/listenerCTC}
-\includestandalone[width=0.49\linewidth]{tikz/listenerCTC810}
-\caption{The training progress shown for the Listener with added CTC layer. The loss values show in blue and green have been scaled with $\frac{1}{100}$. On the right a closeup on the last two training process is shown.}
+\includestandalone[width=0.49\linewidth]{tikz/CTC_Listener_plot_e10_loss}
+\includestandalone[width=0.49\linewidth]{tikz/CTC_Listener_plot_e10_error}
+\caption{The training progress shown for the Listener with added CTC layer. The training and validation loss values are shown in blue and green on the left. The plot on the right depicts the decoding performance on the validation set.}
 \label{fig:listenCTC}
 \end{figure}
 Figure~\ref{fig:listenCTC}, shows the optimization algorithms progress, as measured by trainig loss, validation loss and validation set decoding phoneme error rate. The training was stopped, after 10 epochs. During testing a phoneme error rate of \texttt{0.268} was observed, which indicates that no important information was lost during the compression process.
@@ -20,9 +20,9 @@ Figure~\ref{fig:listenCTC}, shows the optimization algorithms progress, as measu
 Using the tested listener with 64 hidden lstm units per direction and one pyramidal layer, the CTC layer is replaced with attend and spell functions. Within the speller the decoder state size was chosen to be 128, considering the fact that the listener outputs features of size 128, which in turn determines the context vectors to have this same dimension. This choice was made hoping to provide sufficient memory to remember past context vectors.
 The state and feature networks, $\phi$ and $\psi$ were given one hidden layer each, with a hidden dimension of 64. This choice was made mainly to conserve memory. During training the network output was used instead of the true target with a probability of 0.7.
 \begin{figure}
-\includestandalone[width=0.49\linewidth]{tikz/lasGreedyp07}
-\includestandalone[width=0.49\linewidth]{tikz/lasGreedyp07e3540}
-\caption{The training progress shown for the full las architecture with greedy decoding. The loss values show in blue and green have been scaled with $\frac{1}{100}$. On the right a closeup on the last two training process is shown.}
+\includestandalone[width=0.49\linewidth]{tikz/LAS_no_reg_e40_p07_loss}
+\includestandalone[width=0.49\linewidth]{tikz/LAS_no_reg_e40_p07_error}
+\caption{The training progress shown for the full las architecture with greedy decoding, over 40 epochs, network output reuse probability 0.7 and input noise standard deviation 0.65 .}
 \label{fig:lasGreedy}
 \end{figure}
 Figure~\ref{fig:lasGreedy} shows an overview of the training process. When considering the last five epochs, the decoding error  ranges between 0.5 and 0.9. This means that in the best case half of the labels produced by the system must be modified in order to
@@ -42,7 +42,7 @@ From the input features the las network decodes:
 <eos>
 \end{lstlisting}
 The decoding and target sequences clearly bear some resemblance. However significant errors do exist in the network output in particular in the last third. The phoneme sequence dx  iy  ng  ih is incorrectly transcribed as iy  iy  iy  iy  iy  iy  iy iy,
-which has a large impact on the error. The levenstein distance between the two labellings is 21. Given that the target sequence contains 45 labels including the start and end of sentence tokens, the error rate of this example is 0.5, it is therefore slightly better than the average of $0.55$, which is the average decoding error rate over the entire validation set.
+which has a large impact on the error. The levenstein distance between the two labellings is 21. Given that the target sequence contains 45 labels including the start and end of sentence tokens, the error rate of this example is 0.5, it is therefore slightly better than the average of $0.55$, which is the average decoding error rate over the entire test set.
 
 \subsection{The attention mechanism}
 \begin{figure}
@@ -72,21 +72,26 @@ With the parameters set as described the in the previous section the attention m
 In the previous experiment the groundtruth was only used instead of the network output in 0.3 percent of the cases. As the network output is often incorrect during training, less emphasis will be put on past outputs later during decoding. This section investigates
 other values. The same las network is retrained for 10 epochs using output probabilities of $0.2,0.4,0.6,0.8$.
 \begin{figure}
-\includestandalone[width=0.49\linewidth]{tikz/LAS_no_reg_e10_p02}
-\includestandalone[width=0.49\linewidth]{tikz/LAS_no_reg_e10_p04}
-\includestandalone[width=0.49\linewidth]{tikz/LAS_no_reg_e10_p06}
-\includestandalone[width=0.49\linewidth]{tikz/LAS_no_reg_e10_p08}
-\caption{Repetitions of the same experiment with network output reuse probabilities $0.2, 0.4, 0.6, 0.8$. }
+\centering
+\includestandalone[width=0.45\linewidth]{tikz/LAS_no_reg_e10_p02_loss}
+\includestandalone[width=0.45\linewidth]{tikz/LAS_no_reg_e10_p02_error}
+\includestandalone[width=0.45\linewidth]{tikz/LAS_no_reg_e10_p04_loss}
+\includestandalone[width=0.45\linewidth]{tikz/LAS_no_reg_e10_p04_error}
+\includestandalone[width=0.45\linewidth]{tikz/LAS_no_reg_e10_p06_loss}
+\includestandalone[width=0.45\linewidth]{tikz/LAS_no_reg_e10_p06_error}
+\includestandalone[width=0.45\linewidth]{tikz/LAS_no_reg_e10_p08_loss}
+\includestandalone[width=0.45\linewidth]{tikz/LAS_no_reg_e10_p08_error}
+\caption{Repetitions of the same experiment with increasing network output reuse probabilities $0.2, 0.4, 0.6, 0.8$, one experiment per row.}
 \label{fig:lasGreedy2468}
 \end{figure}
-Results are shown in figure ~\ref{fig:lasGreedy2468}. It can be observed, that decoding results improve when reduced emphasis is placed on past labels during training. This observation is confirmed by the phoneme error rates of $2.08, 1.97, 1.1168, 0.87$, which where observed on the validation set.
-To explore the effect of a low reuse probability over longer training periods the experiment has been repeated one more time with a $0.5$ groundtruth probability over 40 epochs.
-\begin{figure}
-\includestandalone[width=0.49\linewidth]{tikz/LAS_no_reg_e40_p05}
-\includestandalone[width=0.49\linewidth]{tikz/LAS_no_reg_e40_p05_3540}
+Results are shown in figure ~\ref{fig:lasGreedy2468}. It can be observed, that decoding results improve when reduced emphasis is placed on past labels during training. This observation is confirmed by the phoneme error rates of $2.08, 1.97, 1.1168, 0.87$, which where observed on the test set.
+\begin{figure}[h]
+\includestandalone[width=0.49\linewidth]{tikz/LAS_no_reg_e40_p05_loss}
+\includestandalone[width=0.49\linewidth]{tikz/LAS_no_reg_e40_p05_error}
 \caption{Training full las over 40 epochs with a network output reuse probability of $0.5$}
 \label{fig:lasGreedy05}
 \end{figure}
+To explore the effect of a low reuse probability over longer training periods the experiment has been repeated one more time with a $0.5$ groundtruth probability over 40 epochs.
 Figure~\ref{fig:lasGreedy05} depicts the training process. In comparison to the experiment show in figure~\ref{fig:lasGreedy} the network does significantly better during training, but
 this improvement does not translate into a better decoding performance.
 
@@ -100,8 +105,9 @@ Looking at figure~\ref{fig:las} it is not perfectly clear weather the blocks aft
 \includestandalone[width=0.5\linewidth]{tikz/asCellType2}
 \caption{A different attend and spell cell configuration, featuring an additional post context RNN}
 \label{fig:lasVariants}
-\includestandalone[width=0.5\linewidth]{tikz/LAS_no_reg_e10_p07_post_context_rnn}
-\caption{Learning curves over 10 epochs using greedy decoding and a training network output reuse probability of 0.7.}
+\includestandalone[width=0.45\linewidth]{tikz/LAS_no_reg_e10_p07_post_context_rnn_loss}
+\includestandalone[width=0.45\linewidth]{tikz/LAS_no_reg_e10_p07_post_context_rnn_error}
+\caption{Learning curves of the las architecture with an additional post context LSTM block. Greedy decoding was used as well as training network output reuse probability of 0.7.}
 \label{fig:variantResult}
 \end{figure}
 A learning curve over 10 epochs using a ground-truth probability of 0.3 with greedy decoding is shown in figure~\ref{fig:variantResult}. The results are slightly worse then what was observed with the original setup, despite the extra weights. This result indicated that the extra post context RNN has no additional value.
@@ -139,7 +145,7 @@ The network now decodes:
 	  sil t uw sil sil
 <eos>
 \end{lstlisting}
-Which is considerably better than the result obtained earlier. The levenstein distance over target length ratio drops to 0.36 for this utterance. However over the entire validation set 0.45 has been measured. This result is considerably better than the 0.55 which where observed in section \ref{sec:greedy} using a much simpler model with greedy decoding and input noise regularization.  
+Which is considerably better than the result obtained earlier. The levenstein distance over target length ratio drops to 0.36 for this utterance. However over the entire test set 0.45 has been measured. This result is considerably better than the 0.55 which where observed in section \ref{sec:greedy} using a much simpler model with greedy decoding and input noise regularization.  
 
 
 
