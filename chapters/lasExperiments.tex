@@ -70,12 +70,9 @@ With the parameters set as described the in the previous section the attention m
 
 \subsection{A second attend and spell cell type}
 Looking at figure~\ref{fig:las} it is not perfectly clear weather the blocks after the context computations represent LSTM-cells or are simply part of the feedforward labeling network. Until now it has been assumed that no additional recurrent LSTM network after the context is part of LAS. In this section such an extra RNN will be investigated briefly. 
-%The attend and spell cell variation is shown in figure~\ref{fig:lasVariants}. The state of the extra memory cell is labeled with $\mathbf{d}$.
+The attend and spell cell variation is shown in figure~\ref{fig:lasVariants}. The state of the extra memory cell is labeled with $\mathbf{d}$.
 \begin{figure}
-%\centering
-%\includestandalone[width=0.4\linewidth]{tikz/asCellType2}
-%\caption{A different attend and spell cell configuration, featuring an %additional post context RNN}
-%\label{fig:lasVariants}
+\centering
 \includestandalone[width=0.45\linewidth]{tikz/LAS_no_reg_e10_p07_post_context_rnn_loss}
 \includestandalone[width=0.45\linewidth]{tikz/LAS_no_reg_e10_p07_post_context_rnn_error}
 \caption{Learning curves of the las architecture with an additional post context LSTM block. Greedy decoding was used as well as training network output reuse probability of 0.7.}
@@ -105,7 +102,7 @@ Results are shown in figure ~\ref{fig:lasGreedy2468}. It can be observed, that d
 \begin{figure}[h]
 \includestandalone[width=0.49\linewidth]{tikz/LAS_no_reg_e40_p05_loss}
 \includestandalone[width=0.49\linewidth]{tikz/LAS_no_reg_e40_p05_error}
-\caption{Training full las over 40 epochs with a network output reuse probability of $0.5$}
+\caption{Training full las over 40 epochs with a network output reuse probability of $0.5$.}
 \label{fig:lasGreedy05}
 \end{figure}
 To explore the effect of a low reuse probability over longer training periods the experiment has been repeated one more time with a $0.5$ groundtruth probability over 40 epochs.
@@ -130,7 +127,10 @@ Second dropout has been added as shown in figure~\ref{fig:dropout}. The rational
 \caption{Dropout LAS learning curves with a listener LSTM using 128 units per direction and one PLSTM. The speller LSTM state size was set to 256. All feed-forward networks in the speller had 128 units per layer and two layers overall.}
 \label{fig:dropBeamRes}
 \end{figure}
-The settings described above led to the learning curves shown in figure~\ref{fig:dropBeamRes}. The validation error drops consistently under 50 percent, without large outliers. Considering once more utterance \texttt{fmld0\_sx295}.
+The settings described above led to the learning curves shown in figure~\ref{fig:dropBeamRes}. The validation error drops consistently under 50 percent, without large outliers. 
+
+\newpage
+Considering once more utterance \texttt{fmld0\_sx295}.
 \begin{lstlisting}[caption={Targets}]
 <sos>  sil  ih  f  sil  k  eh  r  l  sil  k  ah  m  z
        sil  t  ah  m  aa  r  ah  hh  ae  v  er  r  ey
@@ -148,4 +148,9 @@ The network now decodes:
 \end{lstlisting}
 Which is considerably better than the result obtained earlier. The levenstein distance over target length ratio drops to 0.36 for this utterance. However over the entire test set 0.45 has been measured. This result is considerably better than the 0.55 which where observed in section \ref{sec:greedy} using a much simpler model with greedy decoding and input noise regularization.  
 
-
+\begin{figure}
+\centering
+\includestandalone[width=0.7\linewidth]{tikz/asCellType2}
+\caption{A different attend and spell cell configuration, featuring an additional post context RNN}
+\label{fig:lasVariants}
+\end{figure}

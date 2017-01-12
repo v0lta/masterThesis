@@ -12,7 +12,7 @@ keep track of the sequence lengths of every tensor flowing along forward connect
 The sequence length information must be used to avoid actually processing any of the padded data, that the tensors where filled up with in order to allocate memory faster.
 The listener for example produces a three dimensional logit tensor of size $[B, T, F]$, where $B$ denotes the batch size, $T$ the largest occuring frame number and $F$ the feature dimension size. When implementing the output layer the na\"{\i}ve approach would be to loop over the time dimension, and evaluate the linear layer T times with a $B$ times $F$ matrix. Which is simple to implement but very inefficient. Instead the sequence information should be used to remove the padding and concatenate the batch dimension into a matrix $\mathbf{X}$ of size $[S, F]$, where $S$ denotes the sum of all sequence lengths. The linear layer can then be evaluated as:
 \begin{equation}
-\mathbf{W}\mathbf{X} + \mathbf{b} = \mathbf{R}
+\mathbf{W}\mathbf{X} + \mathbf{b} = \mathbf{R}.
 \end{equation}
 The result matrix $R$ can then be converted back into a padded tensor using the sequence length information one more time.
 An alternative approach which avoids reshaping is to implement a linear recurrent network cell with a state size of zero and use dynamic unrollings the evaluate the linear layer. The resulting memory requirements and speed are comparable.
@@ -34,7 +34,7 @@ For use with CTC a liner output layer can optionally be added to the listener, w
 Based on the high level features $\mathbf{H}$ computed by the listener the speller evaluates an internal attention mechanism. This mechanism can be interpreted as a learned sliding window. The speller learns where to place this window based on the decoder state $\mathbf{s}_i$. This state therefore represents a query, which asks the attention mechanism to provide certain information. This query in turn is computed by the spellers internal RNN.  Using the attention factors a context vector $\mathbf{c}$ is computed, which together with the state is used to assign a label. 
 The attention computations described above and in more detail in \ref{subsec:AttendAndSpell}, do only depend on data available at the current time and previously computed values. The spellers key functions can therefore be implemented within an RNN cell. The state of this augmented RNN cell at decoding time step $i$ is given by:
 \begin{align}
-\text{state} =  [\mathbf{y}_{i-1}, \mathbf{s}_{i-1}, \mathbf{c}_{i-1}]
+\text{state} =  [\mathbf{y}_{i-1}, \mathbf{s}_{i-1}, \mathbf{c}_{i-1}].
 \end{align}
 The one hot encoded previous label is denoted by $\mathbf{y}$ the decoder state by $\mathbf{s}$ and context by $\mathbf{c}$.
 \begin{figure}

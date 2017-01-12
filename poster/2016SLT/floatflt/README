@@ -1,0 +1,32 @@
+
+This is the file `README', which accompanies the `floatflt'
+package distribution.  The package defines environments for figures 
+and tables which do not span the full width of a page.  The 'floatflt'
+package is is an extension of Thomas Kneser's style option 'floatfig.sty'
+for LaTeX 2.09, on which it is based.  To use the package, run LaTeX on 
+`floatflt.ins', this produces the files `floatflt.sty', which contains 
+the macro definitions, and the file `floatexm.tex', which is an example 
+of the use of the package.  To obtain the userguide and documentation, 
+run LaTeX on `floatflt.dtx' twice.  To obtain the example, run LaTeX 
+on `floatexm.tex' twice.  
+
+The 'floatflt' package distribution consists of three files:
+     floatflt.ins   -  the installation driver
+     floatflt.dtx   -  the macro code, instructions on how to use 
+                       the package, an example, and the original
+                       documentation by Thomas Kneser, all in 
+                       `docstrip'-able format.
+     floatflt.pdf   -  the user guide and documentation, for reading
+		       on-line 
+Anyone is free to re-distribute these files subject to the LaTeX
+Project Public Licence (http://www.latex-project.org/lppl/)
+mentioned in 'floatflt.ins' are obeyed. These are mainly that the 
+two files always must be distributed together.  
+
+Inquiries may be sent to: mats.dahlgren <at> madicko.se
+This file was last modified on 2011/12/20.
+
+
+____________________________________________________________________
+Copyright (c) 1998 by Mats Dahlgren.
+Modified, with Mats' permission, by Robin Fairbairns

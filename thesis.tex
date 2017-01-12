@@ -117,18 +117,17 @@
 % ... and so on until
 %\import{../chapters/}{conclusion}
 
-% If you have appendices:
-%\appendixpage*          % if wanted
-%\appendix
-%\include{app-A}
-% ... and so on until
-%\include{app-n}
 
 \backmatter
 % The bibliography comes after the appendices.
 % You can replace the standard "abbrv" bibliography style by another one.
 \bibliographystyle{abbrv}
 \bibliography{chapters/references}
+
+% If you have appendices:
+\appendixpage*          % if wanted
+\appendix
+\includepdf[pages={1,2,3,4}]{paper/paperWolter.pdf}
 
 \end{document}
 

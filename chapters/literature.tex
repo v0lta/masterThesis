@@ -13,10 +13,10 @@ This chapter contains a review of some of the most important techniques necessar
 Filter-banks are collections of filters. These filters can be spread out over audible frequencies\footnote{Approximately 16 to 16000 Hz.}. Filter-bank output is commonly used as input for speech analysis \cite{Huang2001}\cite{Chan2015}. The number of filter-banks depends on the required resolution, 32 is a common choice \cite{Juang1987}. The energy within the part of the signal spectrum described by all individual filters is measured. Figure~\ref{fig:timitInput} shows the resulting energy measurements using 23 filters, for a sentence recording contained in the \textit{TIMIT} data set.
 The general argument for filter banks in speech recognition is that the cochlea, in the human ear, resembles a filter bank \cite[page 30]{Huang2001}. Humans do not perceive frequency linearly. Experimental evidence suggests, that our perception of is scaled according to the Mel-Scale \cite[page 34]{Huang2001}:
 \begin{equation}
-B(f) = 1125 ln(1 + f / 700)
+B(f) = 1125 ln(1 + f / 700).
 \end{equation}
 A normalized plot of this function is shown in figure~\ref{fig:mel} on the left.
-According to the Mel-scale, humans are able to distinguish more lower frequencies than higher frequencies. In the plot the first four thousand Herz occupy roughly eighty percent of the scale. The band from four thousand to eight thousand Herz is left with only about twenty percent of the scale, even tough half of the considered frequencies are in this band.
+According to the Mel-scale, humans are able to distinguish more lower frequencies than higher frequencies. In the plot the first four thousand Hertz occupy roughly eighty percent of the scale. The band from four thousand to eight thousand Hertz is left with only about twenty percent of the scale, even tough half of the considered frequencies are in this band.
 \begin{figure}
 \centering
 \includestandalone[width=6cm]{tikz/melScale}
@@ -26,30 +26,30 @@ According to the Mel-scale, humans are able to distinguish more lower frequencie
 \end{figure}
 Mel spaced filter-banks are an attempt to include the human perception in speech recognition. The filter functions are defined by \cite[page 317]{Huang2001}:
 \begin{align}
-H_m &= 0 									   &\text{if}\;\; & k < f[m-1] \\
-H_m &= \frac{k      - f[m-1] }{f[m] - f[m-1]}  &\text{if}\;\; & f[m-1] \leq k \leq f[m] \\
-H_m &= \frac{f[m+1] - k      }{f[m + 1] - f[m]}&\text{if}\;\; & f[m] \leq k \leq f[m+1] \\
-H_m &= 0									   &\text{if}\;\; & k > f[m+1]
+H_m &= 0 									   &\text{if}\;\; & k < f[m-1], \\
+H_m &= \frac{k      - f[m-1] }{f[m] - f[m-1]}  &\text{if}\;\; & f[m-1] \leq k \leq f[m], \\
+H_m &= \frac{f[m+1] - k      }{f[m + 1] - f[m]}&\text{if}\;\; & f[m] \leq k \leq f[m+1], \\
+H_m &= 0									   &\text{if}\;\; & k > f[m+1].
 \end{align}
 In the equations above $H_m$ denotes the magnitude of filter $m$ with a total of $M$ filters. The frequency is denoted by $k$, the vector $f$ contains $M+2$ linearly spaced filter border values. These are the red stars on the left of  figure~\ref{fig:mel}. The right plot shows the triangular filter banks. These banks are spaced according to the same values. Roughly speaking using mel-filter banks means using a high filter resolution where human hearing is good and a low resolution where it is bad. \\
 In addition to perceptually motivated instantaneous features, derivative information can be appended to each feature vector. These so called delta features add information
 regarding the speed of change taking into account $2*N$ feature vectors. $N$ denotes the number of frames back and forward in time. The derivative information can be computed using \cite{Woodland2006}. The mel feature vectors are denoted by $\mathbf{f}$:
 \begin{equation}
-\mathbf{d}_t = \frac{\sum\limits_{n=1}^{N} n (\mathbf{f}_{t+n}- \mathbf{f}_{t-n})}{2 \sum\limits_{n=1}^{N} n^2}
+\mathbf{d}_t = \frac{\sum\limits_{n=1}^{N} n (\mathbf{f}_{t+n}- \mathbf{f}_{t-n})}{2 \sum\limits_{n=1}^{N} n^2}.
 \end{equation}
 The formula above is a central difference, because the value at time t is not taken into account, in contrast to forward or backward differences, where the value at t is part of the difference. A common choice for $N$ is two. In this case the formula above simplifies to:
 \begin{equation}
-\mathbf{d}_t = \frac{2\mathbf{f}_{t+2} + \mathbf{f}_{t+1} - \mathbf{f}_{t-1} - 2\mathbf{f}_{t-2}}{10}
+\mathbf{d}_t = \frac{2\mathbf{f}_{t+2} + \mathbf{f}_{t+1} - \mathbf{f}_{t-1} - 2\mathbf{f}_{t-2}}{10}.
 \end{equation}
 In this case two future frames are used to compute the derivative at time $t$, which implies, that at computation time a full recording is available. Should that not be the case a backward difference scheme should be considered instead. To further augment the features second derivative or acceleration information can be added as well. These can be computed by simply applying the central difference to the deltas one more time. It is important to note that augmenting the features with derivative information significantly increases their dimension. If 40 mel-filters are used then the first and second derivatives will contain 40 entries each, therefore increasing the input dimension from $40$ to $120$.
 
 Before using the features it is best practice to standardize the components of the input vectors. It is desirable to use features with an overall mean of zero and a standard deviation of 1 over the entire training set \cite[page 30]{Graves2008}. The feature normalization process starts by computing the mean,
 \begin{equation}
-\mathbf{m}_i = \frac{1}{\|S\|} \sum\limits_{\mathbf{x} \in S} \mathbf{x}_i
+\mathbf{m}_i = \frac{1}{\|S\|} \sum\limits_{\mathbf{x} \in S} \mathbf{x}_i,
 \end{equation}
-and standard deviation
+and standard deviation,
 \begin{equation}
-\sigma_i = \sqrt{\frac{1}{|S| - 1}\sum\limits_{x \in S}(\mathbf{m}_i - \mathbf{x}_i)^2}
+\sigma_i = \sqrt{\frac{1}{|S| - 1}\sum\limits_{x \in S}(\mathbf{m}_i - \mathbf{x}_i)^2}.
 \end{equation}
 Of a data set $S$ consisting of input $\mathbf{x}$ and target $\mathbf{t}$ pairs. Standardized input vectors can then be computed using:
 \begin{equation}
@@ -69,7 +69,7 @@ E = \frac{1}{2}\sum\limits_{i=1}^{p} \| \mathbf{o}_i - \mathbf{t}_i \|^2.
 \end{align}
 However generally the more complex cross-entropy is used as a cost function, because it leads to faster convergence and better results in practice \cite{Golik2013}. For classification tasks, cross entropy is defined as \cite[page 245]{Bishop1995}:
 \begin{equation}
-E = - \sum\limits_{i=1}^{p} {\mathbf{t}_i \ln(\mathbf{o}_i)} + (1 - \mathbf{t}_i)\ln(1 - \mathbf{o}_i)
+E = - \sum\limits_{i=1}^{p} {\mathbf{t}_i \ln(\mathbf{o}_i)} + (1 - \mathbf{t}_i)\ln(1 - \mathbf{o}_i).
 \label{eq:corssEntropy}
 \end{equation}
 In order to understand why the cross entropy is a measure of output error, the two scalar cases $t=0$ and $t=1$ are considered. For $t = 0$ the cross entropy simplifies to $-\ln(1 - o)$. Looking at figure~\ref{fig:logPlot}, this expression turns out to be a good cost function, because for values close to the desired output $o = 0$, $-\ln(1 - o)$ will be close to zero. If the output moves away from the desired value zero, the cost grows asymptotically. If $t = 1$ is considered the cost function simplifies to $-\ln(o)$ which will be zero for the desired output and once more displays asymptotic growth for undesired values far away from one. If the target probability is somewhere between these two extreme cases the cost will be the sum of the two cases considered earlier. Cross entropy is statistically motivated, the output vectors $\mathbf{o}$ describe probability distributions over the possible labels, their elements must therefore be $\in (0,1)$ and sum op to one.
@@ -86,23 +86,23 @@ In order to reach a local minimum, the gradient of the error function is needed.
 Neural networks can be considered as large composite functions, which are made up of elementary operations. The evaluation of the network can be written as a graph. Computations are done at each node and information travels trough the network along directed edges from node to node. In order to create a computational graph for the training process each of the output units of the network under consideration are connected to a new node which computes $\frac{1}{2}(o_{ij} - t_{ij})^2$\cite[page 157]{Rojas1996} or the cross-entropy term of one data target pair. These new nodes in turn are connected to one more node, which sums up all error values and produces $E_i$. The process described above must be repeated for all training data pairs. One final node is added, which sums up all values $E_i$. Its output gives the value for the error function $E$ which is now in the form of a large graph.\\
 Reverse mode algorithmic differentiation or back-propagation is an algorithm to compute the gradient of a graph consisting of basic elementary operations. As an example its operation is now illustrated using the function \cite[page 69]{Diehl2013}:
 \begin{align}
-f(w_1,w_2,w_3) = \sin(w_1 w_2) + \exp(w_1 w_2 w_3)
+f(w_1,w_2,w_3) = \sin(w_1 w_2) + \exp(w_1 w_2 w_3).
 \label{eq:backFun}
 \end{align}
 This function written in terms of five elementary operations as \cite[page 70]{Diehl2013}:
 \begin{align}
-w_4 = w_1 w_2 \\
-w_5 = sin(w_4)\\
-w_6 = w_4 w_3 \\
-w_7 = exp(w_6) \\
-w_8 = w_5 + w_7 \\
-o = w_8
+w_4 = w_1 w_2, \\
+w_5 = sin(w_4),\\
+w_6 = w_4 w_3, \\
+w_7 = exp(w_6), \\
+w_8 = w_5 + w_7, \\
+o = w_8.
 \end{align}
 Computing the gradient means computing the partial derivatives of $f$ with respect to all inputs. In this case this means finding:
 \begin{align}
-\frac{\partial f(w_1,w_2,w_3)}{\partial w_1} = w_2 (\cos(w_1 w_2) + w_3 \exp(w_1 w_2 w_3)) \\
-\frac{\partial f(w_1,w_2,w_3)}{\partial w_2} = w_1 (\cos(w_1 w_2) + w_3 \exp(w_1 w_2 w_3)) \\
-\frac{\partial f(w_1,w_2,w_3)}{\partial w_3} = w_1  w_2 \exp(w_1 w_2 w_3)
+\frac{\partial f(w_1,w_2,w_3)}{\partial w_1} = w_2 (\cos(w_1 w_2) + w_3 \exp(w_1 w_2 w_3)), \\
+\frac{\partial f(w_1,w_2,w_3)}{\partial w_2} = w_1 (\cos(w_1 w_2) + w_3 \exp(w_1 w_2 w_3)), \\
+\frac{\partial f(w_1,w_2,w_3)}{\partial w_3} = w_1  w_2 \exp(w_1 w_2 w_3).
 \end{align}
 Above the derivatives have been found by hand using the chain rule. Now these will be computed using back-propagation. Figure~\ref{fig:networkGraph} shows a graphical representation of equation~\ref{eq:backFun}. The partial derivatives needed for the backwards sweep can be found on the edges. \\
 \begin{figure}
@@ -167,11 +167,11 @@ However weight noise should be used with care, because it can lead to very slow 
 \subsubsection{Regularized loss minimization}
 Regularized loss minimization includes a model complexity penalty term in the cost function. Instead of minimizing the loss $E$ an augmented loss \cite[p. 338]{Bishop1995}\cite[p. 171]{Ben-david2014}:
 \begin{equation}
-\hat{E} = E + v\Omega
+\hat{E} = E + v\Omega.
 \end{equation}
 is used. $\Omega$ stands for a penalty term, which should grow, when the network is likely to over-fit the training data. $v \in (0,1)$ denotes the weight parameter, which determines how much emphasis the optimization algorithm should place on regularization. A straightforward choice for $\Omega$ is the $l_2$ norm of the model weights:
 \begin{equation}
-\Omega_{l2} = \|\mathbf{w}\|^2 = (\sqrt{ \sum w^2})^2
+\Omega_{l2} = \|\mathbf{w}\|^2 = (\sqrt{ \sum w^2})^2.
 \end{equation}
 The weight norm serves as a measure for the model complexity. The idea of choosing the simplest possible model which can explain the data, often referred to as Occam's razor is expressed in the modified cost function $\hat{E}$, the result of the optimization process will be a compromise between fit to the training data and model complexity.
 
@@ -217,13 +217,13 @@ Even tough past information is available in theory, RNNs have only limited acces
 Initially researchers tried to solve the vanishing gradient problem by making changes to the training algorithm using simulated annealing, time delays or compression \cite[page 32]{Graves2008}. However a good solution to the problem turned out to be changing the RNN cell architecture. Long short-term memory (LSTM) cells as proposed in \cite{Hochreiter1995} are more complex network units. LSTMs are differentiable versions of computer memory chips \cite[page 37]{Graves2012}. Memory chips generally have read, write, and erase ports which can be set in order to allow the chip's state to be read, modified or emptied. In the LSTM case the input, output, and forget gates serve the same function \cite[page 33]{Graves2008}. Throughout the literature these gates are generally denoted as $\mathbf{i}, \mathbf{f}$ and $\mathbf{o}$. The content of the memory or state is written as $\mathbf{c}$, but will referred to as $\mathbf{s}$ in this theses in order to avoid confusion with the LAS context vector. The output is denoted by $\mathbf{h}$, while a $t$ subscript denotes the time step.
 These memory cells use the differentiable equation system \cite[page 5]{Graves2013}\footnote{ Various versions of LSTM cells exist. This one is commonly referred to as the \textquotedblleft peephole\textquotedblright $ \: $ variant. }:
 \begin{align}
-\mathbf{i_t} &= \sigma (\mathbf{W}_{ix} \mathbf{x}_t + \mathbf{W}_{ih} \mathbf{h}_{t-1} + \mathbf{W}_{is} \mathbf{s}_{t-1} +\mathbf{b}_i) \\
-\mathbf{f}_t &= \sigma (\mathbf{W}_{fx} \mathbf{x}_t + \mathbf{W}_{fh} \mathbf{h}_{t-1} + \mathbf{W}_{fs} \mathbf{s}_{t-1} +\mathbf{b}_f) \\
-\mathbf{s}_t &= \mathbf{f}_t \mathbf{s}_{t-1} + \mathbf{i}_t \tanh( \mathbf{W}_{sx} \mathbf{x}_t + \mathbf{W}_{sh} \mathbf{h}_{t-1} + \mathbf{b}_c ) \\
-\mathbf{o}_t &= \sigma (\mathbf{W}_{ox} \mathbf{x}_t + \mathbf{W}_{oh} \mathbf{h}_{t-1} + \mathbf{W}_{os} \mathbf{s}_t + \mathbf{b}_o ) \\
-\mathbf{h}_t &= \mathbf{o}_t \tanh(\mathbf{s}_t) \\
+\mathbf{i_t} &= \sigma (\mathbf{W}_{ix} \mathbf{x}_t + \mathbf{W}_{ih} \mathbf{h}_{t-1} + \mathbf{W}_{is} \mathbf{s}_{t-1} +\mathbf{b}_i), \\
+\mathbf{f}_t &= \sigma (\mathbf{W}_{fx} \mathbf{x}_t + \mathbf{W}_{fh} \mathbf{h}_{t-1} + \mathbf{W}_{fs} \mathbf{s}_{t-1} +\mathbf{b}_f), \\
+\mathbf{s}_t &= \mathbf{f}_t \mathbf{s}_{t-1} + \mathbf{i}_t \tanh( \mathbf{W}_{sx} \mathbf{x}_t + \mathbf{W}_{sh} \mathbf{h}_{t-1} + \mathbf{b}_c ), \\
+\mathbf{o}_t &= \sigma (\mathbf{W}_{ox} \mathbf{x}_t + \mathbf{W}_{oh} \mathbf{h}_{t-1} + \mathbf{W}_{os} \mathbf{s}_t + \mathbf{b}_o ), \\
+\mathbf{h}_t &= \mathbf{o}_t \tanh(\mathbf{s}_t). \\
 \end{align}
-From the definition of the matrix product follows that
+From the definition of the matrix product follows that,
 \begin{equation}
 \mathbf{A}\mathbf{x}_1 + \mathbf{B}\mathbf{x}_2
 =
@@ -232,18 +232,18 @@ From the definition of the matrix product follows that
 \end{equation}
 Which this relation in mind the equations above can be rewritten, by creating column wise concatenated weight matrices for every neuron gate $W_i$, $W_f$, $W_o$, as well as for the state $W_s$. These matrices can then be multiplied by a row wise concatenated vector $[\mathbf{x}_t \; \mathbf{h}_{t-1} \; \mathbf{s}_t]^T$, which leads to the slightly simplified system of equations below:
 \begin{align}
-\mathbf{i}_t &= \sigma (\mathbf{W}_i [\mathbf{x}_t \; \mathbf{h}_{t-1} \; \mathbf{s}_{t-1}]^T + \mathbf{b}_i) \\
-\mathbf{f}_t &= \sigma (\mathbf{W}_f [\mathbf{x}_t \; \mathbf{h}_{t-1} \; \mathbf{s}_{t-1}]^T + \mathbf{b}_f) \\
-\mathbf{s}_t &= \mathbf{f}_t \mathbf{s}_{t-1} + \mathbf{i}_t \tanh( \mathbf{W}_s [\mathbf{x}_t \; \mathbf{h}_{t-1}]^T + \mathbf{b}_s ) \\
-\mathbf{o}_t &= \sigma (\mathbf{W}_o [\mathbf{x}_t \; \mathbf{h}_{t-1} \; \mathbf{s}_t]^T + \mathbf{b}_o ) \\
-\mathbf{h}_t &= \mathbf{o}_t \tanh(\mathbf{s}_t)
+\mathbf{i}_t &= \sigma (\mathbf{W}_i [\mathbf{x}_t \; \mathbf{h}_{t-1} \; \mathbf{s}_{t-1}]^T + \mathbf{b}_i), \\
+\mathbf{f}_t &= \sigma (\mathbf{W}_f [\mathbf{x}_t \; \mathbf{h}_{t-1} \; \mathbf{s}_{t-1}]^T + \mathbf{b}_f), \\
+\mathbf{s}_t &= \mathbf{f}_t \mathbf{s}_{t-1} + \mathbf{i}_t \tanh( \mathbf{W}_s [\mathbf{x}_t \; \mathbf{h}_{t-1}]^T + \mathbf{b}_s ), \\
+\mathbf{o}_t &= \sigma (\mathbf{W}_o [\mathbf{x}_t \; \mathbf{h}_{t-1} \; \mathbf{s}_t]^T + \mathbf{b}_o ), \\
+\mathbf{h}_t &= \mathbf{o}_t \tanh(\mathbf{s}_t).
 \end{align}
 \begin{figure}
 \includestandalone[width=\textwidth]{tikz/lstm}
 \caption{Visualization of the LSTM architecture.}
 \label{fig:lstm}
 \end{figure}
-This system of equations is visualized in figure~\ref{fig:lstm}. Just like diagram~\ref{fig:singleRecCell} this depiction is read from bottom to top. The most important part is the line from $\mathbf{s}_{t-1}$ to $\mathbf{s}_{t}$ \cite{Colah2015}. It records operations on the cell state $\mathbf{s}_t$. The cell state contains information from the past which helps the block make decisions regarding the current output $\mathbf{h}_t$. The sigmoid functions $\sigma(\cdot)$ are applied element wise on the input vectors and produce outputs between zero and one. In the case of the forget gate output $\mathbf{f}_t$ these values $\in (0,1)$ well serve as a measure of how much of the past state the cell would like to remember. One means keep this variable and zero throw it away \cite{Colah2015}.
+This system of equations is visualized in figure~\ref{fig:lstm}. Just like diagram~\ref{fig:singleRecCell} this depiction is read from bottom to top. The most important part is the line from $\mathbf{s}_{t-1}$ to $\mathbf{s}_{t}$ \cite{Colah2015}. It records operations on the cell state $\mathbf{s}_t$. The cell state contains information from the past which helps the block make decisions regarding the current output $\mathbf{h}_t$. The sigmoid functions $\sigma(\cdot)$ are applied element wise on the input vectors and produce outputs between zero and one. In the case of the forget gate output $\mathbf{f}_t$ these values $\in (0,1)$ serve as a measure of how much of the past state the cell would like to remember. One means keep this variable and zero throw it away \cite{Colah2015}.
 The following task is to determine what should be added to the memory. This information can be found in the input gate result $\mathbf{i}_t$. $\mathbf{i}_t$ is multiplied element wise with the candidate values $\mathbf{\bar{s}}_t$. These are computed by a hyperbolic tangent neuron.  The $\tanh(\cdot)$ function makes sure all vector elements are between $-1$ and $1$. The neuron computing the candidate state values $\mathbf{\bar{s}}_t$ looks at input data and the past outputs. Both are labeled $\mathbf{w}$ in figure~\ref{fig:lstm}, $\mathbf{w}$ contains all information that could possibly be included in the new state. Finally the weighted candidate values are added to what was previously stored. This operation leads to the updated memory state $\mathbf{s}_t$.
 Last but not least the new output value has to be computed, which will be a filtered version of the cell state. The decision of which and how much of each state variable will be send outside is made by the output gate. It's output $\mathbf{o}_t$ is multiplied with a rescaled version of the cell state. The rescaling is done using another hyperbolic tangent, which again sets all values between minus one and one. The product of this rescaled state and the weights found in $\mathbf{o}_t$ then yields the new output $\mathbf{h}_t$.
 
@@ -258,25 +258,25 @@ The sigmoid and hyperbolic tangent functions in turn consist out of exponentials
 \end{equation}
 The equation above can be proven by using the definitions of the sigmoidal $\sigma = \frac{1}{1 + \exp(-x)}$, and hyperbolic tangent $\tanh = \frac{\exp(2x) - 1}{\exp(2x) + 1}$:
 \begin{align}
-\tanh(x) &= \frac{\exp(2x) - 1}{\exp(2x) + 1} \\
-&= \frac{2\exp(2x) - (\exp(2x) + 1)}{\exp(2x) + 1} \\
-&= \frac{2 \exp(2x)}{\exp(2x) + 1} - \frac{\exp(2x) + 1}{\exp(2x) + 1} \\
-&= \frac{2 \exp(2x)}{\exp(2x) + 1} - 1 \\
-&= \frac{2}{\frac{\exp(2x) + 1}{\exp(2x)}} - 1 \\
-&= \frac{2}{1 + \frac{1}{\exp(2x)}} - 1 \\
-&= 2\frac{1}{1 + \exp(-2x)} - 1 = 2\sigma(2x) - 1
+\tanh(x) &= \frac{\exp(2x) - 1}{\exp(2x) + 1}, \\
+&= \frac{2\exp(2x) - (\exp(2x) + 1)}{\exp(2x) + 1}, \\
+&= \frac{2 \exp(2x)}{\exp(2x) + 1} - \frac{\exp(2x) + 1}{\exp(2x) + 1}, \\
+&= \frac{2 \exp(2x)}{\exp(2x) + 1} - 1, \\
+&= \frac{2}{\frac{\exp(2x) + 1}{\exp(2x)}} - 1, \\
+&= \frac{2}{1 + \frac{1}{\exp(2x)}} - 1, \\
+&= 2\frac{1}{1 + \exp(-2x)} - 1 = 2\sigma(2x) - 1.
 \end{align}
-These two non-linear functions are thus very similar, in the LSTM-cell their different function value ranges decide how they are used. Sigmoids determine how much of something should be used, stored, or deleted, because its output values range between zero and one, while computations done on the cell state use the hyperbolic tangent, due to its wider range of function values.
+These two non-linear functions are thus very similar, in the LSTM-cell their different function value ranges decide how they are used. Sigmoids determine how much of something should be used, stored, or deleted, because it's output values range between zero and one, while computations done on the cell state use the hyperbolic tangent, due to it's wider range of function values.
 
 
 \subsubsection{Bidirectional Long Short Term Memory}
 With the advent of LSTMs deep recurrent networks became feasible in speech recognition \cite{Graves2013b}. RNNs are always deep in time, because their hidden state depends on past inputs. To enable abstraction their structure must also be deep in space. A bidirectional LSTM layer is shown in figure~\ref{fig:blstm}. It is important to note, that several LSTM layers are often followed by a single linear layer, as is the case in \cite{Graves2013b}:
 \begin{align}
-\overrightarrow{\mathbf{h}}_t &= \text{LSTM}(\mathbf{W}_{\overrightarrow{\mathbf{h}}_t} [\mathbf{x}_t \; \mathbf{h}_{t-1}]^T + \mathbf{b}_{\overrightarrow{\mathbf{h}}_t})
+\overrightarrow{\mathbf{h}}_t &= \text{LSTM}(\mathbf{W}_{\overrightarrow{\mathbf{h}}_t} [\mathbf{x}_t \; \mathbf{h}_{t-1}]^T + \mathbf{b}_{\overrightarrow{\mathbf{h}}_t}),
 \\
-\overleftarrow{\mathbf{h}}_t &= \text{LSTM}(\mathbf{W}_{\overleftarrow{\mathbf{h}}_t} [\mathbf{x}_t \; \mathbf{h}_{t+1}]^T + \mathbf{b}_{\overleftarrow{\mathbf{h}}_t})
+\overleftarrow{\mathbf{h}}_t &= \text{LSTM}(\mathbf{W}_{\overleftarrow{\mathbf{h}}_t} [\mathbf{x}_t \; \mathbf{h}_{t+1}]^T + \mathbf{b}_{\overleftarrow{\mathbf{h}}_t}),
 \\
-\mathbf{y}_t &= \mathbf{W}_{y} [\overrightarrow{\mathbf{h}}_t \; \overleftarrow{\mathbf{h}}_t]^T + \mathbf{b}_y
+\mathbf{y}_t &= \mathbf{W}_{y} [\overrightarrow{\mathbf{h}}_t \; \overleftarrow{\mathbf{h}}_t]^T + \mathbf{b}_y.
 \end{align}
 \begin{figure}
 \centering
@@ -286,11 +286,11 @@ With the advent of LSTMs deep recurrent networks became feasible in speech recog
 \end{figure}
 If stacked on top of each other, these bidirectional LSTM layers form a deep recurrent network. Defining $\mathbf{h}^0 = \mathbf{x}$, $\mathbf{h}^N = \mathbf{y}$ looking at time from $t = 1$ to $T$ and taking $N$ layers leads to:
 \begin{align}
-\overrightarrow{\mathbf{h}}_t^n &= \text{LSTM}(\mathbf{W}_{\overrightarrow{\mathbf{h}}_t}^n [\mathbf{h}_t^{n-1} \; \mathbf{h}_{t-1}^n]^T + \mathbf{b}_{\overrightarrow{\mathbf{h}}_t}^n)
+\overrightarrow{\mathbf{h}}_t^n &= \text{LSTM}(\mathbf{W}_{\overrightarrow{\mathbf{h}}_t}^n [\mathbf{h}_t^{n-1} \; \mathbf{h}_{t-1}^n]^T + \mathbf{b}_{\overrightarrow{\mathbf{h}}_t}^n),
 \\
-\overleftarrow{\mathbf{h}}_t^n &= \text{LSTM}(\mathbf{W}_{\overleftarrow{\mathbf{h}}_t}^n [\mathbf{h}_t^{n-1} \; \mathbf{h}_{t+1}^n]^T + \mathbf{b}_{\overleftarrow{\mathbf{h}}_t}^n)
+\overleftarrow{\mathbf{h}}_t^n &= \text{LSTM}(\mathbf{W}_{\overleftarrow{\mathbf{h}}_t}^n [\mathbf{h}_t^{n-1} \; \mathbf{h}_{t+1}^n]^T + \mathbf{b}_{\overleftarrow{\mathbf{h}}_t}^n),
 \\
-\mathbf{h}_t^N &= \mathbf{W}_{y}^N [\overrightarrow{\mathbf{h}}_t \; \overleftarrow{\mathbf{h}}_t]^T + \mathbf{b}_y^N
+\mathbf{h}_t^N &= \mathbf{W}_{y}^N [\overrightarrow{\mathbf{h}}_t \; \overleftarrow{\mathbf{h}}_t]^T + \mathbf{b}_y^N.
 \end{align}
 In this setting each LSTM cell has access to information from before or after it. For this to work the speech sequence, which is analyzed has to be recorded completely. In this case future information is available and should be used for recognition purposes.
 
@@ -312,7 +312,7 @@ Generally speaking this collapsing process of different paths is what makes it p
 Equation~\ref{eq:CTCPaths} must be evaluated efficiently, which can be done by using a forward-backward algorithm. Such algorithms compute forward and backward pass variables $\alpha_t(s)$ and $\beta_t(s)$. The two variables break the probability of correctly predicting the sequence into a prefix $\alpha$ and suffix $\beta$ part.
 During training their product at any time step $t$ and sequence position $s$ yields the probability sum of all label paths found in the network output $\mathbf{y}$ and mapped onto $\mathbf{t}$ by $\mathcal{B}$.  The probability of predicting the targets ($\mathbf{l} = \mathbf{t}$) given the inputs is then given by:
 \begin{equation}
-p(\mathbf{t}|\mathbf{x}) = \sum\limits_{s=1}^{| \mathbf{t}' |} \alpha_t(s) \beta_t(s)
+p(\mathbf{t}|\mathbf{x}) = \sum\limits_{s=1}^{| \mathbf{t}' |} \alpha_t(s) \beta_t(s).
 \end{equation}
 Which is running tough the $| \mathbf{t}' |$ elements of the target sequence with added blanks at the start, end and between all labels. The sum checks all possible alignments, which could follow from the mapped outputs. Adding up the negative logarithm of the probabilities above leads to the CTC cost function. Decoding can be done using simlpe greedy decoding or a more complex beam search variant called prefix search. More details can be found in  \cite[chapter 7]{Graves2008}, \cite[chapter 7]{Graves2012} and \cite{Graves2006}.
 
@@ -330,29 +330,29 @@ The speller in turn accepts the features as input and outputs distributions over
 \label{subsec:Listener}
 The listener, consists of Long Short Term Memory blocks. These blocks are arranged in layers. The inputs are first fed into a recurrent bidirectional layer (BLSTM). This choice gives the system access to future data, therefore only fully recorded data can be analyzed. This system is restricted to applications, which do not require transcriptions in real time or where its acceptable to wait with decoding until a sentence has been recorded completely. When going up in figure~\ref*{fig:las}, pyramidal layers (pBLSTM) follow the initial BLSTM layer. The pyramidal structure concatenates the hidden values computed previously, such that their time dimension is halved:
 \begin{equation}
-\mathbf{h}_{t}^n = \text{BLSTM}(\mathbf{h}_{t-1}^{n}, [\mathbf{h}_{2t}^{n-1}, \mathbf{h}_{2t+1}^{n-1}])
+\mathbf{h}_{t}^n = \text{BLSTM}(\mathbf{h}_{t-1}^{n}, [\mathbf{h}_{2t}^{n-1}, \mathbf{h}_{2t+1}^{n-1}]).
 \end{equation}
 Technically instead of two, three or more previously computed feature vectors could be concatenated, which increases the compression factor per pyramidal layer.
 This operation reduces the length $U$ of the high level features $\mathbf{H}$. Without this compression the following attend and spell operation has a hard time extracting the relevant information, because a longer time span has to be considered to decode a single character. Additionally the compression reduces the problem complexity, which speeds up the training process.
 
 \subsection{Attend and spell}
 \label{subsec:AttendAndSpell}
-The speller takes the features and produces a distribution over Latin character sequences as output. The computation of this output involves the context vector $\mathbf{s}_i$, the decoder state $\mathbf{s}_i$, the features $\mathbf{H}$ and the previous output $\mathbf{y}_i$. The index $i$ denotes decoding time, $i-1$ is used to refer to results from the last time step. The last decoding step $I$, at which the system terminates is a learned quantity. While the last input step $U$, depends on the input features, lower case $u$ denotes the input step.\\
-During operation the Attend and spell functions keep track of previous output labels and previously important features, which are contained in the context. This information is stored in the state $\mathbf{c}_i$. To function the network must determine, which part of the computed features is $\mathbf{H}$ are relevant at any given decoding time step $i$. The context vector $\mathbf{c}_i$ contains a linear combination of relevant features, weighted according to their importance. The AttentionContext function determines these weights based on the state. Finally the speller function finds a probability over possible labels using the on the relevant features in the context and the state. The computing steps are therefore \cite[page 4]{Chan2015}:
+The speller takes the features and produces a distribution over Latin character sequences as output. The computation of this output involves the context vector $\mathbf{c}_i$, the decoder state $\mathbf{s}_i$, the features $\mathbf{H}$ and the previous output $\mathbf{y}_i$. The index $i$ denotes decoding time, $i-1$ is used to refer to results from the last time step. The last decoding step $I$, at which the system terminates is a learned quantity. While the last input step $U$, depends on the input features, lower case $u$ denotes the input step.\\
+During operation the attend and spell functions keep track of previous output labels and previously important features, which are contained in the context. This information is stored in the state $\mathbf{s}_i$. To function the network must determine, which part of the computed features in $\mathbf{H}$ are relevant at any given decoding time step $i$. The context vector $\mathbf{c}_i$ contains a linear combination of relevant features, weighted according to their importance. The AttentionContext function determines these weights based on the state. Finally the speller function finds a probability over possible labels using the relevant features in the context and the state. The computing steps are therefore \cite[page 4]{Chan2015}:
 \begin{align}
- s_i &= \text{RNN}(\mathbf{c}_{i-1}, \mathbf{y}_{i-1}, \mathbf{c}_{i-1}) \\
- \mathbf{c}_i &= \text{AttentionContext}(\mathbf{c}_i,\mathbf{H}) \\
-  P(\mathbf{y}_i|\mathbf{x}, \mathbf{y}_{<i}) &= \text{CharacterDistribution}(s_i,\textbf{c}_i)
+ \mathbf{s}_i &= \text{RNN}(\mathbf{s}_{i-1}, \mathbf{y}_{i-1}, \mathbf{c}_{i-1}), \\
+ \mathbf{c}_i &= \text{AttentionContext}(\mathbf{s}_i,\mathbf{H}), \\
+  P(\mathbf{y}_i|\mathbf{x}, \mathbf{y}_{<i}) &= \text{CharacterDistribution}(\mathbf{s}_i,\textbf{c}_i).
 \end{align}
 The state follows from a recurrent multilayer LSTM. In contrast to the listener the speller is causal, meaning that it makes decisions based only on information computed during previous decoding steps. LSTMs are necessary here, because past states must be remembered. The attention mechanism, called AttentionContext above, computes a new context vector once every time step.
 This computation starts with the determination of the scalar energy $e_{i,u}$, which will be used as weight for its corresponding feature vector  $h_u$. The computation starts with two feedforward neural networks or multilayer perceptrons (MLP), $\phi$ and $\psi$ \cite[page 5]{Chan2015}:
 \begin{align}
-e_{i,u} = \phi(\mathbf{c}_i)^T \psi(\mathbf{h_u}) \\
-\alpha_{i,u} = \frac{ \exp(e_{i,u})}{ \sum\limits_{u} \exp(e_{i,u})} \\
+e_{i,u} = \phi(\mathbf{s}_i)^T \psi(\mathbf{h_u}), \\
+\alpha_{i,u} = \frac{ \exp(e_{i,u})}{ \sum\limits_{u} \exp(e_{i,u})}, \\
 \label{eq:alphas}
-\mathbf{c}_i = \sum\limits_{u} \alpha_{i,u} \mathbf{h}_u
+\mathbf{c}_i = \sum\limits_{u} \alpha_{i,u} \mathbf{h}_u.
 \end{align}
-$\alpha$ is produced by running $\mathbf{e}$ trough a softmax function, which scales $\mathbf{e}$ such that all elements are within $(0,1)$ and add up to one. These scaled weights, can then be used to form the context vector $\mathbf{s}_i$. When the training process converges the $\alpha_i$s typically follow a distribution with sharp edges\cite[page 5]{Chan2015}. Thus it is justified to think of the alphas as a sliding window. This window contains only the currently relevant parts of the condensed input data set.
+$\alpha$ is produced by running $\mathbf{e}$ trough a softmax function, which scales $\mathbf{e}$ such that all elements are within $(0,1)$ and add up to one. These scaled weights, can then be used to form the context vector $\mathbf{c}_i$. When the training process converges the $\alpha_i$s typically follow a distribution with sharp edges\cite[page 5]{Chan2015}. Thus it is justified to think of the alphas as a sliding window. This window contains only the currently relevant parts of the condensed input data set.
 
 \begin{figure}
 \includestandalone[width=0.9\textwidth]{tikz/lasArcBottomUp}
@@ -369,8 +369,8 @@ Here $y_i$ denotes the current output distribution, $x$ the input, $\theta$ the 
 Using the known output during training creates a situation, where the past outputs are always right. In practice however the situation will be different, as the network is going to make mistakes. As it is desired to create a robust model it is necessary to sometimes include the character distribution generated by the networks being trained.
 Which leads to the objective \cite[page 5]{Chan2015}:
 \begin{align}
-\hat{\mathbf{y}}_{i} = \text{CharacterDistribution}(s_i,\textbf{c}_i) \\
-\max_{\theta} \sum\limits_{i} \log P(y_i|\mathbf{x}, \hat{y}_{<i};\theta)
+\hat{\mathbf{y}}_{i} = \text{CharacterDistribution}(s_i,\textbf{c}_i), \\
+\max_{\theta} \sum\limits_{i} \log P(y_i|\mathbf{x}, \hat{y}_{<i};\theta).
 \end{align}
 The novelty in comparison to the previous expression is that $\hat{y}_{<i}$ is sometimes taken from the past network outputs instead of the ground truth. An idea which Chan et al. found in \cite{Bengio2015}.
 
@@ -378,7 +378,7 @@ The novelty in comparison to the previous expression is that $\hat{y}_{<i}$ is s
 \label{sec:beamsearch}
 In order to generate a readable text, it is necessary to choose characters from the generated character distributions. One way to do this is to simply pick the most likely letter from each distribution. This approach is called greedy decoding. It ignores the possibility of generating better results by also considering less likely options. It is reasonable to expect better results, when considering more then just the most likely label, because the attend and spell decoder takes past labels into account. Consequently a broader search trough the most likely options should be performed. Unfortunately memory limitations make it impossible to search trough all possible combinations. Therefore only the $n$ most likely options are explored and the rest is ignored. This approach is referred to as beam search. Taking into account the most likely options for each label produces a tree of possible transcriptions. The different routes along this tree are called hypotheses. A score for each hypothesis can be computed, by multiplication of the probability values the las-network assigned to each branch along its path. In order to account for different hypotheses lengths the total probability must be divided by the hypothesis length. In beam search only the m most likely hypotheses are kept. Using only las-probabilities is the equivalent of taking only acoustic data and their labels into account. In general text data is far more abundantly available then speech data. To take advantage of these large text corpora a language model trained on these can be used to make a more informed decision when choosing a beam-hypothesis. A selection can then be made according to \cite[page 6]{Chan2015}:
 \begin{align}
-s(\mathbf{y}|\mathbf{x}) = \frac{\log P(\mathbf{y}|\mathbf{x})}{ |\mathbf{y}|_c} + \lambda \log P_{LM}(\mathbf{y})
+s(\mathbf{y}|\mathbf{x}) = \frac{\log P(\mathbf{y}|\mathbf{x})}{ |\mathbf{y}|_c} + \lambda \log P_{LM}(\mathbf{y}).
 \end{align}
 Here $P_{LM}$ denotes the weight the language model assigns to each hypothesis. And $\lambda$ is a weight factor, which determines the language model importance. The formula above describes beam selection using a language model to re-score the attend and spell probabilities with a language model.
 
@@ -412,9 +412,9 @@ D[i,j] = \min\left\{
   \begin{array}{@{}ll@{}}
     D[i-1, j] + 1, & \text{deletion} \\
     D[i,j-1] + 1, & \text{insertion} \\
-    D[i-1,j-1] + \delta(x[i-1], y[j-1]) & \text{match or replacement}
+    D[i-1,j-1] + \delta(x[i-1], y[j-1]) & \text{match or replacement},
   \end{array}\right. \\
-\text{with } \delta(a,b) = 0 \text{ if } a=b \text{ else } 0
+\text{with } \delta(a,b) = 0 \text{ if } a=b \text{ else } 0.
 \end{align}
 Based in these rules the table~\ref{tab:editDistExample}, has been computed. Intuitively the distance three makes sense, because to go from huis to house, an o has to be inserted, the i replaced with an s and finally and an extra e has to be added, which amounts to three edits.
 
