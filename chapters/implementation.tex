@@ -15,20 +15,20 @@ The listener for example produces a three dimensional logit tensor of size $[B, 
 \mathbf{W}\mathbf{X} + \mathbf{b} = \mathbf{R}.
 \end{equation}
 The result matrix $R$ can then be converted back into a padded tensor using the sequence length information one more time.
-An alternative approach which avoids reshaping is to implement a linear recurrent network cell with a state size of zero and use dynamic unrollings the evaluate the linear layer. The resulting memory requirements and speed are comparable.
+An alternative approach which avoids reshaping is to implement a linear recurrent network cell with a state size of zero and use dynamic unrollings the evaluate the linear layer. The resulting memory requirements and speed have been found to be comparable.
 
 \section{Design of the BLSTM-CTC model}
-Sequence labeling using connectionist temporal classification happens in two phases. First BLSTM layers compute annotations based in the input vectors. These annotations are then handed to a CTC layer which runs the annotations trough a softmax to produce normalized label probabilities and computes the loss during training or searches trough the probability distributions during decoding. 
+Sequence labeling using connectionist temporal classification happens in two phases. First BLSTM layers compute annotations based on the input vectors. These annotations are then handed to a CTC layer which runs the annotations trough a softmax to produce normalized label probabilities and computes the loss during training or searches trough the probability distributions during decoding. 
 The BLSTM-CTC implementation reflects this procedure by splitting the BLSTM layers as well as the training and decoding code into model, trainer and decoding classes. \footnote{It was not necessary to implement CTC decoding. Tested code is already available at \url{www.tensorflow.org/api_docs/python/nn/connectionist\_temporal\_classification\_\_ctc\_}} 
 
 
 
 \section{Implementing Listen attend and Spell}
-The listen operations computing the high level feature matrix $\mathbf{H}$ can be completed independently before the attend and spell code is run. All listening related code has therefore been grouped in a Listener class, all attend and spell related functions are grouped in a speller class.
+The listen operations computing the high level feature matrix $\mathbf{H}$ can be completed independently before the attend and spell code is run. All listening related code has therefore been grouped in a listener class, all attend and spell related functions are grouped in a speller class.
 
 \subsection{The Listener}
-The Listener consists of an initial bidirectional long short term memory layer (BLSTM), followed by pyramidal LSTM (PLSTM ). The plstm layer compresses the time dimension as described in chapter \ref{subsec:Listener}. The compression has been implemented by looping trough the hidden output of the previous layer in time and concatenating every second vector with the one before it. Every PLSTM layer therefore halves the time dimension and produces an output of two times the state size of it's LSTM cells. 
-For use with CTC a liner output layer can optionally be added to the listener, which maps the output from two times the state size to the number of required labels. 
+The listener consists of an initial bidirectional long short term memory layer (BLSTM), followed by pyramidal bidirectional LSTM (PLSTM). The PLSTM layer compresses the time dimension as described in chapter \ref{subsec:Listener}. The compression has been implemented by looping trough the hidden output of the previous layer in time and concatenating every second vector with the one before it. Every PLSTM layer therefore halves the time dimension and produces an output of two times the state size of it's LSTM cells. 
+For use with CTC a linear output layer can optionally be added to the listener, which maps the output from two times the state size to the number of required labels. 
 
 \subsection{The Speller}
 Based on the high level features $\mathbf{H}$ computed by the listener the speller evaluates an internal attention mechanism. This mechanism can be interpreted as a learned sliding window. The speller learns where to place this window based on the decoder state $\mathbf{s}_i$. This state therefore represents a query, which asks the attention mechanism to provide certain information. This query in turn is computed by the spellers internal RNN.  Using the attention factors a context vector $\mathbf{c}$ is computed, which together with the state is used to assign a label. 
@@ -43,7 +43,7 @@ The one hot encoded previous label is denoted by $\mathbf{y}$ the decoder state 
 \caption{Schematic of the attend and spell cell components.}
 \label{fig:asCell}
 \end{figure}
-A visualization of the attend and spell cell implementation is shown in figure~\ref{fig:asCell}. The blue box surrounding the attend and spell represents a \texttt{while} or \texttt{for} loop. The loop type depends on whether the speller is run in training or decoding mode. 
+A visualization of the attend and spell cell implementation is shown in figure~\ref{fig:asCell}. The blue box surrounding the attend and spell functions represents a \texttt{while} or \texttt{for} loop. The loop type depends on whether the speller is run in training or decoding mode. 
 The ground-truth labels are known during training. The attend and spell cell must therefore be evaluated until a sequence of the same length as the ground-truth has been obtained. Taking knowledge of the target sequence length into account the unrolling can be done in a \texttt{for} loop. 
 Running in decoding mode is harder, because the length of the sequence the model will assign to the input is unknown. 
 
@@ -57,7 +57,7 @@ while keep_working:
 	stop_loop = logical_or(done, greater(time, max_steps))
 	keep_working = logical_not(stop_loop)
 \end{lstlisting}
-The pseudocode above uses relies on the mask $\mathbf{d}$ and an upper step limit to check if the while loop should continue running. In order to implement decoding efficiently inside of a graph it is important to keep track of the sequence lengths. The decoding loop implementation does this when it determines the done-mask $\mathbf{d}$. During every iteration the loop body updates the sequence lengths with the current decoding time, unless $\mathbf{d}$ contains \texttt{True} at the position corresponding to the current utterance.
+The pseudocode above relies on the mask $\mathbf{d}$ and an upper step limit to check if the while loop should continue running. In order to implement decoding efficiently inside of a graph it is important to keep track of the sequence lengths. The decoding loop implementation does this when it determines the done-mask $\mathbf{d}$. During every iteration the loop body updates the sequence lengths with the current decoding time, unless $\mathbf{d}$ contains \texttt{True} at the position corresponding to the current utterance.
 \begin{lstlisting}[language=python]
      decoded = decode(logits)
      mask = tf.equal(decoded, <eos>)

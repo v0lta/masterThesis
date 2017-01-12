@@ -1,9 +1,9 @@
 \section{Listen attend and spell experiments}
-In this section experiments use the full listen attend and spell architecture. After verification of the listener using a CTC output layer, the listen attend and spell network is first tested using greedy decoding. In contrast to beam search greedy decoding, does not maintain several hypotheses, instead it works with the most likely label each time step.
+In this section experiments use the full listen attend and spell architecture. After verification of the listener using a CTC output layer, the listen attend and spell network is first tested using greedy decoding. In contrast to beam search greedy decoding does not maintain several hypotheses, instead it works with the most likely label each time step.
 
 \subsection{Testing the Listener}
 A crucial part of the listen attend and spell architecture is formed by the listener. Before working with a fully-fledged las a CTC-layer will be attached to the listener.
-The idea is to verify the implementation. If CTC can extract relevant information from the listener, the attend and spell code should be able to do the same in later experiments. In order to keep memory requirements manageable in later experiments with the same listener all LSTM cells where set up with 64 hidden units. As the listener layers are bidirectional this means 64 in each direction so the hidden dimension is 128 in total. This sum is important, because the feature dimension of the lstm outputs is concatenated for each time step. If no further action is taken the listener produces features with a dimension of two times the number of elements per lstm.
+The idea is to verify the implementation. If CTC can extract relevant information from the listener, the attend and spell code should be able to do the same in later experiments. In order to keep memory requirements manageable in later experiments with the same listener all LSTM cells where set up with 64 hidden units. As the listener layers are bidirectional this means 64 in each direction so the hidden dimension is 128 in total. This sum is important, because the feature dimension of the LSTM outputs is concatenated for each time step. If no further action is taken the listener produces features with a dimension of two times the number of elements per LSTM.
 CTC runs the logits it is given trough a softmax layer to compute label probabilities. To function it must therefore be given a logit tensor, where the feature dimension is equal to the number of labels, the system is supposed to output. To meet this requirement an extra linear output layer has been added to the listener which maps the feature dimension to 40, as required. The beam width during decoding was set to 100. 
 \begin{figure}
 \includestandalone[width=0.49\linewidth]{tikz/CTC_Listener_plot_e10_loss}
@@ -11,7 +11,7 @@ CTC runs the logits it is given trough a softmax layer to compute label probabil
 \caption{The training progress shown for the Listener with added CTC layer. The training and validation loss values are shown in blue and green on the left. The plot on the right depicts the decoding performance on the validation set.}
 \label{fig:listenCTC}
 \end{figure}
-Figure~\ref{fig:listenCTC}, shows the optimization algorithms progress, as measured by trainig loss, validation loss and validation set decoding phoneme error rate. The training was stopped, after 10 epochs. During testing a phoneme error rate of \texttt{0.268} was observed, which indicates that no important information was lost during the compression process.
+Figure~\ref{fig:listenCTC}, shows the optimization algorithm's progress, as measured by trainig loss, validation loss and validation set decoding phoneme error rate. The training was stopped, after 10 epochs. During testing a phoneme error rate of \texttt{0.268} was observed, which indicates that no important information was lost during the compression process. Care must be taken when comparing single experiments. The optimization algorithms can terminate at different local optima, results vary. Due to time constraints, this thesis relies on single experiments, to come to more solid conclusions more experimental evidence is required.
 
 
 
@@ -54,7 +54,7 @@ which has a large impact on the error. The levenstein distance between the two l
 \end{figure}
 In order to further verify the implementation of the speller all attention weights $\alpha$ (equation~\ref{eq:alphas}), have been extracted during greedy decoding. The left side of figure~\ref{fig:fullAttention} shows these vectors in concatenated matrix form. The speller assigns 45 labels. During each decoding time step one label is produced, therefore the attention matrix has the same number of columns. The y-Axis shows compressed input time. This dimension depends on the length of the input utterance under consideration and the compression level, which is set by the number of pyramidal LSTM layers. The attention weights are normalized using a softmax function, hence all elements must sum to one. The scale shown next to figure~\ref{fig:fullAttention} therefore ends at one, values close to one indicate that the network is focusing on a single feature. Generally the attention weights should gradually cover all relevant features over time, this is definitely the case, as the attention weight is clustered around the matrix diagonal. 
 Furthermore only a limited number of compressed frames can be relevant at any given time, ideally each vector should contain a sharp peak at the most relevant frame.   
-The timit data corpus comes with alignments found by human listeners. The recoding of utterance \texttt{fmld0\_sx295} lasts for $3.018s$. During the feature computation one frame is placed every $0.01s$. Therefore this utterance will come with 302 frames. Using a listener with a single pyramidal layer 151 high level feature vectors will be computed for this utterance. The right side of figure~\ref{fig:fullAttention} shows the rescaled human alignment. The two plots show some resemblance, which indicates that the implemented attention mechanism is working properly. 
+The timit data corpus comes with alignments found by human listeners. The recoding of utterance \texttt{fmld0\_sx295} lasts for $3.018s$. During the feature computation one frame is placed every $0.01s$. Therefore this will have 302 frames. Using a listener with a single pyramidal layer 151 high level feature vectors will be computed for this utterance. The right side of figure~\ref{fig:fullAttention} shows the rescaled human alignment. The two plots show some resemblance, which indicates that the implemented attention mechanism is working properly. 
 \begin{figure}
 \centering
 \includestandalone[height=0.2\paperheight]{tikz/alphaZoom}
@@ -79,7 +79,7 @@ The attend and spell cell variation is shown in figure~\ref{fig:lasVariants}. Th
 \label{fig:variantResult}
 \end{figure}
 A learning curve over 10 epochs using a ground-truth probability of 0.3 with greedy decoding is shown in figure~\ref{fig:variantResult}. The results are slightly worse then what was observed with the original setup, despite the extra weights. This result indicated that the extra post context RNN has no additional value.
-It is therefore concluded that the decoder state $\mathbf{s}_i$ is sufficient to remember past context information.
+It is therefore concluded that the decoder state $\mathbf{s}_i$ is probably sufficient to remember past context information.
 
 
 \subsection{The effect of the groundtruth selection probability during training}
@@ -106,7 +106,7 @@ Results are shown in figure ~\ref{fig:lasGreedy2468}. It can be observed, that d
 \label{fig:lasGreedy05}
 \end{figure}
 To explore the effect of a low reuse probability over longer training periods the experiment has been repeated one more time with a $0.5$ groundtruth probability over 40 epochs.
-Figure~\ref{fig:lasGreedy05} depicts the training process. In comparison to the experiment show in figure~\ref{fig:lasGreedy} the network does significantly better during training, but
+Figure~\ref{fig:lasGreedy05} depicts the training process. In comparison to the experiment shown in figure~\ref{fig:lasGreedy} the network does significantly better during training, but
 this improvement does not translate into a better decoding performance.
 
 Ideally one would like to observe the opposite. If the output labels where correct more often during decoding, the networks trained to rely on them should outperform those which where not. Based on the observations above we conclude that beam should decoding should yield labels of higher quality, while networks, which learned to rely on past outputs, should benefit in particular.
@@ -141,9 +141,9 @@ Considering once more utterance \texttt{fmld0\_sx295}.
 The network now decodes:
 \begin{lstlisting}[caption={Network output}]
 <sos> sil hh ih f sil k ih r ow sil k ah m sil 
-	  sil t ah m aa aa hh hh v v er ey 
-	  n n sil f f er m iy iy iy iy sil
-	  sil t uw sil sil
+      sil t ah m aa aa hh hh v v er ey 
+      n n sil f f er m iy iy iy iy sil
+      sil t uw sil sil
 <eos>
 \end{lstlisting}
 Which is considerably better than the result obtained earlier. The levenstein distance over target length ratio drops to 0.36 for this utterance. However over the entire test set 0.45 has been measured. This result is considerably better than the 0.55 which where observed in section \ref{sec:greedy} using a much simpler model with greedy decoding and input noise regularization.  
