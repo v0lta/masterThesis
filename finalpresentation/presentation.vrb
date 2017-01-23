@@ -1,0 +1,21 @@
+\frametitle{Decoding loop logic}
+\begin{block}{body loop logic}
+\begin{semiverbatim}
+while keep_working:
+  not_done_count = reduce_sum( logical_not( d ))
+  done = equal(not_done_count, 0)
+  stop = logical_or(done, greater(time, max_steps))
+  keep_working = logical_not(stop)
+\end{semiverbatim}
+\end{block}
+\begin{block}{setting the sequence length}
+\begin{semiverbatim}
+  decoded = decode(logits)
+  mask = tf.equal(decoded, <eos>)
+  time_vec = ones(self.batch_size)*(time+1)
+  sequence_lengths = select(d,
+                            logits_sequence_length,
+                            time_vec)
+  d = logical_or(mask, d)
+\end{semiverbatim}
+\end{block}
